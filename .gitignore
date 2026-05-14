@@ -77,3 +77,5 @@ _[Ss]cripts
 
 #appsettings
 appsettings.json
+appsettings.Development.json
+
