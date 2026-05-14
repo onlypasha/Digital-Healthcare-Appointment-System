@@ -1,3 +1,5 @@
+using healthcare_api.Db;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +17,16 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader() 
               .AllowAnyMethod();
     });
+});
+
+builder.Services.AddDbContext<TrxDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("TrxConnection"));
+});
+
+builder.Services.AddDbContext<RptDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("RptConnection"));
 });
 
 var app = builder.Build();
