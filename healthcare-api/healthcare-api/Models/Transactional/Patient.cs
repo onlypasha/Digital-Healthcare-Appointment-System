@@ -25,5 +25,5 @@ public partial class Patient
 
     public virtual ICollection<MedicalRecord> MedicalRecords { get; set; } = new List<MedicalRecord>();
 
-    public virtual User1? User { get; set; }
+    public virtual User? User { get; set; }
 }

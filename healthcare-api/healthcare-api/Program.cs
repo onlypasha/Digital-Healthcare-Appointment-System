@@ -19,10 +19,10 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddDbContext<TrxDbContext>(options =>
-{
-    options.UseNpgsql(builder.Configuration.GetConnectionString("TrxConnection"));
-});
+//builder.Services.AddDbContext<TrxDbContext>(options =>
+//{
+//    options.UseNpgsql(builder.Configuration.GetConnectionString("TrxConnection"));
+//});
 
 builder.Services.AddDbContext<RptDbContext>(options =>
 {
