@@ -135,8 +135,11 @@ public partial class TrxDbContext : DbContext
 
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("now()");
             entity.Property(e => e.Email).HasColumnType("character varying");
-            entity.Property(e => e.Password).HasColumnType("character varying");
+            entity.Property(e => e.PasswordHash).HasColumnType("character varying");
             entity.Property(e => e.Role).HasColumnType("character varying");
+            entity.Property(e => e.Status)
+                .HasDefaultValueSql("'Active'::character varying")
+                .HasColumnType("character varying");
         });
 
         OnModelCreatingPartial(modelBuilder);
