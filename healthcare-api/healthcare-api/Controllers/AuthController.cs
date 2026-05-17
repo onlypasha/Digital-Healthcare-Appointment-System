@@ -18,11 +18,14 @@ namespace healthcare_api.Controllers
         [HttpPost("register/patient")]
         public async Task<ActionResult> RegisterPatient(RegisterPatientDto request)
         {
+            // mengecek apakah pasien sudah terdaftar melalui email
+            // blok if ini dijalankan jika pasien sudah terdaftar
             if (await context.Users.AnyAsync(u => u.Email == request.Email))
             {
                 return BadRequest("Email sudah terdaftar.");
             }
 
+            // membuat user baru dengan role "Patient"
             var user = new User
             {
                 Email = request.Email,
@@ -32,6 +35,7 @@ namespace healthcare_api.Controllers
             };
             user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.Password);
 
+            // detail dari Patient
             var patient = new Patient
             {
                 User = user,
@@ -43,6 +47,8 @@ namespace healthcare_api.Controllers
                 CreatedAt = DateTime.UtcNow
             };
 
+
+            // save ke db
             context.Users.Add(user);
             context.Patients.Add(patient);
             await context.SaveChangesAsync();
@@ -53,11 +59,14 @@ namespace healthcare_api.Controllers
         [HttpPost("register/doctor")]
         public async Task<ActionResult> RegisterDoctor(RegisterDoctorDto request)
         {
+            // mengecek apakah dokter sudah terdaftar melalui email
+            // blok if ini dijalankan jika dokter sudah terdaftar
             if (await context.Users.AnyAsync(u => u.Email == request.Email))
             {
                 return BadRequest("Email sudah terdaftar.");
             }
 
+            // membuat user baru dengan role "Doctor"
             var user = new User
             {
                 Email = request.Email,
@@ -68,6 +77,7 @@ namespace healthcare_api.Controllers
             };
             user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.Password);
 
+            // detail dokter
             var doctor = new Doctor
             {
                 User = user,
@@ -78,6 +88,7 @@ namespace healthcare_api.Controllers
                 CreatedAt = DateTime.UtcNow
             };
 
+            // save ke db
             context.Users.Add(user);
             context.Doctors.Add(doctor);
             await context.SaveChangesAsync();
@@ -92,9 +103,15 @@ namespace healthcare_api.Controllers
             var adminUsername = configuration["AdminCred:Username"];
             var adminPassword = configuration["AdminCred:Passsword"]; // Menggunakan typo 'Passsword' sesuai config
 
+            // blok if ini dijalanka jika:
+            // 1. Username dan Password tidak kosong
+            // 2. Field email yang diisi adalah username dari admin (karena admin hardcoded)
+            // 3. Field password yang diisi adalah password dari admin
             if (!string.IsNullOrEmpty(adminUsername) && !string.IsNullOrEmpty(adminPassword) &&
                 request.Email == adminUsername && request.Password == adminPassword)
             {
+
+                // membuat user baru dengan role Admin
                 var adminUser = new User
                 {
                     Id = 0,
@@ -157,6 +174,7 @@ namespace healthcare_api.Controllers
         [HttpPut("approve-doctor/{userId}")]
         public async Task<ActionResult> ApproveDoctor(long userId)
         {
+            // Menemukan User id dari dokter
             var user = await context.Users.FindAsync(userId);
 
             if (user == null || user.Role != "Doctor")
@@ -164,6 +182,7 @@ namespace healthcare_api.Controllers
                 return NotFound("Dokter tidak ditemukan.");
             }
 
+            // Merubah status dari InActive jadi Active
             user.Status = "Active";
             await context.SaveChangesAsync();
 
