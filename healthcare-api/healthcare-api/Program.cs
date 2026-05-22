@@ -1,4 +1,6 @@
 using healthcare_api.Db;
+using healthcare_api.Interface;
+using healthcare_api.Service;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -52,6 +54,8 @@ builder.Services.AddDbContext<TrxDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("TrxConnection"));
 });
+
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddDbContext<RptDbContext>(options =>
 {

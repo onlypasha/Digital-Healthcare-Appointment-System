@@ -13,7 +13,7 @@ public partial class Appointment
 
     public long? DoctorsId { get; set; }
 
-    public DateTime? AppointmentsId { get; set; }
+    public DateTime? AppointmentsDate { get; set; }
 
     public long? QueueNumber { get; set; }
 

@@ -55,7 +55,7 @@ public partial class TrxDbContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("Appointments_pkey");
 
-            entity.Property(e => e.AppointmentsId).HasColumnType("timestamp without time zone");
+            entity.Property(e => e.AppointmentsDate).HasColumnType("timestamp without time zone");
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("now()");
             entity.Property(e => e.Status).HasColumnType("character varying");
 
