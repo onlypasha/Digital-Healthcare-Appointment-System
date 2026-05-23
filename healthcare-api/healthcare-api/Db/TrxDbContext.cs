@@ -20,6 +20,8 @@ public partial class TrxDbContext : DbContext
 
     public virtual DbSet<Doctor> Doctors { get; set; }
 
+    public virtual DbSet<DoctorsSchedule> DoctorsSchedules { get; set; }
+
     public virtual DbSet<MedicalRecord> MedicalRecords { get; set; }
 
     public virtual DbSet<Patient> Patients { get; set; }
@@ -74,11 +76,30 @@ public partial class TrxDbContext : DbContext
 
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("now()");
             entity.Property(e => e.Phone).HasColumnType("character varying");
-            entity.Property(e => e.Speacialization).HasColumnType("character varying");
+            entity.Property(e => e.Specialization).HasColumnType("character varying");
 
             entity.HasOne(d => d.User).WithMany(p => p.Doctors)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("Doctors_UserId_fkey");
+        });
+
+        modelBuilder.Entity<DoctorsSchedule>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("DoctorsSchedule_pkey");
+
+            entity.ToTable("DoctorsSchedule");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("id");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("created_at");
+
+            entity.HasOne(d => d.IdNavigation).WithOne(p => p.DoctorsSchedule)
+                .HasForeignKey<DoctorsSchedule>(d => d.Id)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("DoctorsSchedule_id_fkey");
         });
 
         modelBuilder.Entity<MedicalRecord>(entity =>

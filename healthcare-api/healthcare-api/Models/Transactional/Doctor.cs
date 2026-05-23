@@ -11,15 +11,15 @@ public partial class Doctor
 
     public long? UserId { get; set; }
 
-    public string? Speacialization { get; set; }
+    public string? Specialization { get; set; }
 
     public decimal? ConsultationFee { get; set; }
-
-    public string? Scedule { get; set; }
 
     public string? Phone { get; set; }
 
     public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+
+    public virtual DoctorsSchedule? DoctorsSchedule { get; set; }
 
     public virtual ICollection<MedicalRecord> MedicalRecords { get; set; } = new List<MedicalRecord>();
 
