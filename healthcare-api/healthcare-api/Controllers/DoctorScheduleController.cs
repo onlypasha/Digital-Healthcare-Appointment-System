@@ -3,40 +3,26 @@ using healthcare_api.Data;
 using healthcare_api.Models.Transactional;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using healthcare_api.Service;
 
 namespace healthcare_api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DoctorScheduleController(TrxDbContext context) : ControllerBase
+    public class DoctorScheduleController(TrxDbContext context, DoctorsScheduleService service) : ControllerBase
     {
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<DoctorsSchedule>> CreateDoctorSchedule(CreateDoctorScheduleRequestDto request)
         {
-            var isOverlap = await context.DoctorsSchedules.AnyAsync(s => 
-                s.DoctorsId == request.DoctorsId && 
-                s.DayOfWeek == request.DayOfWeek &&
-                ((request.StartTime >= s.StartTime && request.StartTime < s.EndTime) ||
-                 (request.EndTime > s.StartTime && request.EndTime <= s.EndTime) ||
-                 (request.StartTime <= s.StartTime && request.EndTime >= s.EndTime)));
-
-            if (isOverlap)
+            var validate = await service.CreateDoctorScheduleAsync(request);
+            if (validate is null)
             {
-                return BadRequest($"Jadwal dokter pada hari {request.DayOfWeek} di jam tersebut sudah ada atau tumpang tindih.");
+                return BadRequest("Dokter tidak ditemukan, atau jadwal bentrok");
             }
 
-            var newSchedule = new DoctorsSchedule
-            {
-                DoctorsId = request.DoctorsId,
-                DayOfWeek = request.DayOfWeek,
-                StartTime = request.StartTime,
-                EndTime = request.EndTime,
-            };
-
-            context.DoctorsSchedules.Add(newSchedule);
-            await context.SaveChangesAsync();
-
-            return Ok(newSchedule);
+            return Ok(validate);
         }
     }
 }

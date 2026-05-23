@@ -56,6 +56,7 @@ builder.Services.AddDbContext<TrxDbContext>(options =>
 });
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IDoctorsScheduleService, DoctorsScheduleService>();
 
 builder.Services.AddDbContext<RptDbContext>(options =>
 {
