@@ -17,5 +17,5 @@ public partial class DoctorsSchedule
 
     public TimeOnly? EndTime { get; set; }
 
-    public virtual Doctor IdNavigation { get; set; } = null!;
+    public virtual Doctor? Doctor { get; set; }
 }

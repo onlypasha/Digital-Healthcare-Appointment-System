@@ -69,9 +69,8 @@ namespace healthcare_api.Service
             var doctor = new Doctor
             {
                 User = user,
-                Speacialization = request.Speacialization,
+                Specialization = request.Speacialization,
                 ConsultationFee = request.ConsultationFee,
-                Scedule = request.Scedule,
                 Phone = request.Phone,
                 CreatedAt = DateTime.UtcNow
             };
