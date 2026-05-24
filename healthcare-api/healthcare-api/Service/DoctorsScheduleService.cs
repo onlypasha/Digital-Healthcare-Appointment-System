@@ -43,5 +43,24 @@ namespace healthcare_api.Service
 
             return newSchedule;
         }
+
+        public async Task<List<DoctorScheduleResponseDto>> GetAllDoctorSchedulesAsync()
+        {
+            return await context.DoctorsSchedules
+                .AsNoTracking()
+                .Include(s => s.Doctor)
+                    .ThenInclude(d => d.User)
+                .Select(s => new DoctorScheduleResponseDto
+                {
+                    Id = s.Id,
+                    DoctorsId = s.DoctorsId,
+                    DoctorName = s.Doctor != null && s.Doctor.User != null ? s.Doctor.User.Name : "Unknown",
+                    Specialization = s.Doctor != null ? s.Doctor.Specialization : null,
+                    DayOfWeek = s.DayOfWeek,
+                    StartTime = s.StartTime,
+                    EndTime = s.EndTime
+                })
+                .ToListAsync();
+        }
     }
 }
