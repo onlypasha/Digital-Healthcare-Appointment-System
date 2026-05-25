@@ -7,5 +7,9 @@ namespace healthcare_api.Interface
     {
         Task<DoctorsSchedule> CreateDoctorScheduleAsync(CreateDoctorScheduleRequestDto request);
         Task<List<DoctorScheduleResponseDto>> GetAllDoctorSchedulesAsync();
+
+        Task<DoctorsSchedule> UpdateDoctorScheduleAsync(long id, EditDoctorScheduleDto request);
+
+        Task<DoctorsSchedule> DeleteDoctorScheduleAsync(long id);
     }
 }

@@ -30,5 +30,31 @@ namespace healthcare_api.Controllers
 
             return Ok(schedule);
         }
+
+        [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<DoctorsSchedule>> UpdateDoctorSchedule(long id, EditDoctorScheduleDto request)
+        {
+            var schedule = await service.UpdateDoctorScheduleAsync(id, request);
+            if (schedule is null)
+            {
+                return BadRequest("Jadwal tidak ditemukan, atau data yang dimasukkan bentrok.");
+            }
+
+            return Ok(schedule);
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult> DeleteDoctorSchedule(long id) 
+        {
+            var schedule = await service.DeleteDoctorScheduleAsync(id);
+            if (schedule == null)
+            {
+                return NotFound($"Jadwal dengan ID {id} tidak ditemukan.");
+            }
+
+            return Ok(new { message = "Jadwal berhasil dihapus", id });
+        }
     }
 }

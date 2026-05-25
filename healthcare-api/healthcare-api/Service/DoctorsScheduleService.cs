@@ -44,6 +44,46 @@ namespace healthcare_api.Service
             return newSchedule;
         }
 
+        public async Task<DoctorsSchedule> UpdateDoctorScheduleAsync(long id, EditDoctorScheduleDto request)
+        {
+            // 1. Cek keberadaan jadwal yang akan diupdate
+            var schedule = await context.DoctorsSchedules.FirstOrDefaultAsync(d => d.Id == id);
+            if (schedule is null)
+            {
+                return null;
+            }
+
+            // 2. Validasi apakah dokter ada
+            var doctorExists = await context.Doctors.AnyAsync(d => d.Id == request.DoctorsId);
+            if (!doctorExists)
+            {
+                return null;
+            }
+
+            // 3. Validasi apakah ada jadwal yang bertabrakan (overlap), kecualikan ID ini sendiri
+            var isOverlap = await context.DoctorsSchedules.AnyAsync(s =>
+                s.Id != id &&
+                s.DoctorsId == request.DoctorsId &&
+                s.DayOfWeek == request.DayOfWeek &&
+                ((request.StartTime >= s.StartTime && request.StartTime < s.EndTime) ||
+                 (request.EndTime > s.StartTime && request.EndTime <= s.EndTime) ||
+                 (request.StartTime <= s.StartTime && request.EndTime >= s.EndTime)));
+
+            if (isOverlap)
+            {
+                return null;
+            }
+
+            schedule.DoctorsId = request.DoctorsId;
+            schedule.DayOfWeek = request.DayOfWeek;
+            schedule.StartTime = request.StartTime;
+            schedule.EndTime = request.EndTime;
+
+            await context.SaveChangesAsync();
+
+            return schedule;
+        }
+
         public async Task<List<DoctorScheduleResponseDto>> GetAllDoctorSchedulesAsync()
         {
             return await context.DoctorsSchedules
@@ -61,6 +101,20 @@ namespace healthcare_api.Service
                     EndTime = s.EndTime
                 })
                 .ToListAsync();
+        }
+
+        public async Task<DoctorsSchedule> DeleteDoctorScheduleAsync(long id)
+        {
+            var schedule = await context.DoctorsSchedules.FirstOrDefaultAsync(s => s.Id == id);
+
+            if (schedule == null)
+            {
+                return null;
+            }
+
+            context.Remove(schedule);
+            await context.SaveChangesAsync();
+            return schedule;
         }
     }
 }
