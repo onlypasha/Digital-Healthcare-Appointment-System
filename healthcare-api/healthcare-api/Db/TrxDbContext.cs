@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using healthcare_api.Models.Transactional;
 using Microsoft.EntityFrameworkCore;
 
-namespace healthcare_api.Db;
+namespace healthcare_api.Models.Transactional;
 
 public partial class TrxDbContext : DbContext
 {
@@ -94,7 +93,7 @@ public partial class TrxDbContext : DbContext
                 .HasDefaultValueSql("now()")
                 .HasColumnName("created_at");
 
-            entity.HasOne(d => d.Doctor).WithMany(p => p.DoctorsSchedules)
+            entity.HasOne(d => d.Doctors).WithMany(p => p.DoctorsSchedules)
                 .HasForeignKey(d => d.DoctorsId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("DoctorsSchedule_DoctorsId_fkey");
@@ -139,7 +138,6 @@ public partial class TrxDbContext : DbContext
 
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("now()");
             entity.Property(e => e.EndTime).HasColumnType("timestamp without time zone");
-            entity.Property(e => e.MeetingLink).HasColumnType("character varying");
             entity.Property(e => e.StartTime).HasColumnType("timestamp without time zone");
             entity.Property(e => e.Status).HasColumnType("character varying");
 

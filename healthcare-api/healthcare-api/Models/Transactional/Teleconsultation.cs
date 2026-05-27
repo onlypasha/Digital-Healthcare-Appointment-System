@@ -11,8 +11,6 @@ public partial class Teleconsultation
 
     public long? AppointmentsId { get; set; }
 
-    public string? MeetingLink { get; set; }
-
     public DateTime? StartTime { get; set; }
 
     public DateTime? EndTime { get; set; }
