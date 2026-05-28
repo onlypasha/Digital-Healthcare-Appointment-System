@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using healthcare_api.Models.Transactional;
 using Microsoft.EntityFrameworkCore;
 
-namespace healthcare_api.Models.Transactional;
+namespace healthcare_api.Db;
 
 public partial class TrxDbContext : DbContext
 {
