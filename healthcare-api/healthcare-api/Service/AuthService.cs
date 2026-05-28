@@ -70,7 +70,6 @@ namespace healthcare_api.Service
             {
                 User = user,
                 Specialization = request.Speacialization,
-                ConsultationFee = request.ConsultationFee,
                 Phone = request.Phone,
                 CreatedAt = DateTime.UtcNow
             };

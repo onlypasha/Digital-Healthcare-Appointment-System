@@ -38,9 +38,9 @@ namespace healthcare_api.Data
         [Required]
         public string Speacialization { get; set; } = string.Empty;
 
-        public decimal? ConsultationFee { get; set; }
-        public string? Scedule { get; set; }
-        public string? Phone { get; set; }
+        //public decimal? ConsultationFee { get; set; }
+        //public string? Scedule { get; set; }
+        public string? Phone { get; set; } = string.Empty;
     }
 
     public class LoginDto

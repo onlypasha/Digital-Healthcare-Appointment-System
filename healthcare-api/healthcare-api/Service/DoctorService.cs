@@ -1,3 +1,4 @@
+using healthcare_api.Data;
 using healthcare_api.Db;
 using healthcare_api.Interface;
 using healthcare_api.Models.Transactional;
@@ -39,6 +40,29 @@ namespace healthcare_api.Service
             return await context.Doctors
                 .Include(d => d.User)
                 .ToListAsync();
+        }
+
+        public async Task<Doctor> UpdateDoctorAsync(long id, UpdateDoctorDto request)
+        {
+            var user = await context.Users.FindAsync(id);
+            if (user == null || user.Role != "Doctor")
+            {
+                return null;
+            }
+
+            var doctor = await context.Doctors.FirstOrDefaultAsync(d => d.UserId == id);
+            if (doctor == null)
+            {
+                return null;
+            }
+
+            doctor.Specialization = request.Specialization ?? doctor.Specialization;
+            doctor.ConsultationFee = request.ConsultationFee ?? doctor.ConsultationFee;
+            doctor.Phone = request.Phone ?? doctor.Phone;
+
+            await context.SaveChangesAsync();
+
+            return doctor;
         }
     }
 }

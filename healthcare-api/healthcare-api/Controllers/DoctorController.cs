@@ -44,5 +44,19 @@ namespace healthcare_api.Controllers
 
             return Ok(new DoctorControllerResponse { message = "Akun Dokter telah di non-aktifkan." });
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("update-doctor/{userId}")]
+        public async Task<ActionResult> UpdateDoctor(long userId, [FromBody] UpdateDoctorDto request)
+        {
+            var doctor = await service.UpdateDoctorAsync(userId, request);
+
+            if (doctor == null)
+            {
+                return NotFound("Dokter tidak ditemukan");
+            }
+
+            return Ok(new DoctorControllerResponse { message = "Data dokter berhasil diperbarui." });
+        }
     }
 }

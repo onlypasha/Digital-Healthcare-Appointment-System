@@ -1,4 +1,5 @@
-﻿using healthcare_api.Models.Transactional;
+﻿using healthcare_api.Data;
+using healthcare_api.Models.Transactional;
 
 namespace healthcare_api.Interface
 {
@@ -7,5 +8,6 @@ namespace healthcare_api.Interface
         Task<List<Doctor>> GetDoctorsAsync();
         Task<bool> ApproveDoctorAsync(long userId);
         Task<bool> DisableDoctorAsync(long userId);
+        Task<Doctor> UpdateDoctorAsync(long  id, UpdateDoctorDto request);
     }
 }
