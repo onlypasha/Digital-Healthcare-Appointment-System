@@ -1,5 +1,7 @@
-﻿using healthcare_api.Db;
+using healthcare_api.Db;
 using healthcare_api.Interface;
+using healthcare_api.Models.Transactional;
+using Microsoft.EntityFrameworkCore;
 
 namespace healthcare_api.Service
 {
@@ -30,6 +32,13 @@ namespace healthcare_api.Service
             user.Status = "InActive";
             await context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<List<Doctor>> GetDoctorsAsync()
+        {
+            return await context.Doctors
+                .Include(d => d.User)
+                .ToListAsync();
         }
     }
 }

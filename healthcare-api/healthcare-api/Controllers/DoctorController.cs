@@ -1,5 +1,6 @@
-﻿using healthcare_api.Data;
+using healthcare_api.Data;
 using healthcare_api.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace healthcare_api.Controllers
@@ -8,6 +9,15 @@ namespace healthcare_api.Controllers
     [ApiController]
     public class DoctorController(IDoctorService service) : ControllerBase
     {
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<ActionResult> GetDoctors()
+        {
+            var doctors = await service.GetDoctorsAsync();
+            return Ok(doctors);
+        }
+
+        [Authorize(Roles = "Admin")]
         [HttpPut("approve-doctor/{userId}")]
         public async Task<ActionResult> ApproveDoctor(long userId)
         {
@@ -21,6 +31,7 @@ namespace healthcare_api.Controllers
             return Ok(new DoctorControllerResponse { message = "Akun Dokter telah disetujui dan diaktifkan." });
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("disable-doctor/{userId}")]
         public async Task<ActionResult> DisableDoctor(long userId)
         {
