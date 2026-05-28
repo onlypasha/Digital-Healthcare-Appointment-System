@@ -7,7 +7,7 @@ namespace healthcare_api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(TrxDbContext context, IAuthService service) : ControllerBase
+    public class AuthController(IAuthService service) : ControllerBase
     {
         [HttpPost("register/patient")]
         public async Task<ActionResult> RegisterPatient(RegisterPatientDto request)
@@ -49,24 +49,6 @@ namespace healthcare_api.Controllers
                 token = response.Token,
                 user = response.User
             });
-        }
-
-        [HttpPut("approve-doctor/{userId}")]
-        public async Task<ActionResult> ApproveDoctor(long userId)
-        {
-            // Menemukan User id dari dokter
-            var user = await context.Users.FindAsync(userId);
-
-            if (user == null || user.Role != "Doctor")
-            {
-                return NotFound("Dokter tidak ditemukan.");
-            }
-
-            // Merubah status dari InActive jadi Active
-            user.Status = "Active";
-            await context.SaveChangesAsync();
-
-            return Ok(new { message = "Akun Dokter telah disetujui dan diaktifkan." });
         }
     }
 }

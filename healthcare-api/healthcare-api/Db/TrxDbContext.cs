@@ -94,7 +94,7 @@ public partial class TrxDbContext : DbContext
                 .HasDefaultValueSql("now()")
                 .HasColumnName("created_at");
 
-            entity.HasOne(d => d.Doctors).WithMany(p => p.DoctorsSchedules)
+            entity.HasOne(d => d.Doctor).WithMany(p => p.DoctorsSchedules)
                 .HasForeignKey(d => d.DoctorsId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("DoctorsSchedule_DoctorsId_fkey");
