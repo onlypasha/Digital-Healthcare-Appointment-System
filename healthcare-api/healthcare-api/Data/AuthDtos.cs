@@ -36,7 +36,7 @@ namespace healthcare_api.Data
         public string Password { get; set; } = string.Empty;
 
         [Required]
-        public string Speacialization { get; set; } = string.Empty;
+        public long SpecializationId { get; set; }
 
         //public decimal? ConsultationFee { get; set; }
         //public string? Scedule { get; set; }

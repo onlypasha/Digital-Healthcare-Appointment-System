@@ -8,6 +8,7 @@ namespace healthcare_api.Interface
         Task<List<Doctor>> GetDoctorsAsync();
         Task<bool> ApproveDoctorAsync(long userId);
         Task<bool> DisableDoctorAsync(long userId);
-        Task<Doctor> UpdateDoctorAsync(long  id, UpdateDoctorDto request);
+        Task<Doctor?> UpdateDoctorAsync(long  id, UpdateDoctorDto request);
+        Task<List<Specialization>> GetSpecializationsAsync();
     }
 }

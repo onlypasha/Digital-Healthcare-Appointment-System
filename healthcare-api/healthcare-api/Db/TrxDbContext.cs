@@ -26,6 +26,8 @@ public partial class TrxDbContext : DbContext
 
     public virtual DbSet<Patient> Patients { get; set; }
 
+    public virtual DbSet<Specialization> Specializations { get; set; }
+
     public virtual DbSet<Teleconsultation> Teleconsultations { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
@@ -76,7 +78,10 @@ public partial class TrxDbContext : DbContext
 
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("now()");
             entity.Property(e => e.Phone).HasColumnType("character varying");
-            entity.Property(e => e.Specialization).HasColumnType("character varying");
+
+            entity.HasOne(d => d.Specialization).WithMany(p => p.Doctors)
+                .HasForeignKey(d => d.SpecializationId)
+                .HasConstraintName("Doctors_SpecializationId_fkey");
 
             entity.HasOne(d => d.User).WithMany(p => p.Doctors)
                 .HasForeignKey(d => d.UserId)
@@ -94,7 +99,7 @@ public partial class TrxDbContext : DbContext
                 .HasDefaultValueSql("now()")
                 .HasColumnName("created_at");
 
-            entity.HasOne(d => d.Doctor).WithMany(p => p.DoctorsSchedules)
+            entity.HasOne(d => d.Doctors).WithMany(p => p.DoctorsSchedules)
                 .HasForeignKey(d => d.DoctorsId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("DoctorsSchedule_DoctorsId_fkey");
@@ -131,6 +136,17 @@ public partial class TrxDbContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.Patients)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("Patients_UserId_fkey");
+        });
+
+        modelBuilder.Entity<Specialization>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Specialization_pkey");
+
+            entity.ToTable("Specialization");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("now()");
+            entity.Property(e => e.Name).HasColumnType("character varying");
         });
 
         modelBuilder.Entity<Teleconsultation>(entity =>

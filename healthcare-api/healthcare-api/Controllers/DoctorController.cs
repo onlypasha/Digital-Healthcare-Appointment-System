@@ -14,7 +14,19 @@ namespace healthcare_api.Controllers
         public async Task<ActionResult> GetDoctors()
         {
             var doctors = await service.GetDoctorsAsync();
-            return Ok(doctors);
+            var response = doctors.Select(d => new DoctorResponseDto
+            {
+                Id = d.Id,
+                Name = d.User?.Name ?? string.Empty,
+                Email = d.User?.Email ?? string.Empty,
+                Role = d.User?.Role ?? string.Empty,
+                Status = d.User?.Status ?? string.Empty,
+                SpecializationId = d.SpecializationId,
+                SpecializationName = d.Specialization?.Name,
+                ConsultationFee = d.ConsultationFee,
+                Phone = d.Phone
+            });
+            return Ok(response);
         }
 
         [Authorize(Roles = "Admin")]

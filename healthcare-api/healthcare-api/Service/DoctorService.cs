@@ -39,10 +39,11 @@ namespace healthcare_api.Service
         {
             return await context.Doctors
                 .Include(d => d.User)
+                .Include(d => d.Specialization)
                 .ToListAsync();
         }
 
-        public async Task<Doctor> UpdateDoctorAsync(long id, UpdateDoctorDto request)
+        public async Task<Doctor?> UpdateDoctorAsync(long id, UpdateDoctorDto request)
         {
             var user = await context.Users.FindAsync(id);
             if (user == null || user.Role != "Doctor")
@@ -56,13 +57,21 @@ namespace healthcare_api.Service
                 return null;
             }
 
-            doctor.Specialization = request.Specialization ?? doctor.Specialization;
+            doctor.SpecializationId = request.SpecializationId ?? doctor.SpecializationId;
             doctor.ConsultationFee = request.ConsultationFee ?? doctor.ConsultationFee;
             doctor.Phone = request.Phone ?? doctor.Phone;
 
             await context.SaveChangesAsync();
 
+            // Reload to get Specialization name if needed
+            await context.Entry(doctor).Reference(d => d.Specialization).LoadAsync();
+
             return doctor;
+        }
+
+        public async Task<List<Specialization>> GetSpecializationsAsync()
+        {
+            return await context.Specializations.ToListAsync();
         }
     }
 }

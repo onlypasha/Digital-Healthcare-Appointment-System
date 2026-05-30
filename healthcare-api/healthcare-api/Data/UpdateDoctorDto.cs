@@ -2,7 +2,7 @@ namespace healthcare_api.Data
 {
     public class UpdateDoctorDto
     {
-        public string? Specialization { get; set; }
+        public long? SpecializationId { get; set; }
 
         public decimal? ConsultationFee { get; set; }
 

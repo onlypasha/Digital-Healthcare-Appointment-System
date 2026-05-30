@@ -69,7 +69,7 @@ namespace healthcare_api.Service
             var doctor = new Doctor
             {
                 User = user,
-                Specialization = request.Speacialization,
+                SpecializationId = request.SpecializationId,
                 Phone = request.Phone,
                 CreatedAt = DateTime.UtcNow
             };

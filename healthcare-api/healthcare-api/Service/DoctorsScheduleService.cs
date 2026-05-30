@@ -88,14 +88,16 @@ namespace healthcare_api.Service
         {
             return await context.DoctorsSchedules
                 .AsNoTracking()
-                .Include(s => s.Doctor)
+                .Include(s => s.Doctors)
                     .ThenInclude(d => d.User)
+                .Include(s => s.Doctors)
+                    .ThenInclude(d => d.Specialization)
                 .Select(s => new DoctorScheduleResponseDto
                 {
                     Id = s.Id,
                     DoctorsId = s.DoctorsId,
-                    DoctorName = s.Doctor != null && s.Doctor.User != null ? s.Doctor.User.Name : "Unknown",
-                    Specialization = s.Doctor != null ? s.Doctor.Specialization : null,
+                    DoctorName = s.Doctors != null && s.Doctors.User != null ? s.Doctors.User.Name : "Unknown",
+                    Specialization = s.Doctors != null && s.Doctors.Specialization != null ? s.Doctors.Specialization.Name : null,
                     DayOfWeek = s.DayOfWeek,
                     StartTime = s.StartTime,
                     EndTime = s.EndTime
