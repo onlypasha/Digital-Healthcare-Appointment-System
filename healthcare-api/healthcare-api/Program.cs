@@ -3,6 +3,7 @@ using healthcare_api.Interface;
 using healthcare_api.Service;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -59,6 +60,23 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IDoctorsScheduleService, DoctorsScheduleService>();
 builder.Services.AddScoped<IDoctorService, DoctorService>();
 builder.Services.AddScoped<ISpecializationService, SpecializationService>();
+
+builder.Services.AddOptions<SqlTransportOptions>()
+    .Configure(options =>
+    {
+        options.ConnectionString = builder.Configuration.GetConnectionString("RptConnection");
+    });
+
+builder.Services.AddSqlServerMigrationHostedService(create: true);
+
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumers(typeof(Program).Assembly);
+    x.UsingSqlServer((context, cfg) =>
+    {
+        cfg.ConfigureEndpoints(context);
+    });
+});
 
 builder.Services.AddDbContext<RptDbContext>(options =>
 {

@@ -8,10 +8,12 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using healthcare_api.Messaging.Events;
+using MassTransit;
 
 namespace healthcare_api.Service
 {
-    public class AuthService(TrxDbContext context, IConfiguration configuration) : IAuthService
+    public class AuthService(TrxDbContext context, IConfiguration configuration, IPublishEndpoint publishEndpoint) : IAuthService
     {
         public async Task<RegisterPatientDto?> RegisterPatientAsync(RegisterPatientDto request)
         {
@@ -77,6 +79,14 @@ namespace healthcare_api.Service
             context.Users.Add(user);
             context.Doctors.Add(doctor);
             await context.SaveChangesAsync();
+
+            // Publish event notification
+            await publishEndpoint.Publish(new DoctorRegisteredEvent(
+                doctor.Id,
+                user.Name ?? string.Empty,
+                user.Email ?? string.Empty,
+                doctor.SpecializationId ?? 0
+            ));
 
             return new RegisterDoctorDto { Email = request.Email };
         }

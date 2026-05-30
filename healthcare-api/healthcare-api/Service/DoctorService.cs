@@ -2,11 +2,13 @@ using healthcare_api.Data;
 using healthcare_api.Db;
 using healthcare_api.Interface;
 using healthcare_api.Models.Transactional;
+using healthcare_api.Messaging.Events;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 
 namespace healthcare_api.Service
 {
-    public class DoctorService(TrxDbContext context) : IDoctorService
+    public class DoctorService(TrxDbContext context, IPublishEndpoint publishEndpoint) : IDoctorService
     {
         public async Task<bool> ApproveDoctorAsync(long userId)
         {
@@ -20,6 +22,14 @@ namespace healthcare_api.Service
             // Merubah status dari InActive jadi Active
             user.Status = "Active";
             await context.SaveChangesAsync();
+
+            // Publish approval notification
+            await publishEndpoint.Publish(new DoctorApprovedEvent(
+                user.Id,
+                user.Name ?? string.Empty,
+                user.Email ?? string.Empty
+            ));
+
             return true;
         }
 
