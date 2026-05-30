@@ -68,10 +68,5 @@ namespace healthcare_api.Service
 
             return doctor;
         }
-
-        public async Task<List<Specialization>> GetSpecializationsAsync()
-        {
-            return await context.Specializations.ToListAsync();
-        }
     }
 }
