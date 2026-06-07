@@ -73,7 +73,6 @@ namespace healthcare_api.Service
 
             await context.SaveChangesAsync();
 
-            // Reload to get Specialization name if needed
             await context.Entry(doctor).Reference(d => d.Specialization).LoadAsync();
 
             return doctor;
