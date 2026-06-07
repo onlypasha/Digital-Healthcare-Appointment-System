@@ -67,7 +67,11 @@ builder.Services.AddOptions<SqlTransportOptions>()
         options.ConnectionString = builder.Configuration.GetConnectionString("RptConnection");
     });
 
-builder.Services.AddSqlServerMigrationHostedService(create: true);
+builder.Services.AddSqlServerMigrationHostedService(options =>
+{
+    options.CreateDatabase = false;
+    options.CreateInfrastructure = true;
+});
 
 builder.Services.AddMassTransit(x =>
 {
