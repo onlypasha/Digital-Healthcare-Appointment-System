@@ -1,4 +1,4 @@
-﻿using healthcare_api.Data;
+using healthcare_api.Data;
 using healthcare_api.Db;
 using healthcare_api.Interface;
 using healthcare_api.Models.Transactional;
@@ -8,6 +8,8 @@ namespace healthcare_api.Service
 {
     public class DoctorsScheduleService(TrxDbContext context) : IDoctorsScheduleService
     {
+        private readonly TrxDbContext context = context ?? throw new ArgumentNullException(nameof(context));
+
         public async Task<DoctorsSchedule> CreateDoctorScheduleAsync(CreateDoctorScheduleRequestDto request)
         {
             // 1. Validasi apakah dokter ada

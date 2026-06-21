@@ -8,6 +8,8 @@ namespace healthcare_api.Service
 {
     public class SpecializationService(TrxDbContext context) : ISpecializationService
     {
+        private readonly TrxDbContext context = context ?? throw new ArgumentNullException(nameof(context));
+
         public async Task<Specialization?> AddSpecializationAsync(AddSpecializationRequestDto request)
         {
             if (string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Description))

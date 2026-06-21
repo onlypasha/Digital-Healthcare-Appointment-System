@@ -10,6 +10,9 @@ namespace healthcare_api.Service
 {
     public class DoctorService(TrxDbContext context, IPublishEndpoint publishEndpoint) : IDoctorService
     {
+        private readonly TrxDbContext context = context ?? throw new ArgumentNullException(nameof(context));
+        private readonly IPublishEndpoint publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
+
         public async Task<bool> ApproveDoctorAsync(long userId)
         {
             var user = await context.Users.FindAsync(userId);
@@ -23,7 +26,7 @@ namespace healthcare_api.Service
             user.Status = "Active";
             await context.SaveChangesAsync();
 
-            // Publish approval notification
+                // Publish approval notification
             await publishEndpoint.Publish(new DoctorApprovedEvent(
                 user.Id,
                 user.Name ?? string.Empty,

@@ -1,4 +1,4 @@
-﻿using healthcare_api.Db;
+using healthcare_api.Db;
 using healthcare_api.Data;
 using healthcare_api.Models.Transactional;
 using Microsoft.AspNetCore.Mvc;
@@ -9,10 +9,10 @@ namespace healthcare_api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
     public class DoctorScheduleController(IDoctorsScheduleService service) : ControllerBase
     {
         [HttpGet]
+        [Authorize(Roles = "Admin,Patient")]
         public async Task<ActionResult<List<DoctorScheduleResponseDto>>> GetAllDoctorSchedules()
         {
             var schedules = await service.GetAllDoctorSchedulesAsync();
@@ -20,6 +20,7 @@ namespace healthcare_api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<DoctorsSchedule>> CreateDoctorSchedule(CreateDoctorScheduleRequestDto request)
         {
             var schedule = await service.CreateDoctorScheduleAsync(request);
@@ -32,6 +33,7 @@ namespace healthcare_api.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<DoctorsSchedule>> UpdateDoctorSchedule(long id, EditDoctorScheduleDto request)
         {
             var schedule = await service.UpdateDoctorScheduleAsync(id, request);
@@ -44,6 +46,7 @@ namespace healthcare_api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteDoctorSchedule(long id)
         {
             var schedule = await service.DeleteDoctorScheduleAsync(id);

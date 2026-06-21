@@ -1,6 +1,7 @@
 using healthcare_api.Db;
 using healthcare_api.Interface;
 using healthcare_api.Service;
+using healthcare_api.Middleware;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using MassTransit;
@@ -13,6 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -60,6 +63,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IDoctorsScheduleService, DoctorsScheduleService>();
 builder.Services.AddScoped<IDoctorService, DoctorService>();
 builder.Services.AddScoped<ISpecializationService, SpecializationService>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 
 builder.Services.AddOptions<SqlTransportOptions>()
     .Configure(options =>
@@ -88,6 +92,8 @@ builder.Services.AddDbContext<RptDbContext>(options =>
 });
 
 var app = builder.Build();
+
+app.UseExceptionHandler();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

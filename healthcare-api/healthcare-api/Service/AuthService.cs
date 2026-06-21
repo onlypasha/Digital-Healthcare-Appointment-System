@@ -1,4 +1,4 @@
-﻿using healthcare_api.Data;
+using healthcare_api.Data;
 using healthcare_api.Db;
 using healthcare_api.Interface;
 using healthcare_api.Models.Transactional;
@@ -15,6 +15,10 @@ namespace healthcare_api.Service
 {
     public class AuthService(TrxDbContext context, IConfiguration configuration, IPublishEndpoint publishEndpoint) : IAuthService
     {
+        private readonly TrxDbContext context = context ?? throw new ArgumentNullException(nameof(context));
+        private readonly IConfiguration configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        private readonly IPublishEndpoint publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
+
         public async Task<RegisterPatientDto?> RegisterPatientAsync(RegisterPatientDto request)
         {
             if (await context.Users.AnyAsync(u => u.Email == request.Email)) {
