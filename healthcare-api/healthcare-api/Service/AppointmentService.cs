@@ -16,47 +16,43 @@ namespace healthcare_api.Service
 
         public async Task<AppointmentResponseDto?> BookAppointmentAsync(long userId, BookAppointmentDto request)
         {
-            // Get patient linked to user
-            var patient = await context.Patients.FirstOrDefaultAsync(p => p.UserId == userId);
-            if (patient == null) return null;
+            await using var transaction = await context.Database.BeginTransactionAsync();
 
-            // Get doctor and verify status is Active
+            // ponytail: FOR UPDATE lock on Doctor row serializes concurrent bookings for same doctor.
+            // Includes User + Specialization in same query to eliminate the duplicate doctor fetch below.
             var doctor = await context.Doctors
+                .FromSqlRaw("SELECT * FROM \"Doctors\" WHERE \"Id\" = {0} FOR UPDATE", request.DoctorId)
                 .Include(d => d.User)
                 .Include(d => d.Specialization)
-                .FirstOrDefaultAsync(d => d.Id == request.DoctorId);
-            if (doctor == null || doctor.User == null || doctor.User.Status != "Active") return null;
+                .FirstOrDefaultAsync();
 
-            // Verify doctor schedule matches request's day of week
+            if (doctor?.User == null || doctor.User.Status != "Active") return null;
+
+            var patient = await context.Patients
+                .Include(p => p.User)
+                .FirstOrDefaultAsync(p => p.UserId == userId);
+            if (patient == null) return null;
+
             var englishDay = request.AppointmentsDate.DayOfWeek.ToString();
+            // ponytail: indoDay needed because DoctorsSchedule.DayOfWeek may be stored in Indonesian
             string indoDay = englishDay switch
             {
-                "Sunday" => "Minggu",
-                "Monday" => "Senin",
-                "Tuesday" => "Selasa",
-                "Wednesday" => "Rabu",
-                "Thursday" => "Kamis",
-                "Friday" => "Jumat",
-                "Saturday" => "Sabtu",
-                _ => ""
+                "Sunday" => "Minggu", "Monday" => "Senin", "Tuesday" => "Selasa",
+                "Wednesday" => "Rabu", "Thursday" => "Kamis", "Friday" => "Jumat",
+                "Saturday" => "Sabtu", _ => ""
             };
 
             var hasSchedule = await context.DoctorsSchedules.AnyAsync(s =>
-                s.DoctorsId == request.DoctorId &&
-                s.DayOfWeek != null && (s.DayOfWeek.ToLower() == englishDay.ToLower() || s.DayOfWeek.ToLower() == indoDay.ToLower())
-            );
+                s.DoctorsId == request.DoctorId && s.DayOfWeek != null &&
+                (s.DayOfWeek.ToLower() == englishDay.ToLower() || s.DayOfWeek.ToLower() == indoDay.ToLower()));
 
-            // ponytail: Allow bypass schedule check in debug/demo if desired, but we enforce it for safety here
             if (!hasSchedule) return null;
 
-            // Calculate daily queue number sequence
             var dateOnly = request.AppointmentsDate.Date;
-            var count = await context.Appointments.CountAsync(a =>
+            var queueNum = await context.Appointments.CountAsync(a =>
                 a.DoctorsId == request.DoctorId &&
                 a.AppointmentsDate.HasValue &&
-                a.AppointmentsDate.Value.Date == dateOnly
-            );
-            long queueNum = count + 1;
+                a.AppointmentsDate.Value.Date == dateOnly) + 1;
 
             var appointment = new Appointment
             {
@@ -71,8 +67,9 @@ namespace healthcare_api.Service
 
             context.Appointments.Add(appointment);
             await context.SaveChangesAsync();
+            await transaction.CommitAsync();
 
-            // ponytail: Simple explicit mapping projection to avoid AutoMapper boilerplate
+            // ponytail: explicit mapping, no AutoMapper
             return new AppointmentResponseDto
             {
                 Id = appointment.Id,
@@ -82,7 +79,7 @@ namespace healthcare_api.Service
                 Status = appointment.Status,
                 Complaint = appointment.Complaint,
                 PatientsId = appointment.PatientsId,
-                PatientName = doctor.User.Name,
+                PatientName = patient.User?.Name ?? "Unknown Patient",
                 DoctorsId = appointment.DoctorsId,
                 DoctorName = doctor.User.Name,
                 SpecializationName = doctor.Specialization?.Name

@@ -23,4 +23,19 @@ namespace healthcare_api.Data
         public string? DoctorName { get; set; }
         public string? SpecializationName { get; set; }
     }
+
+    public class BookAppointmentRequest
+    {
+        public long UserId { get; set; }
+        public long DoctorId { get; set; }
+        public DateTime AppointmentsDate { get; set; }
+        public string? Complaint { get; set; }
+    }
+
+    public class BookAppointmentResponse
+    {
+        public bool Success { get; set; }
+        public string? ErrorMessage { get; set; }
+        public AppointmentResponseDto? Appointment { get; set; }
+    }
 }

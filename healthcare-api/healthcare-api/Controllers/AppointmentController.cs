@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using healthcare_api.Data;
 using healthcare_api.Interface;
+using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,20 +13,29 @@ namespace healthcare_api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class AppointmentController(IAppointmentService service) : ControllerBase
+    public class AppointmentController(
+        IAppointmentService service, 
+        IRequestClient<BookAppointmentRequest> requestClient) : ControllerBase
     {
         [HttpPost]
         [Authorize(Roles = "Patient")]
         public async Task<ActionResult<AppointmentResponseDto>> BookAppointment([FromBody] BookAppointmentDto request)
         {
             var userId = GetUserId();
-            var response = await service.BookAppointmentAsync(userId, request);
-            if (response == null)
+            var response = await requestClient.GetResponse<BookAppointmentResponse>(new BookAppointmentRequest
             {
-                return BadRequest("Jadwal dokter tidak tersedia pada tanggal tersebut, atau data dokter tidak aktif.");
+                UserId = userId,
+                DoctorId = request.DoctorId,
+                AppointmentsDate = request.AppointmentsDate,
+                Complaint = request.Complaint
+            });
+
+            if (!response.Message.Success)
+            {
+                return BadRequest(response.Message.ErrorMessage);
             }
 
-            return Ok(response);
+            return Ok(response.Message.Appointment);
         }
 
         [HttpGet]
