@@ -16,17 +16,14 @@ namespace healthcare_api.Service
         public async Task<bool> ApproveDoctorAsync(long userId)
         {
             var user = await context.Users.FindAsync(userId);
-
             if (user == null || user.Role != "Doctor")
             {
                 return false;
             }
 
-            // Merubah status dari InActive jadi Active
             user.Status = "Active";
             await context.SaveChangesAsync();
 
-                // Publish approval notification
             await publishEndpoint.Publish(new DoctorApprovedEvent(
                 user.Id,
                 user.Name ?? string.Empty,
@@ -78,6 +75,31 @@ namespace healthcare_api.Service
 
             await context.Entry(doctor).Reference(d => d.Specialization).LoadAsync();
 
+            return doctor;
+        }
+
+        public async Task<Doctor?> GetDoctorConsultationFeeAsync(long id)
+        {
+            return await context.Doctors
+                .Include(d => d.User)
+                .Include(d => d.Specialization)
+                .FirstOrDefaultAsync(d => d.Id == id);
+        }
+
+        public async Task<Doctor?> SetDoctorConsultationFeeAsync(long id, decimal fee)
+        {
+            var doctor = await context.Doctors
+                .Include(d => d.User)
+                .Include(d => d.Specialization)
+                .FirstOrDefaultAsync(d => d.Id == id);
+
+            if (doctor == null)
+            {
+                return null;
+            }
+
+            doctor.ConsultationFee = fee;
+            await context.SaveChangesAsync();
             return doctor;
         }
     }

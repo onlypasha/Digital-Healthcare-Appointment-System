@@ -64,7 +64,6 @@ builder.Services.AddScoped<IDoctorsScheduleService, DoctorsScheduleService>();
 builder.Services.AddScoped<IDoctorService, DoctorService>();
 builder.Services.AddScoped<ISpecializationService, SpecializationService>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
-
 builder.Services.AddOptions<SqlTransportOptions>()
     .Configure(options =>
     {

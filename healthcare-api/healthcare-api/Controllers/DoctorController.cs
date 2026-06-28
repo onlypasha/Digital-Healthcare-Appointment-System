@@ -70,5 +70,33 @@ namespace healthcare_api.Controllers
 
             return Ok(new DoctorControllerResponse { message = "Data dokter berhasil diperbarui." });
         }
+
+        [Authorize]
+        [HttpGet("consultation-fee/{id}")]
+        public async Task<ActionResult> GetDoctorConsultationFee(long id)
+        {
+            var doctor = await service.GetDoctorConsultationFeeAsync(id);
+
+            if (doctor == null)
+            {
+                return NotFound("Dokter tidak ditemukan");
+            }
+
+            return Ok(new { id = doctor.Id, consultationFee = doctor.ConsultationFee });
+        }
+
+        [Authorize(Roles = "Admin,Doctor")]
+        [HttpPut("consultation-fee/{id}")]
+        public async Task<ActionResult> SetDoctorConsultationFee(long id, [FromBody] decimal fee)
+        {
+            var doctor = await service.SetDoctorConsultationFeeAsync(id, fee);
+
+            if (doctor == null)
+            {
+                return NotFound("Dokter tidak ditemukan");
+            }
+
+            return Ok(new { id = doctor.Id, consultationFee = doctor.ConsultationFee, message = "Harga konsultasi berhasil diperbarui." });
+        }
     }
 }
