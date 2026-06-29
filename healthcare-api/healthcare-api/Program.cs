@@ -8,6 +8,8 @@ using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Hangfire;
+using Hangfire.SqlServer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,6 +66,15 @@ builder.Services.AddScoped<IDoctorsScheduleService, DoctorsScheduleService>();
 builder.Services.AddScoped<IDoctorService, DoctorService>();
 builder.Services.AddScoped<ISpecializationService, SpecializationService>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<IBackupTrxToRpt, BackupTrxToRptService>();
+
+// ponytail: reuse existing RptConnection (SQL Server) as Hangfire storage — no extra DB needed
+builder.Services.AddHangfire(cfg => cfg
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseSqlServerStorage(builder.Configuration.GetConnectionString("RptConnection")));
+builder.Services.AddHangfireServer();
 builder.Services.AddOptions<SqlTransportOptions>()
     .Configure(options =>
     {
@@ -91,6 +102,20 @@ builder.Services.AddDbContext<RptDbContext>(options =>
 });
 
 var app = builder.Build();
+
+// Hangfire dashboard — dev only to avoid exposing job management publicly
+if (app.Environment.IsDevelopment())
+    app.UseHangfireDashboard("/hangfire");
+
+// Recurring job: backup previous month on the 1st of each month at 00:05 UTC
+RecurringJob.AddOrUpdate<IBackupTrxToRpt>(
+    "monthly-backup-doctor-performance",
+    svc => svc.BackupDoctorPerformanceAsync(DateTime.UtcNow.AddMonths(-1).Year, DateTime.UtcNow.AddMonths(-1).Month),
+    "5 0 1 * *");
+RecurringJob.AddOrUpdate<IBackupTrxToRpt>(
+    "monthly-backup-monthly-appointment",
+    svc => svc.BackupMonthlyAppointmentAsync(DateTime.UtcNow.AddMonths(-1).Year, DateTime.UtcNow.AddMonths(-1).Month),
+    "5 0 1 * *");
 
 app.UseExceptionHandler();
 
