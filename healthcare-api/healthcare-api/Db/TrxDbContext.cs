@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using healthcare_api.Models.Transactional;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +29,8 @@ public partial class TrxDbContext : DbContext
     public virtual DbSet<Specialization> Specializations { get; set; }
 
     public virtual DbSet<Teleconsultation> Teleconsultations { get; set; }
+
+    public virtual DbSet<TeleconsultationMessage> TeleconsultationMessages { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -161,6 +163,22 @@ public partial class TrxDbContext : DbContext
             entity.HasOne(d => d.Appointments).WithMany(p => p.Teleconsultations)
                 .HasForeignKey(d => d.AppointmentsId)
                 .HasConstraintName("Teleconsultations_AppointmentsId_fkey");
+        });
+
+        modelBuilder.Entity<TeleconsultationMessage>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("TeleconsultationMessages_pkey");
+
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("now()");
+            entity.Property(e => e.Content).HasColumnType("text");
+
+            entity.HasOne(d => d.Teleconsultation).WithMany(p => p.TeleconsultationMessages)
+                .HasForeignKey(d => d.TeleconsultationId)
+                .HasConstraintName("TeleconsultationMessages_TeleconsultationId_fkey");
+
+            entity.HasOne(d => d.Sender).WithMany(p => p.TeleconsultationMessages)
+                .HasForeignKey(d => d.SenderId)
+                .HasConstraintName("TeleconsultationMessages_SenderId_fkey");
         });
 
         modelBuilder.Entity<User>(entity =>

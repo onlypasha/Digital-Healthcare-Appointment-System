@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace healthcare_api.Models.Transactional;
@@ -18,4 +18,6 @@ public partial class Teleconsultation
     public string? Status { get; set; }
 
     public virtual Appointment? Appointments { get; set; }
+
+    public virtual ICollection<TeleconsultationMessage> TeleconsultationMessages { get; set; } = new List<TeleconsultationMessage>();
 }

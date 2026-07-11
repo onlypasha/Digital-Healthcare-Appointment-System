@@ -2,6 +2,7 @@ using healthcare_api.Db;
 using healthcare_api.Interface;
 using healthcare_api.Service;
 using healthcare_api.Middleware;
+using healthcare_api.Hubs;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using MassTransit;
@@ -44,6 +45,19 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = jwtSettings["Audience"],
         ClockSkew = TimeSpan.Zero
     };
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var accessToken = context.Request.Query["access_token"];
+            var path = context.HttpContext.Request.Path;
+            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+            {
+                context.Token = accessToken;
+            }
+            return Task.CompletedTask;
+        }
+    };
 });
 
 builder.Services.AddCors(options =>
@@ -67,6 +81,9 @@ builder.Services.AddScoped<IDoctorService, DoctorService>();
 builder.Services.AddScoped<ISpecializationService, SpecializationService>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<IBackupTrxToRpt, BackupTrxToRptService>();
+builder.Services.AddScoped<ITeleconsultationService, TeleconsultationService>();
+
+builder.Services.AddSignalR();
 
 // ponytail: reuse existing RptConnection (SQL Server) as Hangfire storage — no extra DB needed
 builder.Services.AddHangfire(cfg => cfg
@@ -134,5 +151,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<TeleconsultationHub>("/hubs/teleconsultation");
 
 app.Run();
