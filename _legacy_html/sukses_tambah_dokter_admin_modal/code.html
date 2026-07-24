@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HealthAdmin - Doctor Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#dae2fd",
+                        "on-primary-fixed": "#00174b",
+                        "secondary-fixed": "#d8e2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#faf8ff",
+                        "surface-container-low": "#f2f3ff",
+                        "primary": "#004ac6",
+                        "surface": "#faf8ff",
+                        "on-secondary-fixed-variant": "#004395",
+                        "on-tertiary-container": "#bdffdb",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "on-secondary": "#ffffff",
+                        "outline": "#737686",
+                        "secondary-container": "#2170e4",
+                        "inverse-primary": "#b4c5ff",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "on-error-container": "#93000a",
+                        "inverse-surface": "#283044",
+                        "on-secondary-fixed": "#001a42",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "surface-container-high": "#e2e7ff",
+                        "on-secondary-container": "#fefcff",
+                        "on-surface-variant": "#434655",
+                        "inverse-on-surface": "#eef0ff",
+                        "surface-tint": "#0053db",
+                        "surface-dim": "#d2d9f4",
+                        "outline-variant": "#c3c6d7",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed": "#dbe1ff",
+                        "on-background": "#131b2e",
+                        "primary-container": "#2563eb",
+                        "on-tertiary-fixed": "#002113",
+                        "tertiary-fixed": "#6ffbbe",
+                        "error-container": "#ffdad6",
+                        "tertiary": "#006242",
+                        "secondary": "#0058be",
+                        "surface-container": "#eaedff",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "on-surface": "#131b2e",
+                        "tertiary-container": "#007d55",
+                        "background": "#faf8ff",
+                        "surface-container-highest": "#dae2fd",
+                        "on-primary-container": "#eeefff",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#adc6ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xl": "32px",
+                        "header-height": "64px",
+                        "margin-desktop": "32px",
+                        "lg": "24px",
+                        "base": "4px",
+                        "xs": "4px",
+                        "margin-mobile": "16px",
+                        "md": "16px",
+                        "gutter": "24px",
+                        "sm": "8px",
+                        "sidebar-width": "260px"
+                    },
+                    "fontFamily": {
+                        "caption": ["Inter"],
+                        "body-bold": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-base": ["Inter"]
+                    },
+                    "fontSize": {
+                        "caption": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-bold": ["14px", { "lineHeight": "22px", "letterSpacing": "0", "fontWeight": "600" }],
+                        "display-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "0.15em", "fontWeight": "300" }],
+                        "headline-sm": ["18px", { "lineHeight": "24px", "letterSpacing": "0", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.20em", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0", "fontWeight": "400" }],
+                        "body-base": ["14px", { "lineHeight": "22px", "letterSpacing": "0", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; } /* Base Slate 50 background */
+    </style>
+</head>
+<body class="bg-background text-on-background h-screen overflow-hidden flex font-body-base text-body-base">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-full border-r border-outline-variant fixed left-0 top-0 h-full w-sidebar-width bg-surface dark:bg-inverse-surface z-20">
+<div class="p-lg border-b border-outline-variant flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-low flex items-center justify-center">
+<img alt="Admin Logo" class="object-cover w-full h-full" data-alt="A clean, minimalist abstract logo for a healthcare administration suite, featuring geometric precision and a predominantly white and blue color scheme, evoking trust and medical expertise in a well-lit, modern corporate style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYq1nQygSUqBbCn3nIQhdOQb9vdyB5FnbczBgGrAcrY5xEMXdaLUN14pDbrLp6ByvN0Xo_X2-Nn1Ua26cU2sbVruTj4WCHlwlpTLyOk3RIvK70v8QIMSqQnaIO2JCGmnrNm4Coyf03HvcfNS58uqAFWF1hT6s3tBvsUqu4k3VYiEROfGYPU430NNmqbtziboFj2tWdIHiLsdOWllMZ0rB6LuNKM--b7MEg4vHusX-WlqEVBm2ehCH8So0zzX-9vehdCTlWLN9p3_E"/>
+</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary dark:text-inverse-primary">HealthAdmin</h1>
+<p class="font-caption text-caption text-on-surface-variant">Expert Medical Precision</p>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto py-sm">
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-colors hover:bg-surface-container-low dark:hover:bg-surface-variant transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-outline">dashboard</span>
+<span>Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container/10 text-primary font-bold border-l-4 border-primary transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">medical_services</span>
+<span>Doctors</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-colors hover:bg-surface-container-low dark:hover:bg-surface-variant transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-outline">group</span>
+<span>Patients</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-colors hover:bg-surface-container-low dark:hover:bg-surface-variant transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-outline">calendar_today</span>
+<span>Appointments</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-colors hover:bg-surface-container-low dark:hover:bg-surface-variant transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-outline">assessment</span>
+<span>Reports</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-colors hover:bg-surface-container-low dark:hover:bg-surface-variant transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined text-outline">settings</span>
+<span>Settings</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col md:ml-sidebar-width h-full relative">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center h-header-height px-margin-desktop bg-surface-container-lowest dark:bg-surface-container-high border-b border-outline-variant shadow-sm z-10 w-full relative">
+<div class="flex items-center">
+<!-- Mobile Menu Button -->
+<button class="md:hidden mr-4 text-on-surface-variant hover:bg-surface-container-low rounded-full p-2 transition-all duration-150">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h2 class="font-headline-md text-headline-md font-extrabold text-primary hidden md:block">HealthAdmin Panel</h2>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface rounded-full border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary-fixed-dim text-body-base w-64 transition-all duration-150" placeholder="Search..." type="text"/>
+</div>
+<div class="flex items-center gap-2 border-l border-outline-variant pl-4 ml-2">
+<button class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-all duration-150 relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border border-surface-container-lowest"></span>
+</button>
+<button class="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-all duration-150">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+<div class="flex items-center gap-3 ml-2">
+<button class="hidden lg:block px-4 py-2 bg-surface text-on-surface-variant border border-outline-variant rounded hover:bg-surface-container-low transition-all duration-150 font-body-bold text-body-bold h10">Support</button>
+<button class="px-4 py-2 bg-primary text-on-primary rounded hover:bg-primary/90 transition-all duration-150 font-body-bold text-body-bold h-10 shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                        Add Record
+                    </button>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant ml-2 cursor-pointer hover:ring-2 ring-primary-fixed transition-all">
+<img alt="Administrator Profile" class="object-cover w-full h-full" data-alt="A professional headshot of a female healthcare administrator in a well-lit, modern corporate office environment. The lighting is soft and flattering, emphasizing a trustworthy and competent demeanor against a neutral, bright background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCf31_YCfE_u6sb3Im3mevgm_wRveXJgxdBIPvSQS9PyobS_-RtRMrNtCrfsRQos-_kQZcueJhknP6B7xCRz9K5iDW5adoI4CH_97brzR5TI-IIOJdKSIPcf2Ykvrh5ZQkzOdVEtKTpLfhi9f8g5F8DqSMxmSmK85hB6v9jreC3CaRdCKDSutTHw9DrdETIS7-UCkjz9hkRG01UJ0TNZJhpcGz3lARQO8kAZN0C-FkYYWcEVXIRc-Uw_axCWg0eu4qJVw12nVzOs8k"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Canvas / Main Workspace -->
+<main class="flex-1 overflow-y-auto p-margin-mobile md:p-margin-desktop bg-[#f8fafc]">
+<div class="max-w-7xl mx-auto space-y-lg">
+<!-- Header & Actions -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+<div>
+<h3 class="font-display-lg text-display-lg text-on-background m-0 tracking-tight">Doctor Roster</h3>
+<p class="font-body-base text-body-base text-on-surface-variant mt-1">Manage personnel, specialties, and active statuses.</p>
+</div>
+<button class="px-4 py-2 bg-primary text-on-primary rounded hover:bg-primary/90 transition-all duration-150 font-body-bold text-body-bold h-10 shadow-sm flex items-center gap-2 whitespace-nowrap">
+<span class="material-symbols-outlined text-[20px]">person_add</span>
+                        Add New Doctor
+                    </button>
+</div>
+<!-- Filters & Search -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant p-4 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
+<div class="flex-1 w-full relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface rounded border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary-fixed-dim text-body-base transition-all duration-150" placeholder="Search by name or ID..." type="text"/>
+</div>
+<div class="flex gap-4 w-full md:w-auto">
+<div class="relative w-full md:w-48">
+<select class="w-full appearance-none pl-4 pr-10 py-2 bg-surface rounded border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary-fixed-dim text-body-base transition-all duration-150 text-on-surface-variant">
+<option value="">All Specialties</option>
+<option value="cardio">Cardiology</option>
+<option value="neuro">Neurology</option>
+<option value="peds">Pediatrics</option>
+<option value="ortho">Orthopedics</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
+</div>
+<div class="relative w-full md:w-40">
+<select class="w-full appearance-none pl-4 pr-10 py-2 bg-surface rounded border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary-fixed-dim text-body-base transition-all duration-150 text-on-surface-variant">
+<option value="">Status: All</option>
+<option value="active">Active</option>
+<option value="leave">On Leave</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Data Table Container -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#f8fafc] border-b border-outline-variant">
+<th class="py-sm px-4 font-label-caps text-label-caps text-on-surface-variant tracking-wider">Doctor Info</th>
+<th class="py-sm px-4 font-label-caps text-label-caps text-on-surface-variant tracking-wider">Specialty</th>
+<th class="py-sm px-4 font-label-caps text-label-caps text-on-surface-variant tracking-wider">Clinic / Ward</th>
+<th class="py-sm px-4 font-label-caps text-label-caps text-on-surface-variant tracking-wider">Status</th>
+<th class="py-sm px-4 font-label-caps text-label-caps text-on-surface-variant tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="font-body-base text-body-base">
+<!-- Row 1 -->
+<tr class="border-b border-outline-variant hover:bg-[#f1f5f9] transition-colors group relative">
+<td class="py-3 px-4 relative">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-transparent group-hover:bg-primary transition-colors"></div>
+<div class="flex items-center gap-3 ml-2">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant bg-surface-container-low">
+<img alt="Dr. Sarah Jenkins" class="object-cover w-full h-full" data-alt="A bright, professional headshot of an experienced male doctor wearing a white coat and stethoscope, set against a clean, light blue clinic background, conveying expertise and trust." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6UeKLoZGkgPPka5dBrBf_bftc4eYnlfTI5TfqT5H9YDf_aH0Lcxg0MaBckHZtM82mkP6AQjjyYKMY0yuo3NfeEqEvxiDdN4X_2LuzE9BhcSjI7bLGSvSySbikopfmfIRRB_Q7BrupMLFdcN7mrFUf8QLx4K32tLjwE9K6ClDRAE38kA2fbe2IU874sXantOTXA9TalY8yxkQymOYvYZdPvdkrHvciVDe_5R0hsNcBnKOWI_VWn8l0MvDvsuaZzxUPmmPQLQ3-bh0"/>
+</div>
+<div>
+<div class="font-body-bold text-body-bold text-on-background">Dr. Sarah Jenkins</div>
+<div class="text-caption text-on-surface-variant">ID: MED-8472</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-4 text-on-background">Cardiology</td>
+<td class="py-3 px-4 text-on-background">North Wing, Clinic A</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-tertiary-fixed-dim/20 text-tertiary-fixed font-body-bold text-[11px] leading-tight">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed mr-1.5"></span>Active
+                                        </span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="flex justify-end gap-1">
+<button class="w-9 h-9 rounded flex items-center justify-center text-on-surface-variant hover:bg-[#e2e8f0] transition-colors" title="View Details">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+<button class="w-9 h-9 rounded flex items-center justify-center text-on-surface-variant hover:bg-[#e2e8f0] transition-colors" title="Edit Record">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="border-b border-outline-variant even:bg-slate-50/50 hover:bg-[#f1f5f9] transition-colors group relative">
+<td class="py-3 px-4 relative">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-transparent group-hover:bg-primary transition-colors"></div>
+<div class="flex items-center gap-3 ml-2">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant bg-surface-container-low">
+<img alt="Dr. Marcus Chen" class="object-cover w-full h-full" data-alt="A modern, well-lit headshot of a younger female physician with glasses, dressed in surgical scrubs, positioned against a sterile white hospital corridor background, looking focused and competent." src="https://lh3.googleusercontent.com/aida-public/AB6AXuArVf2uSGmT9R0xCMf0ntfHaW1culZOc_bQcNND28PfmAJ6Iv7kdeCLvE-9ZW0IeVAkmEtQE5VsRP6Lp0u343GpgXrW1kx-D3UAfTKSPc8-hYcZp6NIe7UPwOhIPSwN0aaYKv4HJD4EuXjx7z6_oLy_ZzR6Fg7kbvOyGSClG7ci_WbCeyl0XbZjXVWiH08GVP14iM8s-6MOyH8VWFi3JFV0QoeIcSt7uE0FhRKk2BBjMb6jOBuIDKFDdO8EXM0WmK8a8_mdr8dEBrI"/>
+</div>
+<div>
+<div class="font-body-bold text-body-bold text-on-background">Dr. Marcus Chen</div>
+<div class="text-caption text-on-surface-variant">ID: MED-9103</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-4 text-on-background">Neurology</td>
+<td class="py-3 px-4 text-on-background">East Wing, Floor 3</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-error-container/50 text-on-error-container font-body-bold text-[11px] leading-tight">
+<span class="w-1.5 h-1.5 rounded-full bg-error mr-1.5"></span>On Leave
+                                        </span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="flex justify-end gap-1">
+<button class="w-9 h-9 rounded flex items-center justify-center text-on-surface-variant hover:bg-[#e2e8f0] transition-colors" title="View Details">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+<button class="w-9 h-9 rounded flex items-center justify-center text-on-surface-variant hover:bg-[#e2e8f0] transition-colors" title="Edit Record">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="border-b border-outline-variant hover:bg-[#f1f5f9] transition-colors group relative">
+<td class="py-3 px-4 relative">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-transparent group-hover:bg-primary transition-colors"></div>
+<div class="flex items-center gap-3 ml-2">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant bg-surface-container-low flex items-center justify-center text-outline bg-surface-variant">
+<span class="material-symbols-outlined">person</span>
+</div>
+<div>
+<div class="font-body-bold text-body-bold text-on-background">Dr. Emily Thorne</div>
+<div class="text-caption text-on-surface-variant">ID: MED-7731</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-4 text-on-background">Pediatrics</td>
+<td class="py-3 px-4 text-on-background">South Wing, Clinic C</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-tertiary-fixed-dim/20 text-tertiary-fixed font-body-bold text-[11px] leading-tight">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed mr-1.5"></span>Active
+                                        </span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="flex justify-end gap-1">
+<button class="w-9 h-9 rounded flex items-center justify-center text-on-surface-variant hover:bg-[#e2e8f0] transition-colors" title="View Details">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+<button class="w-9 h-9 rounded flex items-center justify-center text-on-surface-variant hover:bg-[#e2e8f0] transition-colors" title="Edit Record">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="even:bg-slate-50/50 hover:bg-[#f1f5f9] transition-colors group relative">
+<td class="py-3 px-4 relative">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-transparent group-hover:bg-primary transition-colors"></div>
+<div class="flex items-center gap-3 ml-2">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant bg-surface-container-low">
+<img alt="Dr. Robert Vance" class="object-cover w-full h-full" data-alt="A crisp, corporate portrait of a senior male doctor with grey hair, wearing a dark suit with a subtle clinic ID badge, conveying authority and extensive medical administrative experience against a soft, bright office background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCisouC0wbI8sNq1muRifDk82xVAqESbT2m_AQEwus0uxyYQSiLoP8QO3JpBvkuJ_kTPaTpGj7sjbUayTvzSQK2e6gmJYxDzcJNW3OAvJjgPjRn05fdZLg0wyx0-KR9yZuU_S9jBQugLHHNVnLGdiVNzNHRYsEada7URmm-7X5uHQOSMq5tqVStlE-7fEb04C8YvBp46-xzGloCO5d32Yh6ktrKgSJLR5XzvWYuJIJ64FHOqHno3EY8qFIeNjCky_6BxOCiDGpBE4k"/>
+</div>
+<div>
+<div class="font-body-bold text-body-bold text-on-background">Dr. Robert Vance</div>
+<div class="text-caption text-on-surface-variant">ID: MED-4429</div>
+</div>
+</div>
+</td>
+<td class="py-3 px-4 text-on-background">Orthopedics</td>
+<td class="py-3 px-4 text-on-background">Main Hospital, OR 2</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-tertiary-fixed-dim/20 text-tertiary-fixed font-body-bold text-[11px] leading-tight">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed mr-1.5"></span>Active
+                                        </span>
+</td>
+<td class="py-3 px-4 text-right">
+<div class="flex justify-end gap-1">
+<button class="w-9 h-9 rounded flex items-center justify-center text-on-surface-variant hover:bg-[#e2e8f0] transition-colors" title="View Details">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+<button class="w-9 h-9 rounded flex items-center justify-center text-on-surface-variant hover:bg-[#e2e8f0] transition-colors" title="Edit Record">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-4 py-3 border-t border-outline-variant bg-[#f8fafc] flex items-center justify-between">
+<span class="text-label-sm text-on-surface-variant">Showing 1 to 4 of 42 entries</span>
+<div class="flex items-center gap-2">
+<button class="w-8 h-8 rounded border border-outline-variant flex items-center justify-center text-outline hover:bg-surface-container-low disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded border border-primary bg-primary text-on-primary flex items-center justify-center text-label-sm font-bold">1</button>
+<button class="w-8 h-8 rounded border border-outline-variant flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low text-label-sm">2</button>
+<button class="w-8 h-8 rounded border border-outline-variant flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low text-label-sm">3</button>
+<span class="text-on-surface-variant">...</span>
+<button class="w-8 h-8 rounded border border-outline-variant flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-on-background/40 backdrop-blur-sm">
+<div class="bg-surface-container-lowest rounded-xl shadow-lg max-w-md w-full mx-4 overflow-hidden border border-outline-variant">
+<div class="p-6 text-center">
+<div class="w-16 h-16 bg-tertiary-fixed-dim/20 text-tertiary-fixed rounded-full flex items-center justify-center mx-auto mb-4">
+<span class="material-symbols-outlined text-[40px]">check_circle</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-background mb-2">Doctor Added Successfully</h3>
+<p class="text-body-base text-on-surface-variant">
+                Dr. Jane Doe has been added to the Cardiology department and assigned to the North Wing, Clinic A.
+            </p>
+</div>
+<div class="bg-surface-container-low p-4 flex flex-col sm:flex-row gap-3 justify-end">
+<button class="px-4 py-2 bg-surface text-on-surface-variant border border-outline-variant rounded hover:bg-surface-container-high transition-all duration-150 font-body-bold text-body-bold">
+                View Profile
+            </button>
+<button class="px-4 py-2 bg-primary text-on-primary rounded hover:bg-primary/90 transition-all duration-150 font-body-bold text-body-bold shadow-sm">
+                Done
+            </button>
+</div>
+</div>
+</div></body></html>

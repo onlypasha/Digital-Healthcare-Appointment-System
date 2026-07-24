@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CareConnect - Doctor Details</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "primary-fixed-dim": "#b4c5ff",
+                "surface-variant": "#d5e3fc",
+                "tertiary": "#525657",
+                "inverse-surface": "#233144",
+                "secondary-fixed-dim": "#6bd8cb",
+                "on-primary-container": "#eeefff",
+                "surface-container-low": "#eff4ff",
+                "on-background": "#0d1c2e",
+                "tertiary-container": "#6b6e70",
+                "on-primary": "#ffffff",
+                "surface": "#f8f9ff",
+                "outline": "#737686",
+                "inverse-on-surface": "#eaf1ff",
+                "surface-dim": "#ccdbf3",
+                "on-tertiary-fixed": "#191c1e",
+                "error": "#ba1a1a",
+                "on-secondary-container": "#006f66",
+                "on-secondary": "#ffffff",
+                "on-primary-fixed": "#00174b",
+                "on-error": "#ffffff",
+                "error-container": "#ffdad6",
+                "on-tertiary-container": "#eff1f3",
+                "secondary": "#006a61",
+                "primary-fixed": "#dbe1ff",
+                "on-tertiary-fixed-variant": "#444749",
+                "background": "#f8f9ff",
+                "surface-container-highest": "#d5e3fc",
+                "outline-variant": "#c3c6d7",
+                "surface-bright": "#f8f9ff",
+                "on-surface": "#0d1c2e",
+                "on-tertiary": "#ffffff",
+                "secondary-container": "#86f2e4",
+                "tertiary-fixed-dim": "#c4c7c9",
+                "surface-container-high": "#dce9ff",
+                "secondary-fixed": "#89f5e7",
+                "on-secondary-fixed": "#00201d",
+                "on-error-container": "#93000a",
+                "surface-container-lowest": "#ffffff",
+                "on-surface-variant": "#434655",
+                "tertiary-fixed": "#e0e3e5",
+                "surface-container": "#e6eeff",
+                "primary": "#004ac6",
+                "on-secondary-fixed-variant": "#005049",
+                "on-primary-fixed-variant": "#003ea8",
+                "surface-tint": "#0053db",
+                "primary-container": "#2563eb",
+                "inverse-primary": "#b4c5ff"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "margin-desktop": "2.5rem",
+                "lg": "2rem",
+                "margin-mobile": "1rem",
+                "xl": "3rem",
+                "base": "4px",
+                "gutter": "1rem",
+                "sm": "1rem",
+                "md": "1.5rem",
+                "xs": "0.5rem"
+        },
+        "fontFamily": {
+                "title-lg": ["Inter"],
+                "body-md": ["Inter"],
+                "label-sm": ["Inter"],
+                "label-md": ["Inter"],
+                "body-lg": ["Inter"],
+                "headline-lg-mobile": ["Inter"],
+                "headline-lg": ["Inter"],
+                "headline-md": ["Inter"],
+                "display-lg": ["Inter"]
+        },
+        "fontSize": {
+                "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  body {
+    font-family: 'Inter', sans-serif;
+  }
+</style>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen pt-20">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-surface border-b border-outline-variant shadow-sm h-20">
+<div class="flex justify-between items-center h-20 px-margin-desktop w-full mx-auto">
+<!-- Brand -->
+<div class="flex items-center gap-md">
+<span class="font-display-lg text-primary font-bold">CareConnect</span>
+</div>
+<!-- Navigation -->
+<div class="flex items-center gap-lg">
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors active:scale-95 transition-transform" href="#">
+<span class="font-title-lg text-title-lg">Dashboard</span>
+</a>
+<a class="text-primary font-bold border-b-2 border-primary hover:text-primary transition-colors active:scale-95 transition-transform flex items-center h-20" href="#">
+<span class="font-title-lg text-title-lg">Doctors</span>
+</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors active:scale-95 transition-transform" href="#">
+<span class="font-title-lg text-title-lg">Appointments</span>
+</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors active:scale-95 transition-transform" href="#">
+<span class="font-title-lg text-title-lg">Records</span>
+</a>
+</div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-sm">
+<button class="font-label-md text-label-md text-error px-4 py-2 border border-error rounded-full hover:bg-error-container transition-colors">
+                Emergency
+            </button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors active:scale-95 transition-transform">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors active:scale-95 transition-transform">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden border border-outline-variant cursor-pointer ml-2">
+<img alt="User avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a user in a well-lit, modern corporate environment. Clean background, sharp focus, neutral tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2qcZxCwxfyVS6khzu1VZvb7ttgl68ImoK3Sbm7JhI3HzFbPrZI7tQN1huEdZWUR9HNitPZKRe-w0NtsiNeOI1HMMZeEG-z5FHgoZRpxVyypQLP5hKkYfjVi3Mdd0ppuloD2CcVl-D_D-uTZm7kbShJ7Tl55E3dzX2meNfeuXo0caPDsk9NUwlg0_urzIpKqFdvgTOgmY1TNTnv6wO3aTSkXgfoPNvws_hSB8gf-nim2Fl3HHKQx0rmAy8Wp3JDHe-jPq-ZQ8JDrI"/>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="max-w-[1280px] mx-auto px-margin-desktop py-lg">
+<!-- Breadcrumb -->
+<div class="flex items-center gap-xs text-on-surface-variant font-label-md text-label-md mb-lg">
+<span class="cursor-pointer hover:text-primary">Home</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="cursor-pointer hover:text-primary">Doctors</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-primary">Dr. Sarah Jenkins</span>
+</div>
+<div class="grid grid-cols-12 gap-lg">
+<!-- Left Column: Doctor Profile -->
+<div class="col-span-12 lg:col-span-7 space-y-lg">
+<!-- Doctor Identity Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-lg shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05),0_4px_6px_-2px_rgba(0,0,0,0.025)] flex gap-lg relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-2 bg-primary"></div>
+<div class="w-32 h-32 rounded-lg overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="A high-quality, professional headshot of a female doctor in her 40s wearing a white lab coat over professional attire. She has a warm, empathetic smile. The background is a clean, softly lit modern clinical setting with slight blur." src="https://lh3.googleusercontent.com/aida-public/AB6AXuChcBnqL6_OeILvipLjF-csrlvi1uJnRQ6CmZeX65VVlBK-2Bw7dg1-KOsSli9zgKcPbtaswvXL2OU4ecyYZrkbWNIaXMDp9lou_1e7bE5hDrVKhCNC9AoNrSeU6UVjMiA2Z2sMfW0oVe8q-87Q07WNPglS_oC2aIN3UJSUskS_xN3SWMk_AjBxLBaPt_dJfg21KW2yxfd2t-kCWMEDafEOLx2Czc5Ah0OYm0Uq_j6_UQ2eU4msNWGNVSwvOY59Lw9kEHMfCzhu8yU"/>
+</div>
+<div class="flex flex-col justify-center">
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-xs">Dr. Sarah Jenkins</h1>
+<p class="font-body-lg text-body-lg text-primary mb-md">Cardiologist, MD, FACC</p>
+<div class="flex items-center gap-4 text-on-surface-variant">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-md text-label-md text-on-surface">4.9</span>
+<span class="font-label-sm text-label-sm">(124 reviews)</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">work</span>
+<span class="font-label-md text-label-md">15+ Years Exp.</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bio -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline p-lg">
+<h2 class="font-title-lg text-title-lg text-on-surface border-b border-outline-variant pb-xs mb-sm">About</h2>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                    Dr. Sarah Jenkins is a board-certified cardiologist specializing in advanced heart failure and transplant cardiology. She is dedicated to providing compassionate, comprehensive care using the latest evidence-based treatments. Her clinical focus includes managing complex cardiovascular conditions and emphasizing preventative care for long-term heart health.
+                </p>
+</div>
+<!-- Expertise & Education -->
+<div class="grid grid-cols-2 gap-lg">
+<div class="bg-surface-container-lowest rounded-xl border border-outline p-lg">
+<h2 class="font-title-lg text-title-lg text-on-surface border-b border-outline-variant pb-xs mb-sm">Expertise</h2>
+<ul class="space-y-2">
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Echocardiography</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Heart Failure Management</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-primary text-[20px] mt-0.5">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Preventative Cardiology</span>
+</li>
+</ul>
+</div>
+<div class="bg-surface-container-lowest rounded-xl border border-outline p-lg">
+<h2 class="font-title-lg text-title-lg text-on-surface border-b border-outline-variant pb-xs mb-sm">Education</h2>
+<ul class="space-y-3">
+<li>
+<div class="font-label-md text-label-md text-on-surface">MD, Harvard Medical School</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">2005 - 2009</div>
+</li>
+<li>
+<div class="font-label-md text-label-md text-on-surface">Residency, Johns Hopkins</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">Internal Medicine</div>
+</li>
+</ul>
+</div>
+</div>
+<!-- Location -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline overflow-hidden">
+<div class="p-lg border-b border-outline-variant">
+<h2 class="font-title-lg text-title-lg text-on-surface mb-xs">Clinic Location</h2>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                        1200 Medical Plaza, Suite 400, New York, NY 10021
+                    </p>
+</div>
+<div class="h-64 w-full bg-surface-variant relative">
+<img class="w-full h-full object-cover" data-alt="A clean, minimalist digital map graphic showing city streets in light gray and white tones, typical of a modern mapping application in light mode. A subtle blue marker pin indicates the clinic location." data-location="New York, NY" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGCFeRwlGio-THt0FS5fPijsfhoIa045LGc1HvFp2cRcFvr6oHBGgKHn16gvS4xS7SEWhR1kxy0JgXXyFKExuixCZGRZ88pcEERTNFHtKubZy7jhI6ONRGDgJzdm9ViJHz2TK4ucbEMfh3MPoQ_jxiA6jm2pEwX3jkFbWZ3IGcvYiFuDd__O1t4NvTHAmD7pawH2LotEmVrUKcsTutX8w9yigVOBWlghUok3lsf9jwTLL-4Sjkb6eJ27Bs7AJ2-WrwyeAhQ262vps"/>
+</div>
+</div>
+</div>
+<!-- Right Column: Scheduling -->
+<div class="col-span-12 lg:col-span-5 relative">
+<div class="sticky top-28 bg-surface-container-lowest rounded-xl border border-outline-variant shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05),0_4px_6px_-2px_rgba(0,0,0,0.025)] flex flex-col h-[calc(100vh-140px)] max-h-[800px]">
+<div class="p-lg flex-1 overflow-y-auto">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-md">Book Appointment</h2>
+<!-- Calendar -->
+<div class="mb-lg">
+<div class="flex justify-between items-center mb-sm">
+<button class="p-1 rounded-full hover:bg-surface-variant text-on-surface-variant"><span class="material-symbols-outlined">chevron_left</span></button>
+<span class="font-title-lg text-title-lg text-on-surface">October 2024</span>
+<button class="p-1 rounded-full hover:bg-surface-variant text-on-surface-variant"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+<div class="grid grid-cols-7 gap-1 text-center mb-2">
+<div class="font-label-sm text-label-sm text-on-surface-variant py-1">Su</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant py-1">Mo</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant py-1">Tu</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant py-1">We</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant py-1">Th</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant py-1">Fr</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant py-1">Sa</div>
+</div>
+<div class="grid grid-cols-7 gap-1 text-center">
+<!-- Empty slots -->
+<div></div><div></div>
+<!-- Dates -->
+<div class="py-2 font-body-md text-body-md text-outline cursor-not-allowed">1</div>
+<div class="py-2 font-body-md text-body-md text-outline cursor-not-allowed">2</div>
+<div class="py-2 font-body-md text-body-md text-outline cursor-not-allowed">3</div>
+<div class="py-2 font-body-md text-body-md text-outline cursor-not-allowed">4</div>
+<div class="py-2 font-body-md text-body-md text-outline cursor-not-allowed">5</div>
+<div class="py-2 font-body-md text-body-md text-on-surface hover:bg-surface-variant rounded-full cursor-pointer transition-colors">6</div>
+<div class="py-2 font-body-md text-body-md text-on-surface hover:bg-surface-variant rounded-full cursor-pointer transition-colors">7</div>
+<div class="py-2 font-body-md text-body-md bg-primary text-on-primary rounded-full cursor-pointer shadow-md">8</div>
+<div class="py-2 font-body-md text-body-md text-on-surface hover:bg-surface-variant rounded-full cursor-pointer transition-colors">9</div>
+<div class="py-2 font-body-md text-body-md text-on-surface hover:bg-surface-variant rounded-full cursor-pointer transition-colors">10</div>
+<div class="py-2 font-body-md text-body-md text-on-surface hover:bg-surface-variant rounded-full cursor-pointer transition-colors">11</div>
+<div class="py-2 font-body-md text-body-md text-outline cursor-not-allowed">12</div>
+<!-- More rows mock -->
+<div class="py-2 font-body-md text-body-md text-outline cursor-not-allowed">13</div>
+<div class="py-2 font-body-md text-body-md text-on-surface hover:bg-surface-variant rounded-full cursor-pointer transition-colors">14</div>
+<div class="py-2 font-body-md text-body-md text-on-surface hover:bg-surface-variant rounded-full cursor-pointer transition-colors">15</div>
+<div class="py-2 font-body-md text-body-md text-on-surface hover:bg-surface-variant rounded-full cursor-pointer transition-colors">16</div>
+<div class="py-2 font-body-md text-body-md text-on-surface hover:bg-surface-variant rounded-full cursor-pointer transition-colors">17</div>
+<div class="py-2 font-body-md text-body-md text-on-surface hover:bg-surface-variant rounded-full cursor-pointer transition-colors">18</div>
+<div class="py-2 font-body-md text-body-md text-outline cursor-not-allowed">19</div>
+</div>
+</div>
+<div class="w-full h-px bg-outline-variant mb-md"></div>
+<!-- Time Slots -->
+<div>
+<h3 class="font-title-lg text-title-lg text-on-surface mb-sm">Morning</h3>
+<div class="grid grid-cols-3 gap-3 mb-md">
+<div class="bg-surface-variant text-on-surface font-label-md text-label-md py-2 px-3 rounded-lg text-center cursor-pointer border border-transparent hover:border-primary transition-all">09:00 AM</div>
+<div class="bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjZjhmOWZmIj48L3JlY3Q+CjxwYXRoIGQ9Ik0wIDhMOCAwaDFMNCA4eiIgZmlsbD0iI2UzZThmNCIgZmlsbC1vcGFjaXR5PSIwLjUiPjwvcGF0aD4KPC9zdmc+')] bg-surface-container-low text-outline font-label-md text-label-md py-2 px-3 rounded-lg text-center cursor-not-allowed border border-outline-variant">09:30 AM</div>
+<div class="bg-primary text-on-primary font-label-md text-label-md py-2 px-3 rounded-lg text-center cursor-pointer border border-primary shadow-sm">10:00 AM</div>
+<div class="bg-surface-variant text-on-surface font-label-md text-label-md py-2 px-3 rounded-lg text-center cursor-pointer border border-transparent hover:border-primary transition-all">10:30 AM</div>
+<div class="bg-surface-variant text-on-surface font-label-md text-label-md py-2 px-3 rounded-lg text-center cursor-pointer border border-transparent hover:border-primary transition-all">11:00 AM</div>
+<div class="bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjZjhmOWZmIj48L3JlY3Q+CjxwYXRoIGQ9Ik0wIDhMOCAwaDFMNCA4eiIgZmlsbD0iI2UzZThmNCIgZmlsbC1vcGFjaXR5PSIwLjUiPjwvcGF0aD4KPC9zdmc+')] bg-surface-container-low text-outline font-label-md text-label-md py-2 px-3 rounded-lg text-center cursor-not-allowed border border-outline-variant">11:30 AM</div>
+</div>
+<h3 class="font-title-lg text-title-lg text-on-surface mb-sm">Afternoon</h3>
+<div class="grid grid-cols-3 gap-3">
+<div class="bg-surface-variant text-on-surface font-label-md text-label-md py-2 px-3 rounded-lg text-center cursor-pointer border border-transparent hover:border-primary transition-all">01:00 PM</div>
+<div class="bg-surface-variant text-on-surface font-label-md text-label-md py-2 px-3 rounded-lg text-center cursor-pointer border border-transparent hover:border-primary transition-all">01:30 PM</div>
+<div class="bg-surface-variant text-on-surface font-label-md text-label-md py-2 px-3 rounded-lg text-center cursor-pointer border border-transparent hover:border-primary transition-all">02:00 PM</div>
+<div class="bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjZjhmOWZmIj48L3JlY3Q+CjxwYXRoIGQ9Ik0wIDhMOCAwaDFMNCA4eiIgZmlsbD0iI2UzZThmNCIgZmlsbC1vcGFjaXR5PSIwLjUiPjwvcGF0aD4KPC9zdmc+')] bg-surface-container-low text-outline font-label-md text-label-md py-2 px-3 rounded-lg text-center cursor-not-allowed border border-outline-variant">02:30 PM</div>
+</div>
+</div>
+</div>
+<!-- Bottom Sticky Bar inside Card -->
+<div class="p-lg bg-surface-container-low border-t border-outline-variant rounded-b-xl flex flex-col gap-sm">
+<div class="flex justify-between items-center text-on-surface">
+<span class="font-body-md text-body-md">Consultation Fee</span>
+<span class="font-title-lg text-title-lg font-bold">$150.00</span>
+</div>
+<button class="w-full bg-primary-container text-on-primary-container font-label-md text-label-md py-3 rounded-lg hover:bg-primary transition-colors flex items-center justify-center gap-2">
+                        Confirm Appointment
+                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+<p class="text-center font-label-sm text-label-sm text-on-surface-variant">Insurance accepted. Payment processed at clinic.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>
