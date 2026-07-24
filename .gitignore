@@ -85,3 +85,6 @@ Desktop.ini
 
 # Markdown Project Files
 md-files/
+.agents/skills/dotnet-best-practices
+CLAUDE.md
+skills-lock.json
