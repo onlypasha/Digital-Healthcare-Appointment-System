@@ -82,6 +82,7 @@ builder.Services.AddScoped<ISpecializationService, SpecializationService>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<IBackupTrxToRpt, BackupTrxToRptService>();
 builder.Services.AddScoped<ITeleconsultationService, TeleconsultationService>();
+builder.Services.AddScoped<IMedicalRecordService, MedicalRecordService>();
 
 builder.Services.AddSignalR();
 

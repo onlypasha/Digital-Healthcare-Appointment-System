@@ -1,14 +1,19 @@
-# Technical Implementation Plan: Auth Logout Feature
+# Implementation Plan - POST /api/MedicalRecord
 
-## 1. Component Breakdown & Order
-1. **Interface Layer (`Interface/IAuthService.cs`)**:
-   - Tambahkan method signature `Task LogoutAsync();`
-2. **Service Layer (`Service/AuthService.cs`)**:
-   - Implementasikan method `LogoutAsync()` yang menangani logika logout.
-3. **Controller Layer (`Controllers/AuthController.cs`)**:
-   - Tambahkan endpoint `POST api/Auth/logout` dengan atribut `[Authorize]` yang memanggil `service.LogoutAsync()`.
-4. **Verification**:
-   - Jalankan `dotnet build` untuk memastikan proyek terkompilasi tanpa error.
+## Architecture & Data Flow
+1. Client mengirim `CreateMedicalRecordDto` (`AppointmentsId`, `Diagnosis`, `Prescription`, `Notes`) ke `MedicalRecordController`.
+2. Controller mengekstrak `userId` & `role` dari JWT Claim, memanggil `IMedicalRecordService.CreateMedicalRecordAsync(...)`.
+3. Service memvalidasi keberadaan `Appointment`:
+   - Memastikan `Appointment` ada.
+   - Jika role = Doctor, memastikan `Appointment.Doctors.UserId == userId`.
+   - Mengambil `PatientsId` dan `DoctorsId` secara otomatis dari entitas `Appointment`.
+4. Service membuat instance `MedicalRecord`, menyimpannya ke `TrxDbContext`, dan mengubah status `Appointment` menjadi `Completed` (jika belum).
+5. Service mengembalikan `MedicalRecordResponseDto` yang berisi detail rekam medis.
 
-## 2. Dependency Graph & Strategy
-- Interface -> Service Implementation -> Controller Endpoint -> Verification.
+## Order of Execution
+1. Buat DTO (`Data/MedicalRecordDto.cs`).
+2. Buat Interface (`Interface/IMedicalRecordService.cs`).
+3. Buat Service Implementation (`Service/MedicalRecordService.cs`).
+4. Buat Controller (`Controllers/MedicalRecordController.cs`).
+5. Registrasikan Service di `Program.cs`.
+6. Verifikasi build dengan `dotnet build`.

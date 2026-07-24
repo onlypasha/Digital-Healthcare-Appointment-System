@@ -1,45 +1,58 @@
-# Spec: Auth Logout Feature
+# Spec: Create Medical Record Endpoint (`POST /api/MedicalRecord`)
 
 ## Objective
-Menambahkan fitur logout pada `healthcare-api`. Fitur ini memfasilitasi penanganan alur penutupan sesi otentikasi di sisi server (menerima request logout terotentikasi dan mengembalikan konfirmasi sukses).
+Implementasi endpoint `POST /api/MedicalRecord` pada `healthcare-api` untuk mencatat rekam medis (diagnosa, resep obat, dan catatan medis) hasil pemeriksaan janji temu pasien oleh dokter atau admin.
 
 ## Tech Stack
-- C# / .NET 10.0 Web API
-- JWT Authentication (Bearer Token)
-- ASP.NET Core MVC Controllers
+- C# 13 / .NET 10.0 ASP.NET Core Web API
+- Entity Framework Core 10 (PostgreSQL / `TrxDbContext`)
+- ASP.NET Core Identity & JWT Authentication (`[Authorize(Roles = "Admin,Doctor")]`)
 
 ## Commands
 - Build: `dotnet build`
 - Run: `dotnet run`
-- Test API: `healthcare-api.http` / Scalar UI
 
-## Project Structure
-- `Interface/IAuthService.cs` → Definisi kontrak interface `Task LogoutAsync()`
-- `Service/AuthService.cs` → Implementasi method `LogoutAsync()`
-- `Controllers/AuthController.cs` → Endpoint `POST /api/Auth/logout`
+## Project Structure & Touched Files
+- `Data/MedicalRecordDto.cs` → Data Transfer Objects (`CreateMedicalRecordDto`, `MedicalRecordResponseDto`).
+- `Interface/IMedicalRecordService.cs` → Kontrak interface layanan rekam medis.
+- `Service/MedicalRecordService.cs` → Implementasi logika bisnis rekam medis (validasi appointment, otorisasi dokter, pembuatan record).
+- `Controllers/MedicalRecordController.cs` → Controller HTTP endpoint `POST /api/MedicalRecord`.
+- `Program.cs` → Registrasi `IMedicalRecordService` di DI Container.
 
 ## Code Style
 ```csharp
-[Authorize]
-[HttpPost("logout")]
-public async Task<ActionResult> Logout()
+[ApiController]
+[Route("api/[controller]")]
+[Authorize(Roles = "Admin,Doctor")]
+public class MedicalRecordController(IMedicalRecordService service) : ControllerBase
 {
-    await service.LogoutAsync();
-    return Ok(new { message = "Logout berhasil" });
+    [HttpPost]
+    public async Task<ActionResult<MedicalRecordResponseDto>> CreateMedicalRecord([FromBody] CreateMedicalRecordDto request)
+    {
+        var userId = GetUserId();
+        var role = GetUserRole();
+        var result = await service.CreateMedicalRecordAsync(request, userId, role);
+        if (result == null)
+            return BadRequest("Gagal membuat rekam medis. Pastikan ID Janji Temu benar dan Anda memiliki otorisasi.");
+
+        return Ok(result);
+    }
 }
 ```
 
 ## Testing Strategy
-- Verifikasi kompilasi proyek dengan `dotnet build`.
-- Pengujian endpoint `POST /api/Auth/logout` dengan token JWT terotentikasi.
+- Kompilasi seluruh kode dengan `dotnet build` tanpa error maupun warning baru.
+- Verifikasi alur penanganan validasi ID Appointment, penentuan ID Dokter/Pasien otomatis, dan penyimpanan ke `TrxDbContext`.
 
 ## Boundaries
-- **Always do:** Mengikuti pola arsitektur DI (Dependency Injection), mendokumentasikan method dengan XML comments.
-- **Ask first:** Perubahan skema database atau penambahan middleware token revocation terpusat.
-- **Never do:** Mengubah signature method registrasi/login yang sudah ada atau merusak kontrak endpoint yang sudah ada.
+- **Always do:** Menggunakan DTO untuk request & response, memvalidasi keberadaan `Appointment`, menggunakan pencatatan waktu UTC (`DateTime.UtcNow`).
+- **Ask first:** Mengubah skema DB atau membuat migrasi DB baru jika tidak diperlukan.
+- **Never do:** Membiarkan dokter membuat rekam medis untuk janji temu dokter lain (kecuali role Admin).
 
 ## Success Criteria
-1. `IAuthService` memiliki definisi `Task LogoutAsync();`
-2. `AuthService` mengimplementasikan `LogoutAsync()` secara asynchronous.
-3. `AuthController` memiliki action method `[HttpPost("logout")]` terotentikasi yang memanggil `LogoutAsync()` dan mengembalikan HTTP 200 OK dengan pesan respon `"Logout berhasil"`.
-4. `dotnet build` berjalan sukses tanpa error.
+1. `CreateMedicalRecordDto` & `MedicalRecordResponseDto` dibuat di `Data/MedicalRecordDto.cs`.
+2. `IMedicalRecordService` terdefinisi dengan method `Task<MedicalRecordResponseDto?> CreateMedicalRecordAsync(...)`.
+3. `MedicalRecordService` terimplementasi & terisi di `TrxDbContext`.
+4. `MedicalRecordController` terpasang endpoint `POST /api/MedicalRecord`.
+5. Service terdaftar di `Program.cs`.
+6. Proyek berhasil di-build (`dotnet build`) dengan 0 error.
