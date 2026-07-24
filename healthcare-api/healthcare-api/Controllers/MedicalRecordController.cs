@@ -31,5 +31,34 @@ namespace healthcare_api.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("my-records")]
+        public async Task<ActionResult<List<MedicalRecordResponseDto>>> GetMyMedicalRecords()
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!long.TryParse(userIdStr, out var userId)) return Unauthorized();
+
+            var records = await _service.GetMedicalRecordByUserIdAsync(userId);
+            return Ok(records);
+        }
+
+        [HttpGet("user/{userId}")]
+        [Authorize(Roles = "Admin,Doctor")]
+        public async Task<ActionResult<List<MedicalRecordResponseDto>>> GetMedicalRecordsByUserId(long userId)
+        {
+            var records = await _service.GetMedicalRecordByUserIdAsync(userId);
+            return Ok(records);
+        }
+
+        [HttpGet("appointment/{appointmentId}")]
+        public async Task<ActionResult<MedicalRecordResponseDto>> GetMedicalRecordByAppointmentId(long appointmentId)
+        {
+            var record = await _service.GetMedicalRecordByAppointmentIdAsync(appointmentId);
+            if (record == null)
+            {
+                return NotFound("Rekam medis untuk janji temu ini tidak ditemukan.");
+            }
+            return Ok(record);
+        }
     }
 }
