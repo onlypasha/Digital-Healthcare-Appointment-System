@@ -12,14 +12,13 @@ namespace healthcare_api.Service
 
         public async Task<DoctorsSchedule> CreateDoctorScheduleAsync(CreateDoctorScheduleRequestDto request)
         {
-            // 1. Validasi apakah dokter ada
             var doctorExists = await context.Doctors.AnyAsync(d => d.Id == request.DoctorsId);
             if (!doctorExists)
             {
                 return null;
             }
 
-            // 2. Validasi apakah ada jadwal yang bertabrakan (overlap) untuk dokter yang sama
+            // Validasi agar tidak ada jadwal bertabrakan (overlap)
             var isOverlap = await context.DoctorsSchedules.AnyAsync(s =>
                 s.DoctorsId == request.DoctorsId &&
                 s.DayOfWeek == request.DayOfWeek &&
@@ -48,21 +47,19 @@ namespace healthcare_api.Service
 
         public async Task<DoctorsSchedule> UpdateDoctorScheduleAsync(long id, EditDoctorScheduleDto request)
         {
-            // 1. Cek keberadaan jadwal yang akan diupdate
             var schedule = await context.DoctorsSchedules.FirstOrDefaultAsync(d => d.Id == id);
             if (schedule is null)
             {
                 return null;
             }
 
-            // 2. Validasi apakah dokter ada
             var doctorExists = await context.Doctors.AnyAsync(d => d.Id == request.DoctorsId);
             if (!doctorExists)
             {
                 return null;
             }
 
-            // 3. Validasi apakah ada jadwal yang bertabrakan (overlap), kecualikan ID ini sendiri
+            // Validasi overlap jadwal dengan mengabaikan ID yang sedang diubah
             var isOverlap = await context.DoctorsSchedules.AnyAsync(s =>
                 s.Id != id &&
                 s.DoctorsId == request.DoctorsId &&

@@ -34,7 +34,6 @@ namespace healthcare_api.Service
             };
             user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.Password);
 
-            // detail dari Patient
             var patient = new Patient
             {
                 User = user,
@@ -46,8 +45,6 @@ namespace healthcare_api.Service
                 CreatedAt = DateTime.UtcNow
             };
 
-
-            // save ke db
             context.Users.Add(user);
             context.Patients.Add(patient);
             await context.SaveChangesAsync();
@@ -84,7 +81,6 @@ namespace healthcare_api.Service
             context.Doctors.Add(doctor);
             await context.SaveChangesAsync();
 
-            // Publish event notification
             await publishEndpoint.Publish(new DoctorRegisteredEvent(
                 doctor.Id,
                 user.Name ?? string.Empty,

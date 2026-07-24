@@ -38,8 +38,6 @@ namespace healthcare_api.Data
         [Required]
         public long SpecializationId { get; set; }
 
-        //public decimal? ConsultationFee { get; set; }
-        //public string? Scedule { get; set; }
         public string? Phone { get; set; } = string.Empty;
     }
 

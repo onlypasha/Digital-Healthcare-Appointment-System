@@ -14,15 +14,12 @@ using Hangfire.SqlServer;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-// JWT Authentication Configuration
+// Konfigurasi Autentikasi JWT
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]!);
 
@@ -86,7 +83,7 @@ builder.Services.AddScoped<IMedicalRecordService, MedicalRecordService>();
 
 builder.Services.AddSignalR();
 
-// ponytail: reuse existing RptConnection (SQL Server) as Hangfire storage — no extra DB needed
+// Menggunakan RptConnection (SQL Server) sebagai media penyimpanan Hangfire
 builder.Services.AddHangfire(cfg => cfg
     .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
     .UseSimpleAssemblyNameTypeSerializer()
@@ -121,11 +118,11 @@ builder.Services.AddDbContext<RptDbContext>(options =>
 
 var app = builder.Build();
 
-// Hangfire dashboard — dev only to avoid exposing job management publicly
+// Dashboard Hangfire hanya aktif pada lingkungan Development
 if (app.Environment.IsDevelopment())
     app.UseHangfireDashboard("/hangfire");
 
-// Recurring job: backup previous month on the 1st of each month at 00:05 UTC
+// Tugas berkala: Pemeliharaan/backup bulanan pada tanggal 1 pukul 00:05 UTC
 RecurringJob.AddOrUpdate<IBackupTrxToRpt>(
     "monthly-backup-doctor-performance",
     svc => svc.BackupDoctorPerformanceAsync(DateTime.UtcNow.AddMonths(-1).Year, DateTime.UtcNow.AddMonths(-1).Month),
@@ -137,7 +134,6 @@ RecurringJob.AddOrUpdate<IBackupTrxToRpt>(
 
 app.UseExceptionHandler();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();

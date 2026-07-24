@@ -9,7 +9,7 @@ public class BackupTrxToRptService(TrxDbContext trx, RptDbContext rpt) : IBackup
 {
     public async Task<List<FactDoctorPerformance>> BackupDoctorPerformanceAsync(int year, int month)
     {
-        // ponytail: aggregate directly in LINQ, no intermediate objects
+        // Agregasi performa dokter langsung melalui LINQ
         var rows = await trx.Appointments
             .Include(a => a.Doctors).ThenInclude(d => d!.User)
             .Include(a => a.Doctors).ThenInclude(d => d!.Specialization)
@@ -37,7 +37,7 @@ public class BackupTrxToRptService(TrxDbContext trx, RptDbContext rpt) : IBackup
 
         foreach (var row in rows)
         {
-            // ponytail: upsert — update if exists, insert if not
+            // Operasi Upsert: perbarui jika data sudah ada, buat baru jika belum
             var existing = await rpt.FactDoctorPerformances.FirstOrDefaultAsync(f =>
                 f.DoctorName == row.DoctorName && f.Year == year && f.Month == month);
 
@@ -90,7 +90,7 @@ public class BackupTrxToRptService(TrxDbContext trx, RptDbContext rpt) : IBackup
 
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
-        // ponytail: TotalTeleconsultations & TotalOnSiteVisit left null — pending DB redesign
+        // Kolom TotalTeleconsultations & TotalOnSiteVisit diset null (menunggu perancangan ulang DB)
         var existing = await rpt.FactMonthlyAppointments.FirstOrDefaultAsync(f =>
             f.Year == year && f.Month == month);
 
@@ -114,8 +114,6 @@ public class BackupTrxToRptService(TrxDbContext trx, RptDbContext rpt) : IBackup
             TotalCancelled = appointments.Count(a => a.Status == "Cancelled"),
             TotalRevenue = (int)totalRevenue,
             LastSyncDate = today
-            // TotalTeleconsultations = null — pending DB redesign
-            // TotalOnSitesVisit = null — pending DB redesign
         };
 
         rpt.FactMonthlyAppointments.Add(fact);
