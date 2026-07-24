@@ -99,7 +99,7 @@ namespace healthcare_api.Service
         {
             // Cek Admin Hardcoded
             var adminUsername = configuration["AdminCred:Username"];
-            var adminPassword = configuration["AdminCred:Passsword"];
+            var adminPassword = configuration["AdminCred:Passsword"] ?? configuration["AdminCred:Password"];
 
             if (!string.IsNullOrEmpty(adminUsername) && !string.IsNullOrEmpty(adminPassword) &&
                 request.Email == adminUsername && request.Password == adminPassword)
@@ -150,6 +150,13 @@ namespace healthcare_api.Service
                     Role = user.Role ?? string.Empty
                 }
             };
+        }
+
+        public Task LogoutAsync()
+        {
+            // For stateless JWT authentication, client handles token removal.
+            // Server-side cleanup or audit logging can be performed here if needed.
+            return Task.CompletedTask;
         }
 
         private string CreateToken(User user)

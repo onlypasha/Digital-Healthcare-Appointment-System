@@ -1,6 +1,7 @@
 using healthcare_api.Data;
 using healthcare_api.Db;
 using healthcare_api.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace healthcare_api.Controllers
@@ -48,6 +49,18 @@ namespace healthcare_api.Controllers
                 message = "Login berhasil",
                 token = response.Token,
                 user = response.User
+            });
+        }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<ActionResult> Logout()
+        {
+            await service.LogoutAsync();
+
+            return Ok(new
+            {
+                message = "Logout berhasil"
             });
         }
     }

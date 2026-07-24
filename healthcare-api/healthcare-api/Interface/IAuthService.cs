@@ -28,5 +28,11 @@ namespace healthcare_api.Interface
         /// <param name="request">The login payload containing credentials.</param>
         /// <returns>A login response DTO with user metadata and JWT token, or null if credentials are invalid.</returns>
         Task<LoginResponseDto?> LoginAsync(LoginDto request);
+
+        /// <summary>
+        /// Handles user logout logic.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        Task LogoutAsync();
     }
 }
