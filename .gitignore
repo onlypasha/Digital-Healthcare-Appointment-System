@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
@@ -39,3 +40,95 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+=======
+# ==========================================
+# .GITIGNORE UNTUK NEXT.JS & C# WEB API
+# ==========================================
+
+# ------------------------------------------
+# 1. NEXT.JS / NODE.JS (FRONTEND)
+# ------------------------------------------
+# Dependencies
+node_modules/
+.pnp/
+.pnp.*
+
+# Next.js build output
+.next/
+out/
+build/
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment variables (JANGAN PERNAH PUSH FILE .ENV)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Testing & Coverage
+coverage/
+
+# Vercel / Deployment
+.vercel/
+
+# ------------------------------------------
+# 2. C# / .NET WEB API (BACKEND)
+# ------------------------------------------
+# Build and Release Folders
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio / IDE specific files
+.vs/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.rsuser
+
+# AppSettings untuk Development/Lokal (Mencegah bocornya koneksi database/API key)
+appsettings.Development.json
+appsettings.Local.json
+appsettings.json
+
+# NuGet Packages
+*.nupkg
+.nuget/
+
+# ------------------------------------------
+# 3. OS & EDITOR FILES (UMUM)
+# ------------------------------------------
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Mac OS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# VS Code (Mengabaikan cache, tapi tetap menyimpan konfigurasi jika ada)
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Markdown Project Files
+md-files/
+.agents/skills/dotnet-best-practices
+CLAUDE.md
+skills-lock.json
+>>>>>>>
