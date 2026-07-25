@@ -8,6 +8,7 @@ export interface User {
   name: string;
   doctorId?: string;
   patientId?: string;
+  status?: 'active' | 'pending_approval' | 'rejected';
 }
 
 export interface Doctor {
@@ -25,6 +26,7 @@ export interface Doctor {
   location: string;
   fee: number;
   availableSlots: string[];
+  status?: 'Active' | 'Pending' | 'Rejected';
 }
 
 export interface Patient {

@@ -11,7 +11,42 @@ import type {
 
 const users: User[] = [];
 
-let doctors: Doctor[] = [];
+let doctors: Doctor[] = [
+  {
+    id: 'd1',
+    name: 'Dr. Sarah Jenkins, Sp.JP',
+    specialty: 'Spesialis Jantung (Cardiology)',
+    hospital: 'CareConnect Central Hospital',
+    rating: 4.9,
+    reviews: 128,
+    gender: 'female',
+    experience: '8+ Tahun Pengalaman',
+    bio: 'Pakar kardiologi intervensi dengan sertifikasi internasional.',
+    expertise: ['Ekokardiografi', 'Kardiologi Preventif'],
+    education: [{ title: 'Fakultas Kedokteran UI', detail: 'Spesialis Jantung' }],
+    location: 'Jakarta Selatan',
+    fee: 250000,
+    availableSlots: ['09:00 AM', '11:00 AM', '02:00 PM'],
+    status: 'Active',
+  },
+  {
+    id: 'd2',
+    name: 'Dr. Ahmad Wijaya, Sp.A',
+    specialty: 'Spesialis Anak (Pediatrics)',
+    hospital: 'Klinik Kesehatan Ibu & Anak',
+    rating: 4.8,
+    reviews: 95,
+    gender: 'male',
+    experience: '6+ Tahun Pengalaman',
+    bio: 'Dokter spesialis anak yang berdedikasi tinggi terhadap tumbuh kembang balita.',
+    expertise: ['Tumbuh Kembang Anak', 'Imunisasi Lengkap'],
+    education: [{ title: 'Universitas Gadjah Mada', detail: 'Spesialis Anak' }],
+    location: 'Jakarta Barat',
+    fee: 180000,
+    availableSlots: ['10:00 AM', '01:00 PM', '03:00 PM'],
+    status: 'Active',
+  },
+];
 
 let patients: Patient[] = [];
 
@@ -59,7 +94,86 @@ export function getUserByEmail(email: string): User | undefined {
 }
 
 export function authenticate(email: string, password: string): User | null {
-  return users.find((u) => u.email === email && u.password === password) ?? null;
+  return users.find((u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password) ?? null;
+}
+
+export function registerUser(data: {
+  name: string;
+  email: string;
+  password: string;
+  role?: 'patient' | 'doctor' | 'admin';
+  phone?: string;
+  gender?: string;
+  specialty?: string;
+  hospital?: string;
+  experience?: string;
+  fee?: number;
+  location?: string;
+  bio?: string;
+  expertise?: string[];
+}): User {
+  const existing = users.find((u) => u.email.toLowerCase() === data.email.toLowerCase());
+  if (existing) {
+    throw new Error('Email sudah terdaftar');
+  }
+
+  const role = data.role ?? 'patient';
+  const newId = String(Date.now());
+
+  let patientId: string | undefined;
+  let doctorId: string | undefined;
+
+  const isDoctorPending = role === 'doctor';
+
+  if (role === 'patient') {
+    patientId = `p${newId}`;
+    const newPatient: Patient = {
+      id: patientId,
+      name: data.name,
+      email: data.email,
+      phone: data.phone ?? '-',
+      mrn: `MRN-${Math.floor(1000 + Math.random() * 9000)}`,
+      bloodType: 'O+',
+      age: 28,
+      gender: data.gender === 'female' ? 'Perempuan' : 'Laki-laki',
+      address: 'Jakarta',
+      emergencyContact: '-',
+      status: 'Active',
+    };
+    patients.push(newPatient);
+  } else if (role === 'doctor') {
+    const formattedName = data.name.toLowerCase().startsWith('dr.') ? data.name : `Dr. ${data.name}`;
+    const createdDoctor = addDoctor({
+      name: formattedName,
+      specialty: data.specialty || 'Dokter Umum',
+      hospital: data.hospital || 'CareConnect Hospital',
+      rating: 5.0,
+      reviews: 0,
+      gender: data.gender === 'female' ? 'female' : 'male',
+      experience: data.experience || '1+ Tahun Pengalaman',
+      bio: data.bio || 'Dokter berdedikasi tinggi.',
+      expertise: data.expertise && data.expertise.length > 0 ? data.expertise : ['Konsultasi Medis'],
+      education: [{ title: 'Fakultas Kedokteran', detail: 'Dokter Spesialis' }],
+      location: data.location || 'Jakarta',
+      fee: Number(data.fee) || 150000,
+      status: isDoctorPending ? 'Pending' : 'Active',
+    });
+    doctorId = createdDoctor.id;
+  }
+
+  const user: User = {
+    id: newId,
+    email: data.email,
+    password: data.password,
+    role,
+    name: data.name,
+    patientId,
+    doctorId,
+    status: isDoctorPending ? 'pending_approval' : 'active',
+  };
+
+  users.push(user);
+  return user;
 }
 
 export function getUserById(id: string): User | undefined {
@@ -74,14 +188,52 @@ export function getDoctorById(id: string): Doctor | undefined {
   return doctors.find((d) => d.id === id);
 }
 
-export function addDoctor(doctor: Omit<Doctor, 'id' | 'availableSlots'> & { availableSlots?: string[] }): Doctor {
+export function addDoctor(doctor: Omit<Doctor, 'id' | 'availableSlots'> & { availableSlots?: string[]; status?: 'Active' | 'Pending' | 'Rejected' }): Doctor {
   const newDoctor: Doctor = {
     ...doctor,
     id: String(Date.now()),
     availableSlots: doctor.availableSlots ?? ['09:00 AM', '10:00 AM', '02:00 PM'],
+    status: doctor.status ?? 'Active',
   };
   doctors = [...doctors, newDoctor];
+
+  // Also create a linked user account for admin-created doctors if not existing
+  const existingUser = users.find((u) => u.doctorId === newDoctor.id);
+  if (!existingUser) {
+    const doctorEmail = `${newDoctor.name.toLowerCase().replace(/[^a-z0-9]/g, '')}@careconnect.com`;
+    users.push({
+      id: `u-${newDoctor.id}`,
+      email: doctorEmail,
+      password: 'password123',
+      role: 'doctor',
+      name: newDoctor.name,
+      doctorId: newDoctor.id,
+      status: newDoctor.status === 'Active' ? 'active' : 'pending_approval',
+    });
+  }
+
   return newDoctor;
+}
+
+export function updateDoctorStatus(doctorId: string, status: 'Active' | 'Pending' | 'Rejected'): Doctor | null {
+  const docIndex = doctors.findIndex((d) => d.id === doctorId);
+  if (docIndex === -1) return null;
+
+  doctors[docIndex] = {
+    ...doctors[docIndex],
+    status,
+  };
+
+  // Update associated user account status
+  const userIndex = users.findIndex((u) => u.doctorId === doctorId);
+  if (userIndex !== -1) {
+    users[userIndex] = {
+      ...users[userIndex],
+      status: status === 'Active' ? 'active' : status === 'Pending' ? 'pending_approval' : 'rejected',
+    };
+  }
+
+  return doctors[docIndex];
 }
 
 export function getPatients(): Patient[] {

@@ -4,7 +4,7 @@ import { SESSION_COOKIE } from '@/lib/auth';
 import type { Session } from '@/lib/auth';
 import { getRedirectForRole } from '@/lib/auth';
 
-const PUBLIC_PATHS = ['/login', '/api/auth/login'];
+const PUBLIC_PATHS = ['/login', '/register', '/api/auth/login', '/api/auth/register'];
 
 const PATIENT_PATHS = ['/dashboard', '/profile', '/doctors', '/schedule', '/settings', '/support'];
 const ADMIN_PATHS = ['/admin'];

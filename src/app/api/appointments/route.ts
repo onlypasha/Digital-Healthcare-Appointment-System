@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { buildAppointmentPayload, backendFetch, parseBackendResponse } from '@/lib/backend';
+import { buildAppointmentPayload, backendFetch, parseBackendResponse, mapBackendAppointment } from '@/lib/backend';
 import { getSession } from '@/lib/auth';
 import { addAppointment, getAppointmentById, getAppointments, getDoctorById, getPatientById, updateAppointment } from '@/lib/store';
 
@@ -21,7 +21,15 @@ export async function GET(request: Request) {
 
       if (backendResponse.ok) {
         const backendData = await parseBackendResponse(backendResponse);
-        let appointments = Array.isArray(backendData) ? backendData : backendData.data || [];
+        const rawAppointments = Array.isArray(backendData) ? backendData : backendData.data || [];
+        let appointments = rawAppointments.map(mapBackendAppointment);
+
+        // Filter by role if backend returns all appointments
+        if (session.role === 'patient' && session.patientId) {
+          appointments = appointments.filter((a: any) => String(a.patientId) === String(session.patientId));
+        } else if (session.role === 'doctor' && session.doctorId) {
+          appointments = appointments.filter((a: any) => String(a.doctorId) === String(session.doctorId));
+        }
 
         // Filter by status if provided
         if (status && status !== 'all') {
@@ -73,7 +81,7 @@ export async function POST(request: Request) {
 
       if (backendResponse.ok) {
         const backendData = await parseBackendResponse(backendResponse);
-        return NextResponse.json(backendData, { status: 201 });
+        return NextResponse.json(mapBackendAppointment(backendData), { status: 201 });
       }
     }
   } catch (error) {
@@ -116,8 +124,19 @@ export async function PATCH(request: Request) {
   try {
     // Try to update on backend first
     if (session.token) {
-      const backendResponse = await backendFetch(`/api/Appointment/${id}`, {
-        method: 'PATCH',
+      let endpoint = `/api/Appointment/${id}`;
+      let method = 'PATCH';
+
+      if (status === 'Cancelled') {
+        endpoint = `/api/Appointment/${id}/cancel`;
+        method = 'PUT';
+      } else if (status === 'Completed') {
+        endpoint = `/api/Appointment/${id}/complete`;
+        method = 'PUT';
+      }
+
+      const backendResponse = await backendFetch(endpoint, {
+        method,
         body: JSON.stringify({ status }),
       });
 

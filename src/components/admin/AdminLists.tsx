@@ -141,36 +141,80 @@ export function AdminDoctorsList() {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [search, setSearch] = useState('');
   const [specialty, setSpecialty] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [message, setMessage] = useState('');
 
-  useEffect(() => {
+  const loadDoctors = useCallback(() => {
     fetch('/api/doctors').then((r) => r.json()).then(setDoctors);
   }, []);
+
+  useEffect(() => {
+    loadDoctors();
+  }, [loadDoctors]);
+
+  async function updateStatus(id: string, status: 'Active' | 'Pending' | 'Rejected') {
+    try {
+      const res = await fetch('/api/doctors', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setMessage(data.message || `Status dokter berhasil diubah menjadi ${status}`);
+        loadDoctors();
+        setTimeout(() => setMessage(''), 3000);
+      } else {
+        alert(data.error || 'Gagal mengubah status dokter');
+      }
+    } catch {
+      alert('Terjadi kesalahan saat memproses persetujuan dokter');
+    }
+  }
 
   const filtered = useMemo(() => {
     return doctors.filter((d) => {
       const matchSearch = !search || d.name.toLowerCase().includes(search.toLowerCase());
       const matchSpec = !specialty || d.specialty === specialty;
-      return matchSearch && matchSpec;
+      const docStatus = d.status ?? 'Active';
+      const matchStatus = !statusFilter || docStatus === statusFilter;
+      return matchSearch && matchSpec && matchStatus;
     });
-  }, [doctors, search, specialty]);
+  }, [doctors, search, specialty, statusFilter]);
+
+  const pendingCount = doctors.filter((d) => (d.status ?? 'Active') === 'Pending').length;
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h3 className="text-3xl font-bold">Daftar Dokter</h3>
-          <p className="text-sm text-[var(--color-outline)] mt-1">Kelola tenaga medis</p>
+          <h3 className="text-3xl font-bold flex items-center gap-3">
+            Daftar Dokter
+            {pendingCount > 0 && (
+              <span className="bg-amber-500 text-white text-xs font-extrabold px-3 py-1 rounded-full animate-bounce">
+                {pendingCount} Menunggu Approval SA
+              </span>
+            )}
+          </h3>
+          <p className="text-sm text-[var(--color-outline)] mt-1">Kelola tenaga medis & persetujuan akun dokter baru</p>
         </div>
-        <Link href="/admin/doctors/new" className="px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg font-bold text-sm flex items-center gap-2">
+        <Link href="/admin/doctors/new" className="px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg font-bold text-sm flex items-center gap-2 shadow-sm">
           <span className="material-symbols-outlined text-[20px]">person_add</span>
-          Tambah Dokter
+          Tambah Dokter Manual
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl border border-[var(--color-outline-variant)] p-4 flex gap-4">
+      {message && (
+        <div className="bg-emerald-50 text-emerald-800 px-4 py-3 rounded-lg border border-emerald-200 text-sm font-medium flex items-center gap-2">
+          <span className="material-symbols-outlined text-lg">check_circle</span>
+          <span>{message}</span>
+        </div>
+      )}
+
+      <div className="bg-white rounded-xl border border-[var(--color-outline-variant)] p-4 flex flex-col md:flex-row gap-4">
         <input
           type="text"
-          placeholder="Cari nama..."
+          placeholder="Cari nama dokter..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="flex-1 px-4 py-2 border border-[var(--color-outline-variant)] rounded-lg text-sm"
@@ -181,34 +225,99 @@ export function AdminDoctorsList() {
             <option key={s} value={s}>{s}</option>
           ))}
         </select>
+        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="px-4 py-2 border border-[var(--color-outline-variant)] rounded-lg text-sm font-medium">
+          <option value="">Semua Status Persetujuan</option>
+          <option value="Active">Active / Approved</option>
+          <option value="Pending">Pending (Menunggu SA)</option>
+          <option value="Rejected">Rejected (Ditolak)</option>
+        </select>
       </div>
 
-      <div className="bg-white rounded-xl border border-[var(--color-outline-variant)] overflow-hidden">
+      <div className="bg-white rounded-xl border border-[var(--color-outline-variant)] overflow-hidden shadow-sm">
         <table className="w-full text-left">
           <thead>
             <tr className="bg-gray-50 border-b border-[var(--color-outline-variant)]">
               <th className="py-3 px-4 text-xs font-bold text-[var(--color-outline)] uppercase">Dokter</th>
               <th className="py-3 px-4 text-xs font-bold text-[var(--color-outline)] uppercase">Spesialisasi</th>
-              <th className="py-3 px-4 text-xs font-bold text-[var(--color-outline)] uppercase">Klinik</th>
-              <th className="py-3 px-4 text-xs font-bold text-[var(--color-outline)] uppercase">Rating</th>
+              <th className="py-3 px-4 text-xs font-bold text-[var(--color-outline)] uppercase">Klinik & Lokasi</th>
+              <th className="py-3 px-4 text-xs font-bold text-[var(--color-outline)] uppercase">Tarif & Pengalaman</th>
+              <th className="py-3 px-4 text-xs font-bold text-[var(--color-outline)] uppercase">Status SA</th>
+              <th className="py-3 px-4 text-xs font-bold text-[var(--color-outline)] uppercase text-center">Aksi Approval</th>
             </tr>
           </thead>
           <tbody className="text-sm divide-y divide-[var(--color-outline-variant)]">
-            {filtered.map((doc) => (
-              <tr key={doc.id} className="hover:bg-gray-50">
-                <td className="py-3 px-4">
-                  <div className="flex items-center gap-3">
-                    <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(doc.name)}&background=random`} alt="" className="w-10 h-10 rounded-full" />
-                    <span className="font-bold">{doc.name}</span>
-                  </div>
-                </td>
-                <td className="py-3 px-4">{doc.specialty}</td>
-                <td className="py-3 px-4">{doc.hospital}</td>
-                <td className="py-3 px-4">{doc.rating} ⭐</td>
-              </tr>
-            ))}
+            {filtered.map((doc) => {
+              const status = doc.status ?? 'Active';
+              return (
+                <tr key={doc.id} className="hover:bg-gray-50 transition-colors">
+                  <td className="py-3 px-4">
+                    <div className="flex items-center gap-3">
+                      <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(doc.name)}&background=random`} alt="" className="w-10 h-10 rounded-full" />
+                      <div>
+                        <div className="font-bold text-gray-900">{doc.name}</div>
+                        <div className="text-xs text-gray-500">{doc.gender === 'female' ? 'Perempuan' : 'Laki-laki'}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="py-3 px-4 font-medium text-gray-800">{doc.specialty}</td>
+                  <td className="py-3 px-4">
+                    <div className="font-medium text-gray-800">{doc.hospital}</div>
+                    <div className="text-xs text-gray-500">{doc.location}</div>
+                  </td>
+                  <td className="py-3 px-4">
+                    <div className="font-semibold text-gray-900">Rp {doc.fee?.toLocaleString('id-ID')}</div>
+                    <div className="text-xs text-gray-500">{doc.experience}</div>
+                  </td>
+                  <td className="py-3 px-4">
+                    {status === 'Active' && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                        Approved / Active
+                      </span>
+                    )}
+                    {status === 'Pending' && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-full border border-amber-300">
+                        <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+                        Pending Approval
+                      </span>
+                    )}
+                    {status === 'Rejected' && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-rose-100 text-rose-800 text-xs font-bold rounded-full">
+                        <span className="w-2 h-2 rounded-full bg-rose-500" />
+                        Ditolak / Rejected
+                      </span>
+                    )}
+                  </td>
+                  <td className="py-3 px-4 text-center">
+                    <div className="flex items-center justify-center gap-2">
+                      {status !== 'Active' && (
+                        <button
+                          onClick={() => updateStatus(doc.id, 'Active')}
+                          className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg flex items-center gap-1 shadow-sm transition-colors"
+                        >
+                          <span className="material-symbols-outlined text-sm">check_circle</span>
+                          Approve SA
+                        </button>
+                      )}
+                      {status !== 'Rejected' && (
+                        <button
+                          onClick={() => updateStatus(doc.id, 'Rejected')}
+                          className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg flex items-center gap-1 shadow-sm transition-colors"
+                        >
+                          <span className="material-symbols-outlined text-sm">cancel</span>
+                          Tolak
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
+        {filtered.length === 0 && (
+          <div className="p-12 text-center text-gray-500 font-medium">Tidak ada data dokter ditemukan</div>
+        )}
       </div>
     </div>
   );

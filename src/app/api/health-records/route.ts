@@ -6,6 +6,7 @@ import {
   getLatestHealthRecord,
 } from '@/lib/store';
 import { getSession } from '@/lib/auth';
+import { backendFetch, mapBackendHealthRecord, parseBackendResponse } from '@/lib/backend';
 
 export async function GET(request: Request) {
   const session = await getSession();
@@ -16,6 +17,49 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const latest = searchParams.get('latest') === 'true';
 
+  try {
+    if (session.token) {
+      const backendResponse = await backendFetch('/api/HealthRecord', { method: 'GET' });
+      if (backendResponse.ok) {
+        const backendData = await parseBackendResponse(backendResponse);
+        const rawRecords = Array.isArray(backendData) ? backendData : backendData.data || [];
+        const records = rawRecords.map(mapBackendHealthRecord);
+
+        if (session.role === 'patient') {
+          const patientId = session.patientId ?? '1';
+          const patientRecords = records.filter((r: any) => String(r.patientId) === String(patientId));
+          if (latest) {
+            return NextResponse.json(patientRecords[0] ?? null);
+          }
+          return NextResponse.json(patientRecords);
+        }
+
+        if (session.role === 'doctor') {
+          const doctorId = session.doctorId;
+          const patientId = searchParams.get('patientId') ?? undefined;
+          let filtered = records.filter((r: any) => String(r.doctorId) === String(doctorId));
+          if (patientId) {
+            filtered = filtered.filter((r: any) => String(r.patientId) === String(patientId));
+          }
+          return NextResponse.json(filtered);
+        }
+
+        if (session.role === 'admin') {
+          const patientId = searchParams.get('patientId') ?? undefined;
+          const doctorId = searchParams.get('doctorId') ?? undefined;
+          let filtered = records;
+          if (patientId) filtered = filtered.filter((r: any) => String(r.patientId) === String(patientId));
+          if (doctorId) filtered = filtered.filter((r: any) => String(r.doctorId) === String(doctorId));
+          if (latest && patientId) return NextResponse.json(filtered[0] ?? null);
+          return NextResponse.json(filtered);
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching health records from backend:', error);
+  }
+
+  // Fallback to local mock data
   if (session.role === 'patient') {
     const patientId = session.patientId ?? '1';
     if (latest) {
@@ -64,6 +108,31 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Data pemeriksaan tidak lengkap' }, { status: 400 });
   }
 
+  try {
+    if (session.token) {
+      const backendResponse = await backendFetch('/api/MedicalRecord', {
+        method: 'POST',
+        body: JSON.stringify({
+          appointmentId: Number(appointmentId) || appointmentId,
+          patientId: Number(patientId) || patientId,
+          doctorId: Number(doctorId) || doctorId,
+          vitals,
+          diagnosis: diagnosis ?? '',
+          notes: notes ?? '',
+          recommendations: recommendations ?? '',
+        }),
+      });
+
+      if (backendResponse.ok) {
+        const backendData = await parseBackendResponse(backendResponse);
+        return NextResponse.json(mapBackendHealthRecord(backendData), { status: 201 });
+      }
+    }
+  } catch (error) {
+    console.error('Error posting health record to backend:', error);
+  }
+
+  // Fallback to local store
   const existing = getHealthRecordByAppointment(appointmentId);
   if (existing) {
     return NextResponse.json({ error: 'Pemeriksaan untuk janji temu ini sudah dicatat' }, { status: 409 });
@@ -92,3 +161,4 @@ export async function POST(request: Request) {
 
   return NextResponse.json(record, { status: 201 });
 }
+

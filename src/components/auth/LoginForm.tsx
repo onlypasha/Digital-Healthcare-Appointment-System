@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FormEvent, useState } from 'react';
 
@@ -93,6 +94,15 @@ export function LoginForm() {
         >
           {loading ? 'Memproses...' : 'Masuk'}
         </button>
+
+        <div className="text-center pt-2">
+          <p className="text-sm text-[var(--color-outline)]">
+            Belum punya akun?{' '}
+            <Link href="/register" className="text-[var(--color-primary)] font-bold hover:underline">
+              Daftar Akun Baru
+            </Link>
+          </p>
+        </div>
       </form>
     </div>
   );
