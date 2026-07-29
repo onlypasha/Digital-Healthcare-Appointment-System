@@ -6,6 +6,9 @@ using healthcare_api.Interface;
 using healthcare_api.Models.Transactional;
 using Microsoft.EntityFrameworkCore;
 
+using System.Collections.Generic;
+using System.Linq;
+
 namespace healthcare_api.Service
 {
     public class MedicalRecordService(TrxDbContext context) : IMedicalRecordService
@@ -64,6 +67,53 @@ namespace healthcare_api.Service
                 Prescription = medicalRecord.Prescription,
                 Notes = medicalRecord.Notes
             };
+        }
+
+        public async Task<List<MedicalRecordResponseDto>> GetMedicalRecordByUserIdAsync(long userId)
+        {
+            return await _context.MedicalRecords
+                .AsNoTracking()
+                .Include(m => m.Patients!).ThenInclude(p => p.User)
+                .Include(m => m.Doctors!).ThenInclude(d => d.User)
+                .Where(m => (m.Patients != null && m.Patients.UserId == userId))
+                .OrderByDescending(m => m.CreatedAt)
+                .Select(m => new MedicalRecordResponseDto
+                {
+                    Id = m.Id,
+                    CreatedAt = m.CreatedAt,
+                    AppointmentsId = m.AppointmentsId,
+                    PatientsId = m.PatientsId,
+                    PatientName = m.Patients != null && m.Patients.User != null ? m.Patients.User.Name : null,
+                    DoctorsId = m.DoctorsId,
+                    DoctorName = m.Doctors != null && m.Doctors.User != null ? m.Doctors.User.Name : null,
+                    Diagnosis = m.Diagnosis,
+                    Prescription = m.Prescription,
+                    Notes = m.Notes
+                })
+                .ToListAsync();
+        }
+
+        public async Task<MedicalRecordResponseDto?> GetMedicalRecordByAppointmentIdAsync(long appointmentId)
+        {
+            return await _context.MedicalRecords
+                .AsNoTracking()
+                .Include(m => m.Patients!).ThenInclude(p => p.User)
+                .Include(m => m.Doctors!).ThenInclude(d => d.User)
+                .Where(m => m.AppointmentsId == appointmentId)
+                .Select(m => new MedicalRecordResponseDto
+                {
+                    Id = m.Id,
+                    CreatedAt = m.CreatedAt,
+                    AppointmentsId = m.AppointmentsId,
+                    PatientsId = m.PatientsId,
+                    PatientName = m.Patients != null && m.Patients.User != null ? m.Patients.User.Name : null,
+                    DoctorsId = m.DoctorsId,
+                    DoctorName = m.Doctors != null && m.Doctors.User != null ? m.Doctors.User.Name : null,
+                    Diagnosis = m.Diagnosis,
+                    Prescription = m.Prescription,
+                    Notes = m.Notes
+                })
+                .FirstOrDefaultAsync();
         }
     }
 }

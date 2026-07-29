@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-surface" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CareConnect - Admin Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-variant": "#dae2fd",
+                        "on-primary-fixed": "#00174b",
+                        "secondary-fixed": "#d8e2ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#faf8ff",
+                        "surface-container-low": "#f2f3ff",
+                        "primary": "#004ac6",
+                        "surface": "#faf8ff",
+                        "on-secondary-fixed-variant": "#004395",
+                        "on-tertiary-container": "#bdffdb",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "on-secondary": "#ffffff",
+                        "outline": "#737686",
+                        "secondary-container": "#2170e4",
+                        "inverse-primary": "#b4c5ff",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "on-error-container": "#93000a",
+                        "inverse-surface": "#283044",
+                        "on-secondary-fixed": "#001a42",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "surface-container-high": "#e2e7ff",
+                        "on-secondary-container": "#fefcff",
+                        "on-surface-variant": "#434655",
+                        "inverse-on-surface": "#eef0ff",
+                        "surface-tint": "#0053db",
+                        "surface-dim": "#d2d9f4",
+                        "outline-variant": "#c3c6d7",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed": "#dbe1ff",
+                        "on-background": "#131b2e",
+                        "primary-container": "#2563eb",
+                        "on-tertiary-fixed": "#002113",
+                        "tertiary-fixed": "#6ffbbe",
+                        "error-container": "#ffdad6",
+                        "tertiary": "#006242",
+                        "secondary": "#0058be",
+                        "surface-container": "#eaedff",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "on-surface": "#131b2e",
+                        "tertiary-container": "#007d55",
+                        "background": "#faf8ff",
+                        "surface-container-highest": "#dae2fd",
+                        "on-primary-container": "#eeefff",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#adc6ff"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    spacing: {
+                        xl: "32px",
+                        "header-height": "64px",
+                        "margin-desktop": "32px",
+                        "lg": "24px",
+                        base: "4px",
+                        xs: "4px",
+                        "margin-mobile": "16px",
+                        md: "16px",
+                        gutter: "24px",
+                        sm: "8px",
+                        "sidebar-width": "260px"
+                    },
+                    fontFamily: {
+                        caption: ["Inter"],
+                        "body-bold": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-base": ["Inter"]
+                    },
+                    fontSize: {
+                        caption: ["11px", { lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "600" }],
+                        "body-bold": ["14px", { lineHeight: "22px", letterSpacing: "0", fontWeight: "600" }],
+                        "display-lg": ["36px", { lineHeight: "44px", letterSpacing: "0.15em", fontWeight: "300" }],
+                        "headline-sm": ["18px", { lineHeight: "24px", letterSpacing: "0", fontWeight: "600" }],
+                        "headline-md": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "600" }],
+                        "label-caps": ["12px", { lineHeight: "16px", letterSpacing: "0.20em", fontWeight: "700" }],
+                        "label-sm": ["12px", { lineHeight: "16px", letterSpacing: "0", fontWeight: "400" }],
+                        "body-base": ["14px", { lineHeight: "22px", letterSpacing: "0", fontWeight: "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="h-full flex text-on-surface antialiased bg-surface">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-sidebar-width bg-surface dark:bg-inverse-surface border-r border-outline-variant dark:border-outline flex flex-col z-20">
+<div class="h-header-height flex items-center px-4 border-b border-outline-variant">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">health_and_safety</span>
+</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary dark:text-inverse-primary">HealthAdmin</h1>
+<p class="font-caption text-caption text-on-surface-variant">Expert Medical Precision</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 py-4 flex flex-col gap-1 font-body-base text-body-base">
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container/10 text-primary font-bold border-l-4 border-primary transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-colors hover:bg-surface-container-low dark:hover:bg-surface-variant transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">medical_services</span>
+                Doctors
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-colors hover:bg-surface-container-low dark:hover:bg-surface-variant transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">group</span>
+                Patients
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-colors hover:bg-surface-container-low dark:hover:bg-surface-variant transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+                Appointments
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-colors hover:bg-surface-container-low dark:hover:bg-surface-variant transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">assessment</span>
+                Reports
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-colors hover:bg-surface-container-low dark:hover:bg-surface-variant transition-all duration-200 ease-in-out mt-auto" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Settings
+            </a>
+</nav>
+<div class="p-4 border-t border-outline-variant flex items-center gap-3">
+<img alt="Admin Logo" class="w-10 h-10 rounded-full object-cover border border-outline-variant" data-alt="A small, professional headshot of an administrative professional in a corporate setting. Clean lighting, minimal background, high quality portrait suitable for an admin dashboard avatar." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDG2OwrYIMC9ORyn5P5FnpSI-P9uH1a1LhrwSWFr34oIGVL_UFh6HPAb9tAvbMpHay8O5Uot_dSw2H5AxKOIVYXR-L5KpDHb9-8dXvhUqkfmgAKcQ8OJivJP7A1fpVqMU6OnynV09CgUVJVqApXCM-EESWrmbV19c2ICdehydglcUNYD6Mwm6AqUGvmH0RGjzjpCQspn1h8zEtEUulkgDbouToua70Xr0cWNboujbvFT_DS5lSa0FZ3DolqNMKy7_Su3oZL6PcfJzs"/>
+<div>
+<p class="font-body-bold text-body-bold">Admin User</p>
+<p class="font-caption text-caption text-on-surface-variant">Administrator</p>
+</div>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<div class="flex-1 ml-sidebar-width flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="docked full-width top-0 h-header-height px-margin-desktop bg-surface-container-lowest dark:bg-surface-container-high shadow-sm flex justify-between items-center z-10 font-label-caps text-label-caps sticky border-b border-outline-variant dark:border-outline">
+<div class="flex items-center">
+<span class="font-headline-md text-headline-md font-extrabold text-primary hidden md:block">HealthAdmin Panel</span>
+</div>
+<div class="flex-1 flex justify-center max-w-md mx-4 hidden md:flex">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-10 pr-4 py-2 rounded-full border border-outline-variant bg-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all duration-150 font-body-base text-body-base placeholder:text-on-surface-variant" placeholder="Search records, patients..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-variant rounded-full p-2 transition-all duration-150 flex items-center justify-center">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container-low dark:hover:bg-surface-variant rounded-full p-2 transition-all duration-150 flex items-center justify-center">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-6 w-px bg-outline-variant mx-1"></div>
+<button class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-all duration-150">
+                    Support
+                </button>
+<button class="bg-primary-container text-on-primary h-[40px] px-6 rounded font-label-caps text-label-caps hover:bg-primary-container/90 transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-primary-container">
+                    Add Record
+                </button>
+<img alt="Administrator Profile" class="w-8 h-8 rounded-full ml-2 object-cover" data-alt="A small, professional headshot of an administrative professional in a corporate setting. Clean lighting, minimal background, high quality portrait suitable for an admin dashboard avatar." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKXUHcZDo11pzgz1uDchEaOcbl4VZBv9u93ky98jmIe1Lh1qn6FZqvmItNcxmzR7HLxV9Z78K36OWMkaQMKL2WKVkLdNPHP8wS8HNPnfK22MKut7CHX1WYotqmB0wbJXRpsWWECjoV5ypHQYpdiGb5536399L6DRVZadpp83K44sPBfGjBpsLrxNAoPZS0HPnA6dcgnhflSSTHECEyqx3tZdhiqS7Ta8Em0uXxsIq6UtwumOPWGVkK4e3cIg5y3e-BmTu8fWieAUg"/>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 p-lg md:p-margin-desktop bg-surface overflow-y-auto">
+<div class="max-w-[1400px] mx-auto space-y-lg">
+<!-- KPI Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- KPI 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm hover:bg-slate-50 transition-colors">
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Total Appointments</p>
+<h3 class="font-display-lg text-display-lg font-bold text-on-surface mt-1">1,248</h3>
+</div>
+<div class="w-10 h-10 rounded-full bg-secondary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">calendar_month</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="flex items-center text-tertiary font-body-bold text-body-bold bg-tertiary-fixed-dim/20 px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-sm mr-1">trending_up</span>
+                                +12%
+                            </span>
+<span class="font-caption text-caption text-on-surface-variant">vs last month</span>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm hover:bg-slate-50 transition-colors">
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Active Doctors</p>
+<h3 class="font-display-lg text-display-lg font-bold text-on-surface mt-1">42</h3>
+</div>
+<div class="w-10 h-10 rounded-full bg-secondary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">stethoscope</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-caption text-caption text-on-surface-variant">Across 5 departments</span>
+</div>
+</div>
+<!-- KPI 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm hover:bg-slate-50 transition-colors">
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">New Patients</p>
+<h3 class="font-display-lg text-display-lg font-bold text-on-surface mt-1">156</h3>
+</div>
+<div class="w-10 h-10 rounded-full bg-secondary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">person_add</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="flex items-center text-tertiary font-body-bold text-body-bold bg-tertiary-fixed-dim/20 px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-sm mr-1">trending_up</span>
+                                +5.2%
+                            </span>
+<span class="font-caption text-caption text-on-surface-variant">this month</span>
+</div>
+</div>
+<!-- KPI 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm hover:bg-slate-50 transition-colors">
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Total Revenue</p>
+<h3 class="font-display-lg text-display-lg font-bold text-on-surface mt-1">$48.5k</h3>
+</div>
+<div class="w-10 h-10 rounded-full bg-secondary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">payments</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-caption text-caption text-on-surface-variant">Estimated MTD</span>
+</div>
+</div>
+</div>
+<!-- Bento Grid Layout for Charts and Tables -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Main Chart Section (8 cols) -->
+<div class="lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-lg p-lg shadow-sm flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<div>
+<h2 class="font-headline-sm text-headline-sm font-bold">Appointment Trends</h2>
+<p class="font-body-base text-body-base text-on-surface-variant mt-1">Weekly consultation volume vs. capacity</p>
+</div>
+<div class="flex gap-2">
+<button class="px-3 py-1 text-sm border border-outline-variant rounded bg-surface-container-low text-primary font-medium">Week</button>
+<button class="px-3 py-1 text-sm border border-outline-variant rounded hover:bg-surface-container-low transition-colors text-on-surface-variant">Month</button>
+</div>
+</div>
+<div class="flex-1 min-h-[300px] relative w-full h-full">
+<canvas id="trendChart"></canvas>
+</div>
+</div>
+<!-- Upcoming Consultations Mini-table (4 cols) -->
+<div class="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-lg p-0 shadow-sm flex flex-col overflow-hidden">
+<div class="p-lg border-b border-outline-variant flex justify-between items-center bg-slate-50">
+<h2 class="font-headline-sm text-headline-sm font-bold">Today's Consultations</h2>
+<button class="text-primary hover:text-primary-container text-sm font-medium flex items-center">
+                                View All <span class="material-symbols-outlined text-sm ml-1">arrow_forward</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto">
+<ul class="divide-y divide-outline-variant">
+<li class="p-4 hover:bg-slate-50 transition-colors flex justify-between items-center border-l-4 border-primary">
+<div class="flex items-start gap-3">
+<img alt="Patient" class="w-10 h-10 rounded-full object-cover" data-alt="A portrait of a male patient in his 40s. Clean clinical lighting, soft background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOMBeBYmQvlC1L7fPPASHBvdtT6ZqoUMc8tcu-K9_5FLg0uo0bsxCI_6M392nAuLKB_Wa0qS6A9o14VTgDqF7W5CCgUxYv5qSrfqGSQJjvKfEA7XXs-NkxrtTTJQioiZI2-YJmcwrwmTe9RScy6bBPS5AWFxr65bTLEGpVB2yQbPz4Ix93SQOhxtQ6uH-iCEEzIfCp6FBD7aL4TNbxSHfuQpKUZi0X0H4x7ukP8R2quv5bpO-98bdVxvUqyvaFWObMkPHZFb4Kttw"/>
+<div>
+<p class="font-body-bold text-body-bold">Michael Chen</p>
+<p class="font-caption text-caption text-on-surface-variant flex items-center mt-0.5">
+<span class="material-symbols-outlined text-[12px] mr-1">schedule</span> 10:00 AM - Dr. Smith
+                                            </p>
+</div>
+</div>
+<span class="bg-tertiary-fixed-dim/20 text-tertiary font-body-bold text-caption px-2 py-1 rounded-full">In Progress</span>
+</li>
+<li class="p-4 hover:bg-slate-50 transition-colors flex justify-between items-center border-l-4 border-transparent">
+<div class="flex items-start gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-container/10 flex items-center justify-center text-primary font-bold">SJ</div>
+<div>
+<p class="font-body-bold text-body-bold">Sarah Jenkins</p>
+<p class="font-caption text-caption text-on-surface-variant flex items-center mt-0.5">
+<span class="material-symbols-outlined text-[12px] mr-1">schedule</span> 11:30 AM - Dr. Adams
+                                            </p>
+</div>
+</div>
+<span class="bg-surface-variant text-on-surface-variant font-body-bold text-caption px-2 py-1 rounded-full">Waiting</span>
+</li>
+<li class="p-4 hover:bg-slate-50 transition-colors flex justify-between items-center border-l-4 border-transparent">
+<div class="flex items-start gap-3">
+<img alt="Patient" class="w-10 h-10 rounded-full object-cover" data-alt="A portrait of an elderly female patient. Gentle expression, clean clinical lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFHvLfeubZNFKrS4lmNSTvyiJzDtkJDRSHPEYsCuqjNFgju2PBiYtZMkMvPCQfGqL_yO0dx-y8x2kIZytmx7p16JjvBHwAy-wDPyZI-whZKgs__E3FvM2a0-fcAZtDonYT03878NCfcHBcWC7bLSmUK3E385COrX8iVnnWzZIKofYYnKSbQH1pYL-Z-2nXcdPKeorDVz_3zQVaUNDXzAGZpTpjYeX9drLIi3quoOdMfrF0dh2rk_7g8MIqhTxPhQx7rK9eOCRhETg"/>
+<div>
+<p class="font-body-bold text-body-bold">Eleanor Vance</p>
+<p class="font-caption text-caption text-on-surface-variant flex items-center mt-0.5">
+<span class="material-symbols-outlined text-[12px] mr-1">schedule</span> 01:15 PM - Dr. Lee
+                                            </p>
+</div>
+</div>
+<span class="bg-surface-variant text-on-surface-variant font-body-bold text-caption px-2 py-1 rounded-full">Scheduled</span>
+</li>
+<li class="p-4 hover:bg-slate-50 transition-colors flex justify-between items-center border-l-4 border-transparent">
+<div class="flex items-start gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-container/10 flex items-center justify-center text-primary font-bold">DR</div>
+<div>
+<p class="font-body-bold text-body-bold">David Ross</p>
+<p class="font-caption text-caption text-on-surface-variant flex items-center mt-0.5">
+<span class="material-symbols-outlined text-[12px] mr-1">schedule</span> 02:45 PM - Dr. Smith
+                                            </p>
+</div>
+</div>
+<span class="bg-surface-variant text-on-surface-variant font-body-bold text-caption px-2 py-1 rounded-full">Scheduled</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Recent Activity List (Full width below) -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm overflow-hidden">
+<div class="p-lg border-b border-outline-variant flex justify-between items-center bg-slate-50">
+<h2 class="font-headline-sm text-headline-sm font-bold">Recent Activity</h2>
+<div class="flex gap-2">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface border-b border-outline-variant font-label-caps text-label-caps text-on-surface-variant">
+<th class="p-4 font-semibold w-12 text-center">#</th>
+<th class="p-4 font-semibold">Action</th>
+<th class="p-4 font-semibold">Patient/Entity</th>
+<th class="p-4 font-semibold">Staff Member</th>
+<th class="p-4 font-semibold">Time</th>
+<th class="p-4 font-semibold">Status</th>
+</tr>
+</thead>
+<tbody class="font-body-base text-body-base">
+<tr class="border-b border-outline-variant hover:bg-slate-50/50 transition-colors even:bg-slate-50/20">
+<td class="p-4 text-center text-on-surface-variant">1</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">event_available</span>
+                                            New Booking Created
+                                        </div>
+</td>
+<td class="p-4 font-medium">Robert Taylor</td>
+<td class="p-4 text-on-surface-variant">Reception - Lisa</td>
+<td class="p-4 text-on-surface-variant">10 mins ago</td>
+<td class="p-4"><span class="bg-tertiary-fixed-dim/20 text-tertiary text-[11px] font-bold px-2 py-1 rounded">Confirmed</span></td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-slate-50/50 transition-colors even:bg-slate-50/20">
+<td class="p-4 text-center text-on-surface-variant">2</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">edit_document</span>
+                                            Medical Record Updated
+                                        </div>
+</td>
+<td class="p-4 font-medium">Emily White</td>
+<td class="p-4 text-on-surface-variant">Dr. Adams</td>
+<td class="p-4 text-on-surface-variant">45 mins ago</td>
+<td class="p-4"><span class="bg-surface-variant text-on-surface-variant text-[11px] font-bold px-2 py-1 rounded">Logged</span></td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-slate-50/50 transition-colors even:bg-slate-50/20">
+<td class="p-4 text-center text-on-surface-variant">3</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-error text-sm">event_busy</span>
+                                            Appointment Cancelled
+                                        </div>
+</td>
+<td class="p-4 font-medium">James Wilson</td>
+<td class="p-4 text-on-surface-variant">System (Patient App)</td>
+<td class="p-4 text-on-surface-variant">2 hours ago</td>
+<td class="p-4"><span class="bg-error-container text-on-error-container text-[11px] font-bold px-2 py-1 rounded">Cancelled</span></td>
+</tr>
+<tr class="hover:bg-slate-50/50 transition-colors even:bg-slate-50/20">
+<td class="p-4 text-center text-on-surface-variant">4</td>
+<td class="p-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">mail</span>
+                                            Follow-up Sent
+                                        </div>
+</td>
+<td class="p-4 font-medium">Sarah Jenkins</td>
+<td class="p-4 text-on-surface-variant">Automated System</td>
+<td class="p-4 text-on-surface-variant">3 hours ago</td>
+<td class="p-4"><span class="bg-surface-variant text-on-surface-variant text-[11px] font-bold px-2 py-1 rounded">Sent</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Chart.js Initialization -->
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('trendChart').getContext('2d');
+            
+            // Set default font family for Chart.js
+            Chart.defaults.font.family = 'Inter';
+            Chart.defaults.color = '#434655'; // on-surface-variant
+            
+            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(37, 99, 235, 0.2)'); // primary blue with opacity
+            gradient.addColorStop(1, 'rgba(37, 99, 235, 0)');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Appointments',
+                        data: [65, 82, 75, 95, 88, 45, 30],
+                        borderColor: '#2563eb', // primary color
+                        backgroundColor: gradient,
+                        borderWidth: 2,
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: '#2563eb',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        fill: true,
+                        tension: 0.4 // smooth curves
+                    },
+                    {
+                        label: 'Capacity',
+                        data: [100, 100, 100, 100, 100, 50, 50],
+                        borderColor: '#c3c6d7', // outline-variant
+                        borderDash: [5, 5],
+                        borderWidth: 1.5,
+                        pointRadius: 0,
+                        fill: false,
+                        tension: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            align: 'end',
+                            labels: {
+                                usePointStyle: true,
+                                boxWidth: 8,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#283044',
+                            titleFont: { size: 13, family: 'Inter' },
+                            bodyFont: { size: 13, family: 'Inter' },
+                            padding: 10,
+                            cornerRadius: 4,
+                            displayColors: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: { size: 12 }
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#e2e8f0', // slate-200
+                                drawBorder: false,
+                                tickLength: 0
+                            },
+                            ticks: {
+                                padding: 10,
+                                font: { size: 12 },
+                                stepSize: 25
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index',
+                    },
+                }
+            });
+        });
+    </script>
+</body></html>

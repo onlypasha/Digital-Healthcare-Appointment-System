@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Patient Profile &amp; Records</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "primary-fixed-dim": "#b4c5ff",
+                "surface-variant": "#d5e3fc",
+                "tertiary": "#525657",
+                "inverse-surface": "#233144",
+                "secondary-fixed-dim": "#6bd8cb",
+                "on-primary-container": "#eeefff",
+                "surface-container-low": "#eff4ff",
+                "on-background": "#0d1c2e",
+                "tertiary-container": "#6b6e70",
+                "on-primary": "#ffffff",
+                "surface": "#f8f9ff",
+                "outline": "#737686",
+                "inverse-on-surface": "#eaf1ff",
+                "surface-dim": "#ccdbf3",
+                "on-tertiary-fixed": "#191c1e",
+                "error": "#ba1a1a",
+                "on-secondary-container": "#006f66",
+                "on-secondary": "#ffffff",
+                "on-primary-fixed": "#00174b",
+                "on-error": "#ffffff",
+                "error-container": "#ffdad6",
+                "on-tertiary-container": "#eff1f3",
+                "secondary": "#006a61",
+                "primary-fixed": "#dbe1ff",
+                "on-tertiary-fixed-variant": "#444749",
+                "background": "#f8f9ff",
+                "surface-container-highest": "#d5e3fc",
+                "outline-variant": "#c3c6d7",
+                "surface-bright": "#f8f9ff",
+                "on-surface": "#0d1c2e",
+                "on-tertiary": "#ffffff",
+                "secondary-container": "#86f2e4",
+                "tertiary-fixed-dim": "#c4c7c9",
+                "surface-container-high": "#dce9ff",
+                "secondary-fixed": "#89f5e7",
+                "on-secondary-fixed": "#00201d",
+                "on-error-container": "#93000a",
+                "surface-container-lowest": "#ffffff",
+                "on-surface-variant": "#434655",
+                "tertiary-fixed": "#e0e3e5",
+                "surface-container": "#e6eeff",
+                "primary": "#004ac6",
+                "on-secondary-fixed-variant": "#005049",
+                "on-primary-fixed-variant": "#003ea8",
+                "surface-tint": "#0053db",
+                "primary-container": "#2563eb",
+                "inverse-primary": "#b4c5ff"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "margin-desktop": "2.5rem",
+                "lg": "2rem",
+                "margin-mobile": "1rem",
+                "xl": "3rem",
+                "base": "4px",
+                "gutter": "1rem",
+                "sm": "1rem",
+                "md": "1.5rem",
+                "xs": "0.5rem"
+        },
+        "fontFamily": {
+                "title-lg": [
+                        "Inter"
+                ],
+                "body-md": [
+                        "Inter"
+                ],
+                "label-sm": [
+                        "Inter"
+                ],
+                "label-md": [
+                        "Inter"
+                ],
+                "body-lg": [
+                        "Inter"
+                ],
+                "headline-lg-mobile": [
+                        "Inter"
+                ],
+                "headline-lg": [
+                        "Inter"
+                ],
+                "headline-md": [
+                        "Inter"
+                ],
+                "display-lg": [
+                        "Inter"
+                ]
+        },
+        "fontSize": {
+                "title-lg": [
+                        "20px",
+                        {
+                                "lineHeight": "28px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "24px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "label-sm": [
+                        "12px",
+                        {
+                                "lineHeight": "16px",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "label-md": [
+                        "14px",
+                        {
+                                "lineHeight": "20px",
+                                "letterSpacing": "0.01em",
+                                "fontWeight": "500"
+                        }
+                ],
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "28px",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-lg-mobile": [
+                        "24px",
+                        {
+                                "lineHeight": "32px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "40px",
+                                "letterSpacing": "-0.01em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "headline-md": [
+                        "24px",
+                        {
+                                "lineHeight": "32px",
+                                "fontWeight": "600"
+                        }
+                ],
+                "display-lg": [
+                        "48px",
+                        {
+                                "lineHeight": "56px",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "700"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+    body {
+        background-color: #f8f9ff;
+    }
+</style>
+</head>
+<body class="flex h-screen overflow-hidden text-on-surface font-body-md bg-background">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest shadow-md flex flex-col py-lg border-r border-outline-variant z-40 hidden md:flex">
+<div class="px-margin-desktop mb-lg">
+<h1 class="font-headline-md text-primary font-bold">CareConnect</h1>
+<p class="font-label-sm text-on-surface-variant text-label-sm">Healthcare Portal</p>
+</div>
+<nav class="flex-1 px-sm space-y-2">
+<a class="flex items-center gap-xs text-on-surface-variant px-md py-sm hover:bg-surface-variant transition-all rounded-lg font-label-md text-label-md cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+                Overview
+            </a>
+<a class="flex items-center gap-xs text-on-surface-variant px-md py-sm hover:bg-surface-variant transition-all rounded-lg font-label-md text-label-md cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">search</span>
+                Find Doctors
+            </a>
+<a class="flex items-center gap-xs text-on-surface-variant px-md py-sm hover:bg-surface-variant transition-all rounded-lg font-label-md text-label-md cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">calendar_today</span>
+                My Schedule
+            </a>
+<a class="flex items-center gap-xs bg-primary-container text-on-primary-container rounded-lg px-md py-sm font-label-md text-label-md cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">folder_shared</span>
+                Health Files
+            </a>
+<a class="flex items-center gap-xs text-on-surface-variant px-md py-sm hover:bg-surface-variant transition-all rounded-lg font-label-md text-label-md cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+                Settings
+            </a>
+</nav>
+<div class="px-sm mt-auto space-y-2">
+<button class="w-full mb-md bg-primary text-on-primary py-sm rounded-lg font-label-md text-label-md font-bold hover:bg-primary-fixed-variant transition-colors shadow-sm">
+                Book New
+            </button>
+<a class="flex items-center gap-xs text-on-surface-variant px-md py-sm hover:bg-surface-variant transition-all rounded-lg font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">contact_support</span>
+                Support
+            </a>
+<a class="flex items-center gap-xs text-on-surface-variant px-md py-sm hover:bg-surface-variant transition-all rounded-lg font-label-md text-label-md text-error" href="#">
+<span class="material-symbols-outlined">logout</span>
+                Log Out
+            </a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 ml-0 md:ml-64 h-full overflow-y-auto p-margin-mobile md:p-margin-desktop">
+<!-- Profile Header -->
+<header class="bg-surface-container-lowest rounded-xl p-lg shadow-sm border border-outline-variant mb-lg flex flex-col md:flex-row items-center gap-lg">
+<div class="w-32 h-32 rounded-full overflow-hidden border-4 border-surface-container-low shadow-sm shrink-0">
+<img alt="Patient Avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a patient in a well-lit, modern clinic setting. The lighting is soft and bright, casting gentle shadows that emphasize a clean, clinical yet welcoming aesthetic. The background is a blurred, pristine medical office with subtle blue and white tones matching the corporate modern UI style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPmS1U4HnHiRxo1pulE-o0XrW1Y-uTVCJgn0kRSNf6Syu1BADITOUpTf6qrdvOaAaxMJ4z8ZzkLLGqmzsxZrioDvgNRkpT16d8q2pM0Ks-m5OWHjvrkx_jh5mq7yDg8qZXzs_S7TAOVIOs6x-n7XL-pH0Sfje9fTiWUc6DWT4ATiQyaFgQOnAa083fLDIbDJwBAsTaDFPijniTMG7vYhjSIL-P_pbwe1Gvwni-cCpQfkWsDxYcznSyS0OpshVhltBlY_ZiyjlzDkQ"/>
+</div>
+<div class="text-center md:text-left flex-1">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">Eleanor Vance</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-4">Health ID: <span class="font-bold text-primary">CC-8942-771</span></p>
+<div class="flex flex-wrap gap-sm justify-center md:justify-start">
+<span class="inline-flex items-center gap-xs px-3 py-1 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">bloodtype</span> O+
+                    </span>
+<span class="inline-flex items-center gap-xs px-3 py-1 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">cake</span> 34 yrs
+                    </span>
+<span class="inline-flex items-center gap-xs px-3 py-1 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px]">female</span> Female
+                    </span>
+</div>
+</div>
+<div class="shrink-0 flex gap-sm">
+<button class="p-sm rounded-lg border border-primary text-primary hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined">edit</span>
+</button>
+</div>
+</header>
+<!-- Bento Grid for Categories -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg mb-xl">
+<!-- Personal Info (Span 4) -->
+<section class="md:col-span-4 bg-surface-container-lowest rounded-xl p-lg shadow-sm border border-outline-variant hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-1 h-full bg-secondary"></div>
+<div class="flex items-center justify-between mb-md">
+<h3 class="font-title-lg text-title-lg text-on-surface flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary">person</span>
+                        Personal Info
+                    </h3>
+</div>
+<div class="space-y-4">
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Email</p>
+<p class="font-body-md text-body-md text-on-surface">e.vance@example.com</p>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Phone</p>
+<p class="font-body-md text-body-md text-on-surface">+1 (555) 123-4567</p>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Address</p>
+<p class="font-body-md text-body-md text-on-surface">1248 Magnolia Blvd, Apt 4B<br/>Seattle, WA 98101</p>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Emergency Contact</p>
+<p class="font-body-md text-body-md text-on-surface">Robert Vance (Husband)<br/>+1 (555) 987-6543</p>
+</div>
+</div>
+</section>
+<!-- Medical Records (Span 8) -->
+<section class="md:col-span-8 bg-surface-container-lowest rounded-xl p-lg shadow-sm border border-outline-variant hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
+<div class="flex items-center justify-between mb-md">
+<h3 class="font-title-lg text-title-lg text-on-surface flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">description</span>
+                        Recent Medical Records
+                    </h3>
+<button class="text-primary font-label-md text-label-md hover:underline">View All</button>
+</div>
+<div class="space-y-3">
+<!-- Record Item -->
+<div class="flex items-center justify-between p-md bg-surface border border-outline-variant rounded-lg hover:border-primary transition-colors cursor-pointer group/item">
+<div class="flex items-center gap-md">
+<div class="p-sm bg-surface-container-high rounded-full text-primary group-hover/item:bg-primary-container group-hover/item:text-on-primary-container transition-colors">
+<span class="material-symbols-outlined">science</span>
+</div>
+<div>
+<h4 class="font-body-md text-body-md font-semibold text-on-surface">Complete Blood Count (CBC)</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Oct 12, 2024 • Dr. Aris Thorne</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover/item:text-primary transition-colors">download</span>
+</div>
+<!-- Record Item -->
+<div class="flex items-center justify-between p-md bg-surface border border-outline-variant rounded-lg hover:border-primary transition-colors cursor-pointer group/item">
+<div class="flex items-center gap-md">
+<div class="p-sm bg-surface-container-high rounded-full text-primary group-hover/item:bg-primary-container group-hover/item:text-on-primary-container transition-colors">
+<span class="material-symbols-outlined">radiology</span>
+</div>
+<div>
+<h4 class="font-body-md text-body-md font-semibold text-on-surface">Chest X-Ray</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Sep 05, 2024 • Seattle Imaging Center</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover/item:text-primary transition-colors">download</span>
+</div>
+<!-- Record Item -->
+<div class="flex items-center justify-between p-md bg-surface border border-outline-variant rounded-lg hover:border-primary transition-colors cursor-pointer group/item">
+<div class="flex items-center gap-md">
+<div class="p-sm bg-surface-container-high rounded-full text-primary group-hover/item:bg-primary-container group-hover/item:text-on-primary-container transition-colors">
+<span class="material-symbols-outlined">prescriptions</span>
+</div>
+<div>
+<h4 class="font-body-md text-body-md font-semibold text-on-surface">Amoxicillin Prescription</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Aug 22, 2024 • Dr. Sarah Jenkins</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover/item:text-primary transition-colors">download</span>
+</div>
+</div>
+</section>
+<!-- Insurance Details (Span 6) -->
+<section class="md:col-span-6 bg-surface-container-lowest rounded-xl p-lg shadow-sm border border-outline-variant hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-1 h-full bg-secondary-fixed-dim"></div>
+<div class="flex items-center justify-between mb-md">
+<h3 class="font-title-lg text-title-lg text-on-surface flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary-fixed-dim">health_and_safety</span>
+                        Insurance Details
+                    </h3>
+</div>
+<div class="bg-surface p-md rounded-lg border border-outline-variant">
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Provider</p>
+<p class="font-body-lg text-body-lg font-semibold text-on-surface">BlueShield Health</p>
+</div>
+<span class="bg-secondary-container text-on-secondary-container px-2 py-1 rounded text-xs font-bold">ACTIVE</span>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Policy Number</p>
+<p class="font-body-md text-body-md text-on-surface">BSH-992-441-A</p>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Group Number</p>
+<p class="font-body-md text-body-md text-on-surface">G-7742</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Preferences (Span 6) -->
+<section class="md:col-span-6 bg-surface-container-lowest rounded-xl p-lg shadow-sm border border-outline-variant hover:shadow-md transition-shadow relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-1 h-full bg-tertiary"></div>
+<div class="flex items-center justify-between mb-md">
+<h3 class="font-title-lg text-title-lg text-on-surface flex items-center gap-sm">
+<span class="material-symbols-outlined text-tertiary">tune</span>
+                        Preferences
+                    </h3>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div>
+<p class="font-body-md text-body-md font-medium text-on-surface">SMS Notifications</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Receive appointment reminders via text.</p>
+</div>
+<!-- Toggle -->
+<div class="w-11 h-6 bg-primary rounded-full relative cursor-pointer">
+<div class="absolute right-1 top-1 w-4 h-4 bg-on-primary rounded-full shadow-sm"></div>
+</div>
+</div>
+<hr class="border-outline-variant border-t"/>
+<div class="flex items-center justify-between">
+<div>
+<p class="font-body-md text-body-md font-medium text-on-surface">Email Marketing</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Receive health tips and clinic news.</p>
+</div>
+<!-- Toggle Off -->
+<div class="w-11 h-6 bg-surface-variant rounded-full relative cursor-pointer border border-outline-variant">
+<div class="absolute left-1 top-1 w-4 h-4 bg-outline rounded-full shadow-sm"></div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</body></html>

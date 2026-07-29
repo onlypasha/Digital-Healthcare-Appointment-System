@@ -21,11 +21,10 @@ namespace healthcare_api.Hubs
             var canAccess = await _teleconsultationService.CanAccessSessionAsync(teleconsultationId, userId, role);
             if (!canAccess)
             {
-                Context.Abort(); // Disconnect unauthorized users
+                Context.Abort();
                 return;
             }
 
-            // Add connection to a group specific to this teleconsultation
             await Groups.AddToGroupAsync(Context.ConnectionId, teleconsultationId.ToString());
         }
 
@@ -41,10 +40,7 @@ namespace healthcare_api.Hubs
             
             var role = Context.User?.FindFirstValue(ClaimTypes.Role) ?? "";
 
-            // Attempt to save the message via service layer (which handles authorization and DB insert)
             var savedMessage = await _teleconsultationService.SaveMessageAsync(request, userId);
-
-            // If successfully saved, broadcast to everyone in the room
             if (savedMessage != null)
             {
                 await Clients.Group(request.TeleconsultationId.ToString())

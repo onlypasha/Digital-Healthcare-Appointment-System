@@ -51,9 +51,6 @@ namespace healthcare_api.Controllers
             var role = User.FindFirstValue(ClaimTypes.Role) ?? "";
 
             var messages = await _teleconsultationService.GetChatHistoryAsync(teleconsultationId, userId, role);
-            
-            // If the service returns empty list, we just return it. 
-            // The service already handles returning empty if unauthorized.
             return Ok(messages);
         }
     }

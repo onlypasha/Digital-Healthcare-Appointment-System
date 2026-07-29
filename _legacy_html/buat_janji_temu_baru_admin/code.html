@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>New Appointment - HealthAdmin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed-variant": "#005236",
+                    "inverse-on-surface": "#eef0ff",
+                    "on-tertiary": "#ffffff",
+                    "inverse-surface": "#283044",
+                    "on-secondary-fixed-variant": "#004395",
+                    "on-secondary-fixed": "#001a42",
+                    "primary-container": "#2563eb",
+                    "primary": "#004ac6",
+                    "on-primary": "#ffffff",
+                    "surface-container-high": "#e2e7ff",
+                    "on-background": "#131b2e",
+                    "on-tertiary-container": "#bdffdb",
+                    "outline-variant": "#c3c6d7",
+                    "error": "#ba1a1a",
+                    "on-surface": "#131b2e",
+                    "surface-container-highest": "#dae2fd",
+                    "tertiary-fixed-dim": "#4edea3",
+                    "surface-variant": "#dae2fd",
+                    "on-secondary-container": "#fefcff",
+                    "on-secondary": "#ffffff",
+                    "surface-dim": "#d2d9f4",
+                    "secondary": "#0058be",
+                    "tertiary-fixed": "#6ffbbe",
+                    "tertiary-container": "#007d55",
+                    "surface-container-low": "#f2f3ff",
+                    "secondary-container": "#2170e4",
+                    "on-error": "#ffffff",
+                    "secondary-fixed": "#d8e2ff",
+                    "surface-tint": "#0053db",
+                    "on-surface-variant": "#434655",
+                    "surface-container": "#eaedff",
+                    "tertiary": "#006242",
+                    "on-error-container": "#93000a",
+                    "primary-fixed": "#dbe1ff",
+                    "on-primary-container": "#eeefff",
+                    "primary-fixed-dim": "#b4c5ff",
+                    "outline": "#737686",
+                    "inverse-primary": "#b4c5ff",
+                    "on-tertiary-fixed": "#002113",
+                    "surface-container-lowest": "#ffffff",
+                    "surface": "#faf8ff",
+                    "on-primary-fixed-variant": "#003ea8",
+                    "surface-bright": "#faf8ff",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed": "#00174b",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "background": "#faf8ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "base": "4px",
+                    "xs": "4px",
+                    "md": "16px",
+                    "header-height": "64px",
+                    "xl": "32px",
+                    "sm": "8px",
+                    "margin-desktop": "32px",
+                    "lg": "24px",
+                    "sidebar-width": "260px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "display-lg": [
+                            "Inter"
+                    ],
+                    "body-bold": [
+                            "Inter"
+                    ],
+                    "body-base": [
+                            "Inter"
+                    ],
+                    "label-sm": [
+                            "Inter"
+                    ],
+                    "headline-sm": [
+                            "Inter"
+                    ],
+                    "headline-md": [
+                            "Inter"
+                    ],
+                    "label-caps": [
+                            "Inter"
+                    ],
+                    "caption": [
+                            "Inter"
+                    ]
+            },
+            "fontSize": {
+                    "display-lg": [
+                            "36px",
+                            {
+                                    "lineHeight": "44px",
+                                    "letterSpacing": "0.15em",
+                                    "fontWeight": "300"
+                            }
+                    ],
+                    "body-bold": [
+                            "14px",
+                            {
+                                    "lineHeight": "22px",
+                                    "letterSpacing": "0",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-base": [
+                            "14px",
+                            {
+                                    "lineHeight": "22px",
+                                    "letterSpacing": "0",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "label-sm": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "letterSpacing": "0",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-sm": [
+                            "18px",
+                            {
+                                    "lineHeight": "24px",
+                                    "letterSpacing": "0",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "headline-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "label-caps": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "letterSpacing": "0.20em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "caption": [
+                            "11px",
+                            {
+                                    "lineHeight": "16px",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "600"
+                            }
+                    ]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { background-color: #f8fafc; }
+    </style>
+</head>
+<body class="font-body-base text-on-background min-h-screen">
+<!-- TopNavBar -->
+<header class="fixed bg-surface-container-lowest text-primary-fixed font-label-caps text-label-caps docked full-width top-0 border-b border-outline-variant shadow-sm transition-all duration-150 flex justify-between items-center h-header-height px-margin-desktop ml-sidebar-width w-[calc(100%-theme(spacing.sidebar-width))] z-20">
+<div class="flex items-center gap-4">
+<span class="font-headline-md text-headline-md font-extrabold text-primary">HealthAdmin Panel</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden md:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="pl-9 pr-4 py-1.5 bg-surface border border-outline-variant rounded-full font-body-base text-body-base focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 w-64 transition-all" placeholder="Search..." type="text"/>
+</div>
+<button aria-label="notifications" class="text-on-surface-variant hover:bg-surface-container-low rounded-full p-2 transition-all duration-150">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button aria-label="help_outline" class="text-on-surface-variant hover:bg-surface-container-low rounded-full p-2 transition-all duration-150">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<button class="font-body-bold text-body-bold text-on-surface-variant bg-surface border border-outline-variant hover:bg-surface-container-low px-4 py-2 rounded transition-colors hidden lg:block">Support</button>
+<button class="font-body-bold text-body-bold text-on-primary bg-primary-container hover:bg-primary px-4 py-2 rounded shadow-sm hover:shadow transition-all hidden lg:block">Add Record</button>
+<div class="w-8 h-8 rounded-full bg-surface-container overflow-hidden border border-outline-variant flex-shrink-0 cursor-pointer">
+<img alt="Administrator Profile" class="w-full h-full object-cover" data-alt="A small, professional headshot of an administrator in a medical setting. Well lit, modern corporate style, conveying trust and efficiency." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOb6KNYDVzR-vdUKVcsvU6BVxZ2mCWGLmnjrt-FLckBeWLmNC35ThSBmPrD8vlEGBgxgk1afDVtAEeXs6dpAAmXVTsdwkzxGKnBnGHDhg5AKz8g_3yj7Rk3GG1r00zjE_Q-6ggy7yTqllkesmNuWBtIY8P-BK0-jFNJxf4DhkiONeC-Nr6gjCsG211TQ7Ep0wB7fXm1SImHy-KzV2BrV3_4YZauV19x53Y7tdKGVO9pVW5OVddasX0YrFYa7kVI7RjPqztaAwlKKU"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-sidebar-width bg-surface text-primary-fixed font-body-base text-body-base border-r border-outline-variant flat no shadows transition-all duration-200 ease-in-out flex flex-col z-30 hidden md:flex">
+<div class="h-header-height flex items-center px-6 border-b border-outline-variant shrink-0">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary-container/10 flex items-center justify-center text-primary-container font-bold border border-primary-container/20">
+                     H
+                 </div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary">HealthAdmin</h1>
+<p class="font-caption text-caption text-on-surface-variant">Expert Medical Precision</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto py-4 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-colors mx-2 rounded" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-colors mx-2 rounded" href="#">
+<span class="material-symbols-outlined" data-icon="medical_services">medical_services</span>
+<span>Doctors</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-colors mx-2 rounded" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span>Patients</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container/10 text-primary font-bold border-l-4 border-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today" data-weight="fill" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
+<span>Appointments</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-colors mx-2 rounded" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span>Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-colors mx-2 rounded mt-auto mb-2" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-sidebar-width pt-header-height min-h-screen p-margin-mobile md:p-margin-desktop bg-[#f8fafc]">
+<div class="max-w-5xl mx-auto">
+<div class="mb-8 flex items-center justify-between">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-background">New Appointment</h2>
+<p class="font-body-base text-body-base text-on-surface-variant mt-1">Schedule a new clinical engagement.</p>
+</div>
+<button class="font-body-bold text-body-bold text-on-surface-variant bg-surface border border-outline-variant hover:bg-surface-container-low px-4 py-2 rounded transition-colors hidden sm:block">Cancel</button>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-gutter">
+<!-- Form Section -->
+<div class="lg:col-span-8 space-y-6">
+<!-- Patient & Doctor -->
+<div class="bg-surface border border-outline-variant rounded-lg p-6 shadow-sm">
+<h3 class="font-headline-sm text-headline-sm text-on-background mb-4 pb-2 border-b border-outline-variant">Participant Details</h3>
+<div class="space-y-5">
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-2">Select Patient</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface border border-outline-variant rounded font-body-base text-body-base text-on-background focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all placeholder:text-outline/70" placeholder="Search by name or ID..." type="text"/>
+</div>
+</div>
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-2">Select Doctor</label>
+<div class="relative">
+<select class="w-full pl-4 pr-10 py-2 bg-surface border border-outline-variant rounded font-body-base text-body-base text-on-background focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all appearance-none cursor-pointer">
+<option disabled="" selected="" value="">Assign a specialist...</option>
+<option value="1">Dr. Sarah Jenkins - Cardiology</option>
+<option value="2">Dr. Marcus Vance - Neurology</option>
+<option value="3">Dr. Elena Rostova - General Practice</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Scheduling -->
+<div class="bg-surface border border-outline-variant rounded-lg p-6 shadow-sm">
+<h3 class="font-headline-sm text-headline-sm text-on-background mb-4 pb-2 border-b border-outline-variant">Scheduling &amp; Service</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-2">Date</label>
+<div class="relative">
+<input class="w-full pl-4 pr-4 py-2 bg-surface border border-outline-variant rounded font-body-base text-body-base text-on-background focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all cursor-pointer" type="date"/>
+</div>
+</div>
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-2">Time Slot</label>
+<div class="relative">
+<select class="w-full pl-4 pr-10 py-2 bg-surface border border-outline-variant rounded font-body-base text-body-base text-on-background focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all appearance-none cursor-pointer">
+<option disabled="" selected="" value="">Select available time...</option>
+<option value="0900">09:00 AM</option>
+<option value="1030">10:30 AM</option>
+<option value="1300">01:00 PM</option>
+<option value="1545">03:45 PM</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
+</div>
+</div>
+</div>
+<div class="mb-5">
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-2">Service Type</label>
+<div class="flex flex-wrap gap-3">
+<label class="relative flex items-center justify-center px-4 py-2 border border-outline-variant rounded cursor-pointer hover:bg-surface-container-low transition-colors has-[:checked]:border-primary-container has-[:checked]:bg-[#eff6ff] has-[:checked]:text-primary-container">
+<input class="sr-only" name="service_type" type="radio" value="checkup"/>
+<span class="font-body-base text-body-base font-semibold">Checkup</span>
+</label>
+<label class="relative flex items-center justify-center px-4 py-2 border border-outline-variant rounded cursor-pointer hover:bg-surface-container-low transition-colors has-[:checked]:border-primary-container has-[:checked]:bg-[#eff6ff] has-[:checked]:text-primary-container">
+<input checked="" class="sr-only" name="service_type" type="radio" value="consultation"/>
+<span class="font-body-base text-body-base font-semibold">Consultation</span>
+</label>
+<label class="relative flex items-center justify-center px-4 py-2 border border-outline-variant rounded cursor-pointer hover:bg-surface-container-low transition-colors has-[:checked]:border-primary-container has-[:checked]:bg-[#eff6ff] has-[:checked]:text-primary-container">
+<input class="sr-only" name="service_type" type="radio" value="surgery"/>
+<span class="font-body-base text-body-base font-semibold">Surgery</span>
+</label>
+</div>
+</div>
+<div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-2">Clinical Notes (Optional)</label>
+<textarea class="w-full p-4 bg-surface border border-outline-variant rounded font-body-base text-body-base text-on-background focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all resize-none" placeholder="Add specific requirements or pre-consultation notes here..." rows="3"></textarea>
+</div>
+</div>
+</div>
+<!-- Summary Section -->
+<div class="lg:col-span-4">
+<div class="bg-surface border border-outline-variant rounded-lg p-6 shadow-sm sticky top-[calc(theme(spacing.header-height)+24px)]">
+<h3 class="font-headline-sm text-headline-sm text-on-background mb-4 pb-2 border-b border-outline-variant">Booking Summary</h3>
+<div class="space-y-4 mb-6">
+<div class="flex justify-between items-start">
+<span class="font-body-base text-body-base text-on-surface-variant">Status</span>
+<span class="inline-flex items-center px-2 py-1 bg-surface-container-high text-on-surface font-body-bold text-caption rounded">DRAFT</span>
+</div>
+<div class="flex justify-between items-start">
+<span class="font-body-base text-body-base text-on-surface-variant">Patient</span>
+<span class="font-body-bold text-body-bold text-on-background text-right">--</span>
+</div>
+<div class="flex justify-between items-start">
+<span class="font-body-base text-body-base text-on-surface-variant">Doctor</span>
+<span class="font-body-bold text-body-bold text-on-background text-right">--</span>
+</div>
+<div class="flex justify-between items-start">
+<span class="font-body-base text-body-base text-on-surface-variant">Schedule</span>
+<span class="font-body-bold text-body-bold text-on-background text-right">--</span>
+</div>
+<div class="flex justify-between items-start pt-4 border-t border-outline-variant/50">
+<span class="font-body-base text-body-base text-on-surface-variant">Est. Duration</span>
+<span class="font-body-bold text-body-bold text-on-background text-right">45 mins</span>
+</div>
+</div>
+<button class="w-full font-body-bold text-body-bold text-on-primary bg-primary-container hover:bg-primary py-3 rounded shadow-sm hover:shadow transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+                            Confirm Booking
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

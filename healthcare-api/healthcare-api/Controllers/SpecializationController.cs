@@ -65,7 +65,6 @@ namespace healthcare_api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteSpecialization(long id)
         {
-            // Cek keberadaan data terlebih dahulu melalui daftar yang ada
             var allSpecializations = await service.GetSpecializationsAsync();
             var specializationExists = allSpecializations.Any(s => s.Id == id);
             

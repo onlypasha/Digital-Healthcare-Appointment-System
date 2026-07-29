@@ -18,8 +18,7 @@ namespace healthcare_api.Service
         {
             await using var transaction = await context.Database.BeginTransactionAsync();
 
-            // ponytail: FOR UPDATE lock on Doctor row serializes concurrent bookings for same doctor.
-            // Includes User + Specialization in same query to eliminate the duplicate doctor fetch below.
+            // Mengunci baris Dokter (FOR UPDATE) untuk mencegah konflik pemesanan bersamaan.
             var doctor = await context.Doctors
                 .FromSqlRaw("SELECT * FROM \"Doctors\" WHERE \"Id\" = {0} FOR UPDATE", request.DoctorId)
                 .Include(d => d.User)
@@ -34,7 +33,7 @@ namespace healthcare_api.Service
             if (patient == null) return null;
 
             var englishDay = request.AppointmentsDate.DayOfWeek.ToString();
-            // ponytail: indoDay needed because DoctorsSchedule.DayOfWeek may be stored in Indonesian
+            // Konversi nama hari ke bahasa Indonesia sesuai format data jadwal
             string indoDay = englishDay switch
             {
                 "Sunday" => "Minggu", "Monday" => "Senin", "Tuesday" => "Selasa",
@@ -69,7 +68,6 @@ namespace healthcare_api.Service
             await context.SaveChangesAsync();
             await transaction.CommitAsync();
 
-            // ponytail: explicit mapping, no AutoMapper
             return new AppointmentResponseDto
             {
                 Id = appointment.Id,
