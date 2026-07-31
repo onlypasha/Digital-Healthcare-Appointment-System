@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
-import '../../home/healthcare_home_page.dart'; 
+import '../../home/healthcare_home_page.dart';
 
 class AuthController extends ChangeNotifier {
   final AuthService _authService = AuthService();
@@ -12,12 +12,15 @@ class AuthController extends ChangeNotifier {
   // Controller Input Sign Up
   final signUpNameController = TextEditingController();
   final signUpEmailController = TextEditingController();
-  final signUpDobController = TextEditingController();
   final signUpPhoneController = TextEditingController();
   final signUpPasswordController = TextEditingController();
+  final signUpAddressController = TextEditingController();
+  final signUpDobController = TextEditingController();
 
   // States
   DateTime? signUpDob;
+  String? selectedBloodType;
+  String? selectedGender;
   bool isObscure = true;
   bool isCheckedTerms = false;
   bool isLoading = false;
@@ -33,6 +36,16 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setBloodType(String? val) {
+    selectedBloodType = val;
+    notifyListeners();
+  }
+
+  void setGender(String? val) {
+    selectedGender = val;
+    notifyListeners();
+  }
+
   Future<void> selectDob(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -45,7 +58,8 @@ class AuthController extends ChangeNotifier {
     );
     if (picked != null) {
       signUpDob = picked;
-      signUpDobController.text = "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
+      signUpDobController.text =
+          "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
       notifyListeners();
     }
   }
@@ -54,37 +68,53 @@ class AuthController extends ChangeNotifier {
     signUpStep = 1;
     isCheckedTerms = false;
     signUpDob = null;
+    selectedBloodType = null;
+    selectedGender = null;
+
+    signUpNameController.clear();
+    signUpEmailController.clear();
+    signUpPhoneController.clear();
+    signUpPasswordController.clear();
+    signUpAddressController.clear();
     signUpDobController.clear();
+
     notifyListeners();
   }
 
+  // Validasi Setiap Langkah (3 Steps Bar)
   bool validateStep(BuildContext context, int step) {
     if (step == 1) {
+      // Step 1: Nama, Email, No Telepon, Password
       final name = signUpNameController.text.trim();
       final email = signUpEmailController.text.trim();
-      if (name.isEmpty || email.isEmpty) {
-        _showSnackBar(context, 'Nama dan Email wajib diisi.');
+      final phone = signUpPhoneController.text.trim();
+      final password = signUpPasswordController.text;
+
+      if (name.isEmpty || email.isEmpty || phone.isEmpty || password.isEmpty) {
+        _showSnackBar(context, 'Semua bidang di Langkah 1 wajib diisi.');
         return false;
       }
       if (!email.contains('@')) {
         _showSnackBar(context, 'Format email tidak valid.');
         return false;
       }
-    } else if (step == 2) {
-      final dob = signUpDobController.text.trim();
-      final phone = signUpPhoneController.text.trim();
-      final password = signUpPasswordController.text;
-      if (dob.isEmpty || phone.isEmpty || password.isEmpty) {
-        _showSnackBar(context, 'Tanggal Lahir, Nomor HP, dan Password wajib diisi.');
+      if (password.length < 6) {
+        _showSnackBar(context, 'Kata sandi minimal 6 karakter.');
         return false;
       }
-      if (password.length < 6) {
-        _showSnackBar(context, 'Password minimal 6 karakter.');
+    } else if (step == 2) {
+      // Step 2: Alamat & Tanggal Lahir
+      final address = signUpAddressController.text.trim();
+      final dob = signUpDobController.text.trim();
+
+      if (address.isEmpty || dob.isEmpty) {
+        _showSnackBar(context, 'Alamat dan Tanggal Lahir wajib diisi.');
         return false;
       }
     } else if (step == 3) {
+      // Step 3: Persetujuan Ketentuan & Privasi
       if (!isCheckedTerms) {
-        _showSnackBar(context, 'Kamu harus menyetujui Ketentuan & Privasi.');
+        _showSnackBar(context, 'Kamu harus menyetujui Ketentuan & Kebijakan Privasi.');
         return false;
       }
     }
@@ -113,7 +143,7 @@ class AuthController extends ChangeNotifier {
     final password = signInPasswordController.text;
 
     if (email.isEmpty || password.isEmpty) {
-      _showSnackBar(context, 'Email dan Password wajib diisi.');
+      _showSnackBar(context, 'Email dan Kata Sandi wajib diisi.');
       return;
     }
 
@@ -122,7 +152,7 @@ class AuthController extends ChangeNotifier {
 
     try {
       await _authService.login(email, password);
-      
+
       if (context.mounted) {
         _showSnackBar(context, 'Sign In Berhasil!');
 
@@ -148,45 +178,24 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-  // Logika Sign Up
+  // Logika Sign Up Final
   Future<void> signUp(BuildContext context) async {
-    final name = signUpNameController.text.trim();
-    final email = signUpEmailController.text.trim();
-    final phone = signUpPhoneController.text.trim();
-    final password = signUpPasswordController.text;
-
-    if (name.isEmpty || email.isEmpty || phone.isEmpty || password.isEmpty) {
-      _showSnackBar(context, 'Semua kolom input wajib diisi.');
-      return;
-    }
-
-    if (!isCheckedTerms) {
-      _showSnackBar(context, 'Kamu harus menyetujui Terms & Privacy Policy.');
-      return;
-    }
+    if (!validateStep(context, 3)) return;
 
     isLoading = true;
     notifyListeners();
 
     try {
       await _authService.register(
-        fullName: name,
-        email: email,
-        phone: phone,
-        password: password,
+        fullName: signUpNameController.text.trim(),
+        email: signUpEmailController.text.trim(),
+        phone: signUpPhoneController.text.trim(),
+        password: signUpPasswordController.text,
       );
 
       if (context.mounted) {
         _showSnackBar(context, 'Akun berhasil dibuat! Silakan masuk.');
-
-        // Bersihkan inputan setelah register
-        signUpNameController.clear();
-        signUpEmailController.clear();
-        signUpPhoneController.clear();
-        signUpPasswordController.clear();
-        isCheckedTerms = false;
-        signUpStep = 1;
-
+        resetSignUpStep();
         Navigator.pop(context); // Kembali ke halaman Sign In
       }
     } catch (e) {
@@ -209,9 +218,10 @@ class AuthController extends ChangeNotifier {
     signInPasswordController.dispose();
     signUpNameController.dispose();
     signUpEmailController.dispose();
-    signUpDobController.dispose();
     signUpPhoneController.dispose();
     signUpPasswordController.dispose();
+    signUpAddressController.dispose();
+    signUpDobController.dispose();
     super.dispose();
   }
 }

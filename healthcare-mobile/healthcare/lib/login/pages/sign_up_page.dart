@@ -44,7 +44,11 @@ class SignUpPage extends StatelessWidget {
                   Text(
                     'Daftar CareConnect',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: primaryColor),
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: primaryColor,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -62,7 +66,9 @@ class SignUpPage extends StatelessWidget {
                           duration: const Duration(milliseconds: 300),
                           height: 6,
                           decoration: BoxDecoration(
-                            color: controller.signUpStep >= 1 ? primaryColor : primaryColor.withValues(alpha: 0.2),
+                            color: controller.signUpStep >= 1
+                                ? primaryColor
+                                : primaryColor.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(3),
                           ),
                         ),
@@ -73,7 +79,9 @@ class SignUpPage extends StatelessWidget {
                           duration: const Duration(milliseconds: 300),
                           height: 6,
                           decoration: BoxDecoration(
-                            color: controller.signUpStep >= 2 ? primaryColor : primaryColor.withValues(alpha: 0.2),
+                            color: controller.signUpStep >= 2
+                                ? primaryColor
+                                : primaryColor.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(3),
                           ),
                         ),
@@ -84,7 +92,9 @@ class SignUpPage extends StatelessWidget {
                           duration: const Duration(milliseconds: 300),
                           height: 6,
                           decoration: BoxDecoration(
-                            color: controller.signUpStep >= 3 ? primaryColor : primaryColor.withValues(alpha: 0.2),
+                            color: controller.signUpStep >= 3
+                                ? primaryColor
+                                : primaryColor.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(3),
                           ),
                         ),
@@ -96,7 +106,11 @@ class SignUpPage extends StatelessWidget {
                   Text(
                     'Langkah ${controller.signUpStep} dari 3',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: primaryColor),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: primaryColor,
+                    ),
                   ),
                   const SizedBox(height: 24),
 
@@ -111,13 +125,26 @@ class SignUpPage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Sudah punya akun? ", style: TextStyle(color: secondaryTextColor, fontSize: 13)),
+                      Text(
+                        "Sudah punya akun? ",
+                        style: TextStyle(
+                          color: secondaryTextColor,
+                          fontSize: 13,
+                        ),
+                      ),
                       GestureDetector(
                         onTap: () {
                           controller.resetSignUpStep();
                           Navigator.pop(context);
                         },
-                        child: Text('Masuk', style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold, fontSize: 13)),
+                        child: Text(
+                          'Masuk',
+                          style: TextStyle(
+                            color: primaryColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -133,11 +160,11 @@ class SignUpPage extends StatelessWidget {
   String _getStepSubtitle(int step) {
     switch (step) {
       case 1:
-        return 'Langkah 1: Masukkan nama lengkap dan alamat email Anda.';
+        return 'Langkah 1: Masukkan nama, email, dan kata sandi Anda.';
       case 2:
-        return 'Langkah 2: Masukkan nomor HP dan buat kata sandi.';
+        return 'Langkah 2: Masukkan alamat tempat tinggal, nomor telepon dan tanggal lahir Anda.';
       case 3:
-        return 'Langkah 3: Konfirmasi data dan setujui ketentuan layanan.';
+        return 'Langkah 3: Lengkapi profil medis dan konfirmasi data akun.';
       default:
         return 'Buat akun Anda untuk menjadwalkan janji temu medis.';
     }
@@ -156,7 +183,7 @@ class SignUpPage extends StatelessWidget {
     }
   }
 
-  // --- STEP 1: INFORMASI DIRI ---
+  // --- STEP 1: AKUN & DIRI ---
   Widget _buildStep1(BuildContext context, AuthController controller) {
     return Column(
       key: const ValueKey(1),
@@ -193,8 +220,9 @@ class SignUpPage extends StatelessWidget {
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: borderColor)),
             enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: borderColor)),
           ),
-        ),const SizedBox(height: 16),
-        Text('Password', style: TextStyle(fontWeight: FontWeight.w600, color: textColor)),
+        ),
+        const SizedBox(height: 16),
+        Text('Kata Sandi', style: TextStyle(fontWeight: FontWeight.w600, color: textColor)),
         const SizedBox(height: 6),
         TextField(
           controller: controller.signUpPasswordController,
@@ -236,12 +264,46 @@ class SignUpPage extends StatelessWidget {
     );
   }
 
-  // --- STEP 2: KONTAK & KEAMANAN ---
+  // --- STEP 2: ALAMAT, TELEPON & TANGGAL LAHIR ---
   Widget _buildStep2(BuildContext context, AuthController controller) {
     return Column(
       key: const ValueKey(2),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        Text('Alamat Tempat Tinggal', style: TextStyle(fontWeight: FontWeight.w600, color: textColor)),
+        const SizedBox(height: 6),
+        TextField(
+          controller: controller.signUpAddressController,
+          maxLines: 2,
+          textInputAction: TextInputAction.next,
+          decoration: InputDecoration(
+            prefixIcon: const Icon(Icons.location_on_outlined, size: 20),
+            hintText: 'Jl. Sudirman No. 123, Jakarta',
+            filled: true,
+            fillColor: inputFillColor,
+            contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: borderColor)),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: borderColor)),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text('Nomor Telepon', style: TextStyle(fontWeight: FontWeight.w600, color: textColor)),
+        const SizedBox(height: 6),
+        TextField(
+          controller: controller.signUpPhoneController,
+          keyboardType: TextInputType.phone,
+          textInputAction: TextInputAction.next,
+          decoration: InputDecoration(
+            prefixIcon: const Icon(Icons.phone_outlined, size: 20),
+            hintText: '081234567890',
+            filled: true,
+            fillColor: inputFillColor,
+            contentPadding: const EdgeInsets.symmetric(vertical: 12),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: borderColor)),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: borderColor)),
+          ),
+        ),
+        const SizedBox(height: 16),
         Text('Tanggal Lahir', style: TextStyle(fontWeight: FontWeight.w600, color: textColor)),
         const SizedBox(height: 6),
         TextField(
@@ -252,23 +314,6 @@ class SignUpPage extends StatelessWidget {
             prefixIcon: const Icon(Icons.calendar_today_outlined, size: 20),
             suffixIcon: const Icon(Icons.arrow_drop_down, size: 20),
             hintText: 'DD/MM/YYYY',
-            filled: true,
-            fillColor: inputFillColor,
-            contentPadding: const EdgeInsets.symmetric(vertical: 12),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: borderColor)),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: borderColor)),
-          ),
-        ),
-        const SizedBox(height: 16),
-        Text('Nomor HP', style: TextStyle(fontWeight: FontWeight.w600, color: textColor)),
-        const SizedBox(height: 6),
-        TextField(
-          controller: controller.signUpPhoneController,
-          keyboardType: TextInputType.phone,
-          textInputAction: TextInputAction.next,
-          decoration: InputDecoration(
-            prefixIcon: const Icon(Icons.phone_outlined, size: 20),
-            hintText: '(62) 812-3456-7890',
             filled: true,
             fillColor: inputFillColor,
             contentPadding: const EdgeInsets.symmetric(vertical: 12),
@@ -323,38 +368,63 @@ class SignUpPage extends StatelessWidget {
     );
   }
 
-  // --- STEP 3: KONFIRMASI & KETENTUAN ---
+  // --- STEP 3: INFORMASI OPSIONAL & RINGKASAN DATA ---
   Widget _buildStep3(BuildContext context, AuthController controller) {
     return Column(
       key: const ValueKey(3),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Card Ringkasan Data
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: inputFillColor,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: borderColor),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Ringkasan Data Akun', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: primaryColor)),
-              const Divider(height: 16),
-              _buildSummaryRow(Icons.person, 'Nama', controller.signUpNameController.text),
-              const SizedBox(height: 8),
-              _buildSummaryRow(Icons.email, 'Email', controller.signUpEmailController.text),
-              const SizedBox(height: 8),
-              _buildSummaryRow(Icons.calendar_today, 'Tanggal Lahir', controller.signUpDobController.text),
-              const SizedBox(height: 8),
-              _buildSummaryRow(Icons.phone, 'Nomor HP', controller.signUpPhoneController.text),
-            ],
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Golongan Darah', style: TextStyle(fontWeight: FontWeight.w600, color: textColor)),
+            Text('(Opsional)', style: TextStyle(fontSize: 12, color: secondaryTextColor)),
+          ],
+        ),
+        const SizedBox(height: 6),
+        DropdownButtonFormField<String>(
+          value: controller.selectedBloodType,
+          items: ['A', 'B', 'AB', 'O'].map((type) {
+            return DropdownMenuItem(value: type, child: Text(type));
+          }).toList(),
+          onChanged: (val) => controller.setBloodType(val),
+          decoration: InputDecoration(
+            prefixIcon: const Icon(Icons.opacity, size: 20),
+            hintText: 'Pilih Golongan Darah',
+            filled: true,
+            fillColor: inputFillColor,
+            contentPadding: const EdgeInsets.symmetric(vertical: 12),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: borderColor)),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: borderColor)),
           ),
         ),
         const SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Jenis Kelamin', style: TextStyle(fontWeight: FontWeight.w600, color: textColor)),
+            Text('(Opsional)', style: TextStyle(fontSize: 12, color: secondaryTextColor)),
+          ],
+        ),
+        const SizedBox(height: 6),
+        DropdownButtonFormField<String>(
+          value: controller.selectedGender,
+          items: ['Laki-laki', 'Perempuan'].map((gender) {
+            return DropdownMenuItem(value: gender, child: Text(gender));
+          }).toList(),
+          onChanged: (val) => controller.setGender(val),
+          decoration: InputDecoration(
+            prefixIcon: const Icon(Icons.wc, size: 20),
+            hintText: 'Pilih Jenis Kelamin',
+            filled: true,
+            fillColor: inputFillColor,
+            contentPadding: const EdgeInsets.symmetric(vertical: 12),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: borderColor)),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: borderColor)),
+          ),
+        ),
+        const SizedBox(height: 20),
 
-        // Checkbox Terms
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -422,23 +492,6 @@ class SignUpPage extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSummaryRow(IconData icon, String label, String value) {
-    return Row(
-      children: [
-        Icon(icon, size: 16, color: secondaryTextColor),
-        const SizedBox(width: 8),
-        Text('$label: ', style: TextStyle(fontSize: 12, color: secondaryTextColor, fontWeight: FontWeight.w500)),
-        Expanded(
-          child: Text(
-            value.isEmpty ? '-' : value,
-            style: TextStyle(fontSize: 12, color: textColor, fontWeight: FontWeight.w600),
-            overflow: TextOverflow.ellipsis,
-          ),
         ),
       ],
     );
