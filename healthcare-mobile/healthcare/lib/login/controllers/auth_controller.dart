@@ -12,13 +12,16 @@ class AuthController extends ChangeNotifier {
   // Controller Input Sign Up
   final signUpNameController = TextEditingController();
   final signUpEmailController = TextEditingController();
+  final signUpDobController = TextEditingController();
   final signUpPhoneController = TextEditingController();
   final signUpPasswordController = TextEditingController();
 
   // States
+  DateTime? signUpDob;
   bool isObscure = true;
   bool isCheckedTerms = false;
   bool isLoading = false;
+  int signUpStep = 1;
 
   void toggleObscure() {
     isObscure = !isObscure;
@@ -28,6 +31,80 @@ class AuthController extends ChangeNotifier {
   void toggleTerms(bool? value) {
     isCheckedTerms = value ?? false;
     notifyListeners();
+  }
+
+  Future<void> selectDob(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: signUpDob ?? DateTime(2000, 1, 1),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+      helpText: 'Pilih Tanggal Lahir',
+      cancelText: 'Batal',
+      confirmText: 'Pilih',
+    );
+    if (picked != null) {
+      signUpDob = picked;
+      signUpDobController.text = "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
+      notifyListeners();
+    }
+  }
+
+  void resetSignUpStep() {
+    signUpStep = 1;
+    isCheckedTerms = false;
+    signUpDob = null;
+    signUpDobController.clear();
+    notifyListeners();
+  }
+
+  bool validateStep(BuildContext context, int step) {
+    if (step == 1) {
+      final name = signUpNameController.text.trim();
+      final email = signUpEmailController.text.trim();
+      if (name.isEmpty || email.isEmpty) {
+        _showSnackBar(context, 'Nama dan Email wajib diisi.');
+        return false;
+      }
+      if (!email.contains('@')) {
+        _showSnackBar(context, 'Format email tidak valid.');
+        return false;
+      }
+    } else if (step == 2) {
+      final dob = signUpDobController.text.trim();
+      final phone = signUpPhoneController.text.trim();
+      final password = signUpPasswordController.text;
+      if (dob.isEmpty || phone.isEmpty || password.isEmpty) {
+        _showSnackBar(context, 'Tanggal Lahir, Nomor HP, dan Password wajib diisi.');
+        return false;
+      }
+      if (password.length < 6) {
+        _showSnackBar(context, 'Password minimal 6 karakter.');
+        return false;
+      }
+    } else if (step == 3) {
+      if (!isCheckedTerms) {
+        _showSnackBar(context, 'Kamu harus menyetujui Ketentuan & Privasi.');
+        return false;
+      }
+    }
+    return true;
+  }
+
+  void nextSignUpStep(BuildContext context) {
+    if (validateStep(context, signUpStep)) {
+      if (signUpStep < 3) {
+        signUpStep++;
+        notifyListeners();
+      }
+    }
+  }
+
+  void previousSignUpStep() {
+    if (signUpStep > 1) {
+      signUpStep--;
+      notifyListeners();
+    }
   }
 
   // Logika Sign In
@@ -44,7 +121,7 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await _authService.login(email, password);
+      await _authService.login(email, password);
       
       if (context.mounted) {
         _showSnackBar(context, 'Sign In Berhasil!');
@@ -108,6 +185,7 @@ class AuthController extends ChangeNotifier {
         signUpPhoneController.clear();
         signUpPasswordController.clear();
         isCheckedTerms = false;
+        signUpStep = 1;
 
         Navigator.pop(context); // Kembali ke halaman Sign In
       }
@@ -131,6 +209,7 @@ class AuthController extends ChangeNotifier {
     signInPasswordController.dispose();
     signUpNameController.dispose();
     signUpEmailController.dispose();
+    signUpDobController.dispose();
     signUpPhoneController.dispose();
     signUpPasswordController.dispose();
     super.dispose();

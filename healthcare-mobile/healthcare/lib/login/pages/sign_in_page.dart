@@ -53,20 +53,20 @@ class SignInPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Welcome back. Please sign in to continue.',
+                    'Selamat datang kembali. Silakan masuk untuk melanjutkan.',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 14, color: secondaryTextColor),
                   ),
                   const SizedBox(height: 24),
 
                   // Email Input
-                  Text('Email Address', style: TextStyle(fontWeight: FontWeight.w600, color: textColor)),
+                  Text('Email Anda', style: TextStyle(fontWeight: FontWeight.w600, color: textColor)),
                   const SizedBox(height: 6),
                   TextField(
                     controller: controller.signInEmailController,
                     decoration: InputDecoration(
                       prefixIcon: const Icon(Icons.email_outlined, size: 20),
-                      hintText: 'Enter your Email',
+                      hintText: 'emailanda@contoh.com',
                       filled: true,
                       fillColor: inputFillColor,
                       contentPadding: const EdgeInsets.symmetric(vertical: 12),
@@ -80,10 +80,10 @@ class SignInPage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Password', style: TextStyle(fontWeight: FontWeight.w600, color: textColor)),
+                      Text('Sandi', style: TextStyle(fontWeight: FontWeight.w600, color: textColor)),
                       GestureDetector(
                         onTap: () {},
-                        child: Text('Forgot Password?', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: primaryColor)),
+                        child: Text('Lupa sandi?', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: primaryColor)),
                       ),
                     ],
                   ),
@@ -134,7 +134,7 @@ class SignInPage extends StatelessWidget {
                       Expanded(child: Divider(color: borderColor)),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: Text('OR CONTINUE WITH', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: secondaryTextColor)),
+                        child: Text('ATAU LANJUTKAN DENGAN', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: secondaryTextColor)),
                       ),
                       Expanded(child: Divider(color: borderColor)),
                     ],
@@ -163,7 +163,7 @@ class SignInPage extends StatelessWidget {
                         child: OutlinedButton.icon(
                           onPressed: () {},
                           icon: Image.asset('assets/images/Apple.png', width: 20, height: 20), // Pastikan ada file Apple.png
-                          label: const Text('AppLe', style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w600)),
+                          label: const Text('Apple', style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w600)),
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             side: BorderSide(color: borderColor),
@@ -178,10 +178,10 @@ class SignInPage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Don't have an account? ", style: TextStyle(color: secondaryTextColor, fontSize: 13)),
+                      Text("Tidak punya akun? ", style: TextStyle(color: secondaryTextColor, fontSize: 13)),
                       GestureDetector(
                         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SignUpPage())),
-                        child: Text('Sign Up', style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold, fontSize: 13)),
+                        child: Text('Daftar', style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold, fontSize: 13)),
                       ),
                     ],
                   ),

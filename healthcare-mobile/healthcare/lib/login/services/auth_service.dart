@@ -2,13 +2,14 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class AuthService {
-  // Ganti URL sesuai endpoint Laravel kamu (Ganti localhost ke 10.0.2.2 jika pakai Emulator Android)
-  final String baseUrl = 'http://10.0.2.2:8000/api';
+  // erlangga:
+  //https://perky-drastic-gleeful.ngrok-free.dev
+  final String baseUrl = 'https://perky-drastic-gleeful.ngrok-free.dev/api';
 
   // API Sign In
   Future<Map<String, dynamic>> login(String email, String password) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/login'),
+      Uri.parse('$baseUrl/auth/login'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'email': email,
