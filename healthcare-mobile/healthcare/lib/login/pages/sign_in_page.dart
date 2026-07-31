@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:healthcare/login/shared/shared.dart';
 import '../controllers/auth_controller.dart';
 import 'sign_up_page.dart';
+import 'forgot_password_page.dart'; // Import halaman forgot password
 
 class SignInPage extends StatelessWidget {
   const SignInPage({super.key});
@@ -82,8 +83,22 @@ class SignInPage extends StatelessWidget {
                     children: [
                       Text('Sandi', style: TextStyle(fontWeight: FontWeight.w600, color: textColor)),
                       GestureDetector(
-                        onTap: () {},
-                        child: Text('Lupa sandi?', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: primaryColor)),
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ForgotPasswordPage(),
+                            ),
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 2.0),
+                          child: Text(
+                            'Lupa sandi?',
+                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: primaryColor),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -141,7 +156,7 @@ class SignInPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
 
-                 // ikon
+                  // Ikon Social
                   Row(
                     children: [
                       // Google 
@@ -162,7 +177,7 @@ class SignInPage extends StatelessWidget {
                       Expanded(
                         child: OutlinedButton.icon(
                           onPressed: () {},
-                          icon: Image.asset('assets/images/Apple.png', width: 20, height: 20), // Pastikan ada file Apple.png
+                          icon: Image.asset('assets/images/Apple.png', width: 20, height: 20),
                           label: const Text('Apple', style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w600)),
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 12),

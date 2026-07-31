@@ -17,6 +17,9 @@ class AuthController extends ChangeNotifier {
   final signUpAddressController = TextEditingController();
   final signUpDobController = TextEditingController();
 
+  // Controller Input Forgot Password
+  final forgotPasswordEmailController = TextEditingController();
+
   // States
   DateTime? signUpDob;
   String? selectedBloodType;
@@ -81,10 +84,9 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Validasi Setiap Langkah (3 Steps Bar)
+  // Validasi Setiap Langkah Sign Up
   bool validateStep(BuildContext context, int step) {
     if (step == 1) {
-      // Step 1: Nama, Email, No Telepon, Password
       final name = signUpNameController.text.trim();
       final email = signUpEmailController.text.trim();
       final phone = signUpPhoneController.text.trim();
@@ -103,7 +105,6 @@ class AuthController extends ChangeNotifier {
         return false;
       }
     } else if (step == 2) {
-      // Step 2: Alamat & Tanggal Lahir
       final address = signUpAddressController.text.trim();
       final dob = signUpDobController.text.trim();
 
@@ -112,7 +113,6 @@ class AuthController extends ChangeNotifier {
         return false;
       }
     } else if (step == 3) {
-      // Step 3: Persetujuan Ketentuan & Privasi
       if (!isCheckedTerms) {
         _showSnackBar(context, 'Kamu harus menyetujui Ketentuan & Kebijakan Privasi.');
         return false;
@@ -155,12 +155,9 @@ class AuthController extends ChangeNotifier {
 
       if (context.mounted) {
         _showSnackBar(context, 'Sign In Berhasil!');
-
-        // Bersihkan inputan
         signInEmailController.clear();
         signInPasswordController.clear();
 
-        // NAVIGASI LANGSUNG KE DASHBOARD HEALTHCARE
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -178,7 +175,7 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-  // Logika Sign Up Final
+  // Logika Sign Up
   Future<void> signUp(BuildContext context) async {
     if (!validateStep(context, 3)) return;
 
@@ -196,7 +193,7 @@ class AuthController extends ChangeNotifier {
       if (context.mounted) {
         _showSnackBar(context, 'Akun berhasil dibuat! Silakan masuk.');
         resetSignUpStep();
-        Navigator.pop(context); // Kembali ke halaman Sign In
+        Navigator.pop(context);
       }
     } catch (e) {
       if (context.mounted) {
@@ -205,6 +202,41 @@ class AuthController extends ChangeNotifier {
     } finally {
       isLoading = false;
       notifyListeners();
+    }
+  }
+
+  // Logika Forgot Password
+  Future<bool> sendResetPasswordEmail(BuildContext context, String email) async {
+    final cleanEmail = email.trim();
+
+    if (cleanEmail.isEmpty) {
+      _showSnackBar(context, 'Silakan masukkan alamat email Anda.');
+      return false;
+    }
+
+    if (!cleanEmail.contains('@')) {
+      _showSnackBar(context, 'Format email tidak valid.');
+      return false;
+    }
+
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      // Memanggil method di AuthService
+      await _authService.sendPasswordResetEmail(cleanEmail);
+
+      isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      isLoading = false;
+      notifyListeners();
+
+      if (context.mounted) {
+        _showSnackBar(context, e.toString().replaceAll('Exception: ', ''));
+      }
+      return false;
     }
   }
 
@@ -222,6 +254,7 @@ class AuthController extends ChangeNotifier {
     signUpPasswordController.dispose();
     signUpAddressController.dispose();
     signUpDobController.dispose();
+    forgotPasswordEmailController.dispose();
     super.dispose();
   }
 }
