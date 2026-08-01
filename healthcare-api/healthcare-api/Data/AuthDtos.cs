@@ -64,4 +64,14 @@ namespace healthcare_api.Data
         public string Token { get; set; } = string.Empty;
         public UserDto User { get; set; } = new();
     }
+
+    public class ChangePasswordDto
+    {
+        [Required]
+        public string OldPassword { get; set; } = string.Empty;
+
+        [Required]
+        [MinLength(6)]
+        public string NewPassword { get; set; } = string.Empty;
+    }
 }

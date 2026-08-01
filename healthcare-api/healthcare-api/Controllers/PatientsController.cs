@@ -41,5 +41,20 @@ namespace healthcare_api.Controllers
 
             return Ok(profile);
         }
+
+        [HttpPut("profile")]
+        public async Task<ActionResult<PatientsResponseDto>> UpdateMyProfile([FromBody] UpdatePatientProfileDto request)
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!long.TryParse(userIdStr, out var userId)) return Unauthorized();
+
+            var profile = await _service.UpdatePatientProfileAsync(userId, request);
+            if (profile == null)
+            {
+                return NotFound("Profil pasien tidak ditemukan.");
+            }
+
+            return Ok(profile);
+        }
     }
 }

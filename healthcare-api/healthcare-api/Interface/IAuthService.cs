@@ -34,5 +34,10 @@ namespace healthcare_api.Interface
         /// </summary>
         /// <returns>A task representing the asynchronous operation.</returns>
         Task LogoutAsync();
+
+        /// <summary>
+        /// Mengubah password user yang sedang login.
+        /// </summary>
+        Task<bool> ChangePasswordAsync(long userId, ChangePasswordDto request);
     }
 }

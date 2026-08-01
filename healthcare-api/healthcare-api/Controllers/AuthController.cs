@@ -3,6 +3,7 @@ using healthcare_api.Db;
 using healthcare_api.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace healthcare_api.Controllers
 {
@@ -25,13 +26,20 @@ namespace healthcare_api.Controllers
         [HttpPost("register/doctor")]
         public async Task<ActionResult> RegisterDoctor(RegisterDoctorDto request)
         {
-            var user = await service.RegisterDoctorAsync(request);
-
-            if (user == null)
+            try
             {
-                return BadRequest("Email sudah terdaftar.");
+                var user = await service.RegisterDoctorAsync(request);
+
+                if (user == null)
+                {
+                    return BadRequest("Email sudah terdaftar.");
+                }
+                return Ok(new { message = "Registrasi Dokter berhasil. Menunggu persetujuan Admin.", email = user.Email });
             }
-            return Ok(new { message = "Registrasi Dokter berhasil. Menunggu persetujuan Admin.", email = user.Email });
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("login")]
@@ -62,6 +70,22 @@ namespace healthcare_api.Controllers
             {
                 message = "Logout berhasil"
             });
+        }
+
+        [Authorize]
+        [HttpPut("change-password")]
+        public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordDto request)
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!long.TryParse(userIdStr, out var userId)) return Unauthorized();
+
+            var success = await service.ChangePasswordAsync(userId, request);
+            if (!success)
+            {
+                return BadRequest("Password lama salah.");
+            }
+
+            return Ok(new { message = "Password berhasil diubah." });
         }
     }
 }

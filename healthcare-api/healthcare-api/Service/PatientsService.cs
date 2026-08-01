@@ -37,5 +37,38 @@ namespace healthcare_api.Service
                 CreatedAt = patient.CreatedAt
             };
         }
+
+        // Update profil pasien: hanya nomor HP, alamat, dan golongan darah
+        public async Task<PatientsResponseDto?> UpdatePatientProfileAsync(long userId, UpdatePatientProfileDto request)
+        {
+            var patient = await _context.Patients
+                .Include(p => p.User)
+                .FirstOrDefaultAsync(p => p.UserId == userId);
+
+            if (patient == null)
+            {
+                return null;
+            }
+
+            if (request.Phone != null) patient.Phone = request.Phone;
+            if (request.Address != null) patient.Address = request.Address;
+            if (request.BloodType != null) patient.BloodType = request.BloodType;
+
+            await _context.SaveChangesAsync();
+
+            return new PatientsResponseDto
+            {
+                Id = patient.Id,
+                UserId = patient.UserId,
+                Name = patient.User?.Name,
+                Email = patient.User?.Email,
+                BirthDate = patient.BirthDate,
+                Gender = patient.Gender,
+                BloodType = patient.BloodType,
+                Phone = patient.Phone,
+                Address = patient.Address,
+                CreatedAt = patient.CreatedAt
+            };
+        }
     }
 }

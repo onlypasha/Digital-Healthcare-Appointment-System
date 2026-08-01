@@ -24,4 +24,11 @@ namespace healthcare_api.Data
 
         public DateTime CreatedAt { get; set; }
     }
+
+    public class UpdatePatientProfileDto
+    {
+        public string? Phone { get; set; }
+        public string? Address { get; set; }
+        public string? BloodType { get; set; }
+    }
 }

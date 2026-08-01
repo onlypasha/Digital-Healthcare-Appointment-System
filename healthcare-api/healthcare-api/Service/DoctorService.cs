@@ -24,11 +24,19 @@ namespace healthcare_api.Service
             user.Status = "Active";
             await context.SaveChangesAsync();
 
-            await publishEndpoint.Publish(new DoctorApprovedEvent(
-                user.Id,
-                user.Name ?? string.Empty,
-                user.Email ?? string.Empty
-            ));
+            // Publish event tidak boleh menggagalkan approval
+            try
+            {
+                await publishEndpoint.Publish(new DoctorApprovedEvent(
+                    user.Id,
+                    user.Name ?? string.Empty,
+                    user.Email ?? string.Empty
+                ));
+            }
+            catch (Exception)
+            {
+                // Event gagal terkirim, tapi approval tetap berhasil
+            }
 
             return true;
         }

@@ -30,6 +30,7 @@ namespace healthcare_api.Service
                 Email = request.Email,
                 Name = request.Name,
                 Role = "Patient",
+                Status = "Active",
                 CreatedAt = DateTime.UtcNow
             };
             user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.Password);
@@ -59,6 +60,12 @@ namespace healthcare_api.Service
                 return null;
             }
 
+            // Validasi SpecializationId harus ada di database
+            if (!await context.Specializations.AnyAsync(s => s.Id == request.SpecializationId))
+            {
+                throw new ArgumentException("Spesialisasi tidak ditemukan.");
+            }
+
             var user = new User
             {
                 Email = request.Email,
@@ -81,12 +88,20 @@ namespace healthcare_api.Service
             context.Doctors.Add(doctor);
             await context.SaveChangesAsync();
 
-            await publishEndpoint.Publish(new DoctorRegisteredEvent(
-                doctor.Id,
-                user.Name ?? string.Empty,
-                user.Email ?? string.Empty,
-                doctor.SpecializationId ?? 0
-            ));
+            // Publish event tidak boleh menggagalkan registrasi
+            try
+            {
+                await publishEndpoint.Publish(new DoctorRegisteredEvent(
+                    doctor.Id,
+                    user.Name ?? string.Empty,
+                    user.Email ?? string.Empty,
+                    doctor.SpecializationId ?? 0
+                ));
+            }
+            catch (Exception)
+            {
+                // Event gagal terkirim, tapi registrasi tetap berhasil
+            }
 
             return new RegisterDoctorDto { Email = request.Email };
         }
@@ -153,6 +168,28 @@ namespace healthcare_api.Service
             // For stateless JWT authentication, client handles token removal.
             // Server-side cleanup or audit logging can be performed here if needed.
             return Task.CompletedTask;
+        }
+
+        // Ganti password: validasi password lama, lalu simpan hash password baru
+        public async Task<bool> ChangePasswordAsync(long userId, ChangePasswordDto request)
+        {
+            var user = await context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                return false;
+            }
+
+            var hasher = new PasswordHasher<User>();
+            var verifyResult = hasher.VerifyHashedPassword(user, user.PasswordHash!, request.OldPassword);
+
+            if (verifyResult == PasswordVerificationResult.Failed)
+            {
+                return false;
+            }
+
+            user.PasswordHash = hasher.HashPassword(user, request.NewPassword);
+            await context.SaveChangesAsync();
+            return true;
         }
 
         private string CreateToken(User user)

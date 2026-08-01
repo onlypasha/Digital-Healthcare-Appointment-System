@@ -32,6 +32,8 @@ builder.Services.AddAuthentication(options =>
 {
     options.RequireHttpsMetadata = false;
     options.SaveToken = true;
+    // Memastikan claim JWT nama pendek ("role", "nameid") di-map balik ke URI panjang (ClaimTypes.Role, ClaimTypes.NameIdentifier)
+    options.MapInboundClaims = true;
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
