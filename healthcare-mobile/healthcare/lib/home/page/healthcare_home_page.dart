@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'data_model.dart';
+import '../model/data_model.dart';
 import '/doctors/search_doctor_page.dart'; // Import halaman Search Dokter
 
 class HealthcareHomePage extends StatelessWidget {

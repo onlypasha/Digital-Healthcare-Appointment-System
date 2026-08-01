@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:healthcare/login/pages/pages.dart';
 import '../services/auth_service.dart';
-import '../../home/healthcare_home_page.dart';
+import '../../home/page/healthcare_home_page.dart';
 
 class AuthController extends ChangeNotifier {
   final AuthService _authService = AuthService();
@@ -19,7 +20,6 @@ class AuthController extends ChangeNotifier {
 
   // Controller Input Forgot Password
   final forgotPasswordEmailController = TextEditingController();
-
   // States
   DateTime? signUpDob;
   String? selectedBloodType;
@@ -62,7 +62,7 @@ class AuthController extends ChangeNotifier {
     if (picked != null) {
       signUpDob = picked;
       signUpDobController.text =
-          "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
+          "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
       notifyListeners();
     }
   }
@@ -89,11 +89,10 @@ class AuthController extends ChangeNotifier {
     if (step == 1) {
       final name = signUpNameController.text.trim();
       final email = signUpEmailController.text.trim();
-      final phone = signUpPhoneController.text.trim();
       final password = signUpPasswordController.text;
 
-      if (name.isEmpty || email.isEmpty || phone.isEmpty || password.isEmpty) {
-        _showSnackBar(context, 'Semua bidang di Langkah 1 wajib diisi.');
+      if (name.isEmpty || email.isEmpty || password.isEmpty) {
+        _showSnackBar(context, 'Semua field di Langkah 1 wajib diisi.');
         return false;
       }
       if (!email.contains('@')) {
@@ -107,14 +106,16 @@ class AuthController extends ChangeNotifier {
     } else if (step == 2) {
       final address = signUpAddressController.text.trim();
       final dob = signUpDobController.text.trim();
+      final phone = signUpPhoneController.text.trim();
 
-      if (address.isEmpty || dob.isEmpty) {
-        _showSnackBar(context, 'Alamat dan Tanggal Lahir wajib diisi.');
+      if (address.isEmpty || dob.isEmpty || phone.isEmpty) {
+        _showSnackBar(context, 'Semua field di Langkah 2 wajib diisi');
         return false;
       }
     } else if (step == 3) {
-      if (!isCheckedTerms) {
-        _showSnackBar(context, 'Kamu harus menyetujui Ketentuan & Kebijakan Privasi.');
+      final genderSelected = selectedGender?.trim();
+      if (!isCheckedTerms || genderSelected == null) {
+        _showSnackBar(context, 'Kamu harus mengisi Jenis kelamin & menyetujui Ketentuan & Kebijakan Privasi.');
         return false;
       }
     }
@@ -188,11 +189,15 @@ class AuthController extends ChangeNotifier {
         email: signUpEmailController.text.trim(),
         phone: signUpPhoneController.text.trim(),
         password: signUpPasswordController.text,
+        address: signUpAddressController.text.trim(),
+        bloodType: selectedBloodType?.trim(),
+        gender: selectedGender?.trim(),
+        birthDate: signUpDobController.text.trim()
       );
 
       if (context.mounted) {
         _showSnackBar(context, 'Akun berhasil dibuat! Silakan masuk.');
-        resetSignUpStep();
+        SignInPage();
         Navigator.pop(context);
       }
     } catch (e) {

@@ -403,7 +403,6 @@ class SignUpPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('Jenis Kelamin', style: TextStyle(fontWeight: FontWeight.w600, color: textColor)),
-            Text('(Opsional)', style: TextStyle(fontSize: 12, color: secondaryTextColor)),
           ],
         ),
         const SizedBox(height: 6),
