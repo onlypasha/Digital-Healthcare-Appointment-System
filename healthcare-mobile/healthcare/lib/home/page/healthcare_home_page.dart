@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../model/data_model.dart';
-import '/doctors/search_doctor_page.dart'; // Import halaman Search Dokter
+import '../controller/home_controller.dart';
+import '/doctors/search_doctor_page.dart';
+import '/login/controllers/auth_controller.dart';
 
 class HealthcareHomePage extends StatelessWidget {
   const HealthcareHomePage({super.key});
@@ -14,30 +17,39 @@ class HealthcareHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final homeController = Provider.of<HomeController>(context);
+
     return Scaffold(
       backgroundColor: backgroundColor,
-      appBar: _buildAppBar(),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSearchBar(context),
-            const SizedBox(height: 24),
-            _buildUpcomingAppointmentSection(),
-            const SizedBox(height: 24),
-            _buildSpecialtiesSection(),
-            const SizedBox(height: 24),
-            _buildHealthOverviewSection(),
-            const SizedBox(height: 16),
-          ],
-        ),
-      ),
-      bottomNavigationBar: _buildBottomNavigationBar(context),
+      appBar: _buildAppBar(context),
+      body: homeController.isLoading
+          ? const Center(child: CircularProgressIndicator(color: primaryColor))
+          : SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSearchBar(context),
+                  const SizedBox(height: 24),
+                  _buildUpcomingAppointmentSection(homeController.upcomingAppointment),
+                  const SizedBox(height: 24),
+                  _buildSpecialtiesSection(homeController.specialties),
+                  const SizedBox(height: 24),
+                  _buildHealthOverviewSection(homeController.vitalSigns),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            ),
+      bottomNavigationBar: _buildBottomNavigationBar(context, homeController),
     );
   }
 
-  PreferredSizeWidget _buildAppBar() {
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
+    final authController = Provider.of<AuthController>(context);
+    final displayName = (authController.userName != null && authController.userName!.isNotEmpty)
+        ? authController.userName!
+        : currentUser.name;
+
     return AppBar(
       backgroundColor: backgroundColor,
       elevation: 0,
@@ -50,7 +62,7 @@ class HealthcareHomePage extends StatelessWidget {
             style: const TextStyle(color: textColorSecondary, fontSize: 13, fontWeight: FontWeight.normal),
           ),
           Text(
-            currentUser.name,
+            displayName,
             style: const TextStyle(color: textColorMain, fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ],
@@ -66,7 +78,7 @@ class HealthcareHomePage extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.black.withOpacity(0.06)),
+                  border: Border.all(color: Colors.black.withValues(alpha: 0.06)),
                 ),
                 child: const Icon(Icons.notifications_outlined, color: primaryColor, size: 22),
               ),
@@ -86,7 +98,6 @@ class HealthcareHomePage extends StatelessWidget {
     );
   }
 
-  // Search Bar: Dibuat clickable agar langsung pindah ke halaman Cari Dokter
   Widget _buildSearchBar(BuildContext context) {
     return GestureDetector(
       onTap: () {
@@ -100,7 +111,7 @@ class HealthcareHomePage extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.black.withOpacity(0.08)),
+          border: Border.all(color: Colors.black.withValues(alpha: 0.08)),
         ),
         child: const Row(
           children: [
@@ -116,8 +127,8 @@ class HealthcareHomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildUpcomingAppointmentSection() {
-    final ap = mockUpcomingAppointment;
+  Widget _buildUpcomingAppointmentSection(Appointment? apData) {
+    final ap = apData ?? mockUpcomingAppointment;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,7 +143,7 @@ class HealthcareHomePage extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.black.withOpacity(0.06)),
+            border: Border.all(color: Colors.black.withValues(alpha: 0.06)),
           ),
           child: Column(
             children: [
@@ -140,7 +151,8 @@ class HealthcareHomePage extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 30,
-                    backgroundImage: NetworkImage(ap.doctor.imageUrl),
+                    backgroundColor: primaryColor.withValues(alpha: 0.1),
+                    child: const Icon(Icons.person, color: primaryColor, size: 30),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -180,14 +192,14 @@ class HealthcareHomePage extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 14),
-              Divider(color: Colors.black.withOpacity(0.06), height: 1),
+              Divider(color: Colors.black.withValues(alpha: 0.06), height: 1),
               const SizedBox(height: 12),
               Row(
                 children: [
                   Expanded(
                     child: OutlinedButton(
                       style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: primaryColor.withOpacity(0.5)),
+                        side: BorderSide(color: primaryColor.withValues(alpha: 0.5)),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       ),
                       onPressed: () {},
@@ -210,13 +222,15 @@ class HealthcareHomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildSpecialtiesSection() {
-    final List<Map<String, String>> specialties = [
-      {'name': 'General', 'icon': 'stetoskop.png'},
-      {'name': 'Dentist', 'icon': 'gigi.png'},
-      {'name': 'Cardiology', 'icon': 'hati.png'},
-      {'name': 'Pediatrics', 'icon': 'suntikan.png'},
-    ];
+  Widget _buildSpecialtiesSection(List<Map<String, String>> specialtiesData) {
+    final specialties = specialtiesData.isEmpty
+        ? const [
+            {'name': 'General', 'icon': 'stetoskop.png'},
+            {'name': 'Dentist', 'icon': 'gigi.png'},
+            {'name': 'Cardiology', 'icon': 'hati.png'},
+            {'name': 'Pediatrics', 'icon': 'suntikan.png'},
+          ]
+        : specialtiesData;
 
     return Column(
       children: [
@@ -247,7 +261,7 @@ class HealthcareHomePage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.black.withOpacity(0.06)),
+                border: Border.all(color: Colors.black.withValues(alpha: 0.06)),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -271,20 +285,22 @@ class HealthcareHomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildHealthOverviewSection() {
+  Widget _buildHealthOverviewSection(List<VitalSign> vitalsData) {
+    final vitals = vitalsData.isEmpty ? mockVitalSigns : vitalsData;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text("Health Overview", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: textColorMain)),
         const SizedBox(height: 12),
-        ...mockVitalSigns.map((vital) => _buildVitalCard(vital)).toList(),
+        ...vitals.map((vital) => _buildVitalCard(vital)),
         const SizedBox(height: 8),
         SizedBox(
           width: double.infinity,
           height: 44,
           child: OutlinedButton.icon(
             style: OutlinedButton.styleFrom(
-              side: BorderSide(color: Colors.black.withOpacity(0.12)),
+              side: BorderSide(color: Colors.black.withValues(alpha: 0.12)),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
             onPressed: () {},
@@ -303,7 +319,7 @@ class HealthcareHomePage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.black.withOpacity(0.06)),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.06)),
       ),
       child: Row(
         children: [
@@ -338,25 +354,16 @@ class HealthcareHomePage extends StatelessWidget {
     );
   }
 
-  // Bottom Navigation Bar: Menerima BuildContext untuk berpindah ke SearchDoctorPage
-  Widget _buildBottomNavigationBar(BuildContext context) {
+  Widget _buildBottomNavigationBar(BuildContext context, HomeController homeController) {
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
       backgroundColor: Colors.white,
       selectedItemColor: primaryColor,
       unselectedItemColor: textColorSecondary,
-      currentIndex: 0,
+      currentIndex: homeController.selectedNavIndex,
       selectedFontSize: 11,
       unselectedFontSize: 11,
-      onTap: (index) {
-        if (index == 1) {
-          // Pindah ke Halaman Cari Dokter
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const SearchDoctorPage()),
-          );
-        }
-      },
+      onTap: (index) => homeController.handleNavigation(context, index),
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
         BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),

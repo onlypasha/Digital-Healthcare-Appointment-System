@@ -21,6 +21,30 @@ class AuthController extends ChangeNotifier {
   // Controller Input Forgot Password
   final forgotPasswordEmailController = TextEditingController();
   // States
+  String? _token;
+  String? _userName;
+  String? _userEmail;
+
+  String? get token => _token;
+  String? get jwt => _token;
+  String? get userName => _userName;
+  String? get userEmail => _userEmail;
+  bool get isAuthenticated => _token != null && _token!.isNotEmpty;
+
+  void setToken(String? newToken, {String? userName, String? userEmail}) {
+    _token = newToken;
+    if (userName != null) _userName = userName;
+    if (userEmail != null) _userEmail = userEmail;
+    notifyListeners();
+  }
+
+  void clearToken() {
+    _token = null;
+    _userName = null;
+    _userEmail = null;
+    notifyListeners();
+  }
+
   DateTime? signUpDob;
   String? selectedBloodType;
   String? selectedGender;
@@ -152,7 +176,18 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _authService.login(email, password);
+      final data = await _authService.login(email, password);
+
+      // Simpan JWT token dan info pengguna ke state global AuthController
+      String? extractedToken;
+      String? extractedName;
+      String? extractedEmail = email;
+
+      extractedToken = data['token']?.toString();
+      extractedName = data['user']?['name']?.toString();
+      extractedEmail = data['user']?['email']?.toString();
+
+      setToken(extractedToken, userName: extractedName, userEmail: extractedEmail);
 
       if (context.mounted) {
         _showSnackBar(context, 'Sign In Berhasil!');
