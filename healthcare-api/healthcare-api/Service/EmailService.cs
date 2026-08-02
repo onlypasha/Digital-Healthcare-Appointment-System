@@ -52,7 +52,6 @@ namespace healthcare_api.Service
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to send email to {ToEmail}. Error: {Message}", toEmail, ex.Message);
-                // Do not rethrow to prevent breaking caller execution flow
             }
         }
     }

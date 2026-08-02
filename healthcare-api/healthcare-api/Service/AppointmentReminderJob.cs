@@ -50,9 +50,9 @@ namespace healthcare_api.Service
 
                 if (!string.IsNullOrWhiteSpace(patientEmail))
                 {
-                    var subject = "Pengingat Jadwal Appointment (H-1) - Digital Healthcare";
+                    var subject = "Reminder Appintment - Care Connect";
                     var body = $@"
-                        <h3>Halo, {patientName}!</h3>
+                        <h3>Yth, {patientName}</h3>
                         <p>Ini adalah pengingat bahwa Anda memiliki jadwal konsultasi besok:</p>
                         <ul>
                             <li><strong>Dokter:</strong> Dr. {doctorName} ({specialization})</li>
@@ -62,7 +62,7 @@ namespace healthcare_api.Service
                         </ul>
                         <p>Mohon hadir tepat waktu sesuai jadwal yang telah ditentukan.</p>
                         <br/>
-                        <p>Salam hangat,<br/>Tim Digital Healthcare</p>";
+                        <p>Salam hangat,<br/>Tim Care Connect</p>";
 
                     await _emailService.SendEmailAsync(patientEmail, subject, body);
                 }

@@ -17,12 +17,12 @@ namespace healthcare_api.Messaging.Consumers
 
             var subject = "Pendaftaran Akun Dokter - Digital Healthcare";
             var body = $@"
-                <h3>Halo, Dr. {message.Name}!</h3>
-                <p>Terima kasih telah mendaftar di sistem Digital Healthcare.</p>
-                <p>Status akun Anda saat ini: <strong>Menunggu Persetujuan Admin (Pending)</strong>.</p>
+                <h3>Yth, Dr. {message.Name}</h3>
+                <p>Terima kasih telah mendaftar di Care Connect.</p>
+                <p>Status akun Anda saat ini <strong>Menunggu Persetujuan Admin (Pending)</strong>.</p>
                 <p>Kami akan mengirimkan email pemberitahuan setelah akun Anda disetujui oleh Admin.</p>
                 <br/>
-                <p>Salam,<br/>Tim Digital Healthcare</p>";
+                <p>Salam hangat,<br/>Tim Care Connect</p>";
 
             await emailService.SendEmailAsync(message.Email, subject, body);
         }
