@@ -1,19 +1,30 @@
+using System.Threading.Tasks;
+using healthcare_api.Interface;
 using healthcare_api.Messaging.Events;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
 namespace healthcare_api.Messaging.Consumers
 {
-    public class DoctorRegisteredConsumer(ILogger<DoctorRegisteredConsumer> logger) : IConsumer<DoctorRegisteredEvent>
+    public class DoctorRegisteredConsumer(ILogger<DoctorRegisteredConsumer> logger, IEmailService emailService) : IConsumer<DoctorRegisteredEvent>
     {
-        public Task Consume(ConsumeContext<DoctorRegisteredEvent> context)
+        public async Task Consume(ConsumeContext<DoctorRegisteredEvent> context)
         {
             var message = context.Message;
             
-            logger.LogInformation("NOTIFICATION: New Doctor Registered. ID: {Id}, Name: {Name}, Email: {Email}. Notifying Admin for approval...", 
+            logger.LogInformation("NOTIFICATION: New Doctor Registered. ID: {Id}, Name: {Name}, Email: {Email}. Notifying Doctor...", 
                 message.DoctorId, message.Name, message.Email);
-            
-            return Task.CompletedTask;
+
+            var subject = "Pendaftaran Akun Dokter - Digital Healthcare";
+            var body = $@"
+                <h3>Halo, Dr. {message.Name}!</h3>
+                <p>Terima kasih telah mendaftar di sistem Digital Healthcare.</p>
+                <p>Status akun Anda saat ini: <strong>Menunggu Persetujuan Admin (Pending)</strong>.</p>
+                <p>Kami akan mengirimkan email pemberitahuan setelah akun Anda disetujui oleh Admin.</p>
+                <br/>
+                <p>Salam,<br/>Tim Digital Healthcare</p>";
+
+            await emailService.SendEmailAsync(message.Email, subject, body);
         }
     }
 }

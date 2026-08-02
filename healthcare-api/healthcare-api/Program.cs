@@ -83,6 +83,8 @@ builder.Services.AddScoped<IBackupTrxToRpt, BackupTrxToRptService>();
 builder.Services.AddScoped<ITeleconsultationService, TeleconsultationService>();
 builder.Services.AddScoped<IMedicalRecordService, MedicalRecordService>();
 builder.Services.AddScoped<IPatientsService, PatientsService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IAppointmentReminderJob, AppointmentReminderJob>();
 
 builder.Services.AddSignalR();
 
@@ -134,6 +136,12 @@ RecurringJob.AddOrUpdate<IBackupTrxToRpt>(
     "monthly-backup-monthly-appointment",
     svc => svc.BackupMonthlyAppointmentAsync(DateTime.UtcNow.AddMonths(-1).Year, DateTime.UtcNow.AddMonths(-1).Month),
     "5 0 1 * *");
+
+// Tugas berkala: Email reminder H-1 appointment setiap hari jam 07:00 UTC (14:00 WIB)
+RecurringJob.AddOrUpdate<IAppointmentReminderJob>(
+    "daily-appointment-reminder-h1",
+    job => job.SendTomorrowAppointmentRemindersAsync(),
+    "0 7 * * *");
 
 app.UseExceptionHandler();
 
