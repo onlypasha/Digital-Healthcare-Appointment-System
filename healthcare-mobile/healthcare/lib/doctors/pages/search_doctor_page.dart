@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'doctor_model.dart';
-import '../home/page/healthcare_home_page.dart'; // Untuk navigasi balik ke Home jika ditekan
-import '../profile/page/patient_profile_page.dart'; // Untuk navigasi ke Profile Pasien
+import '../models/doctor_model.dart';
+import '../../home/page/healthcare_home_page.dart'; // Untuk navigasi balik ke Home jika ditekan
+import '../../profile/page/patient_profile_page.dart'; // Untuk navigasi ke Profile Pasien
 
 class SearchDoctorPage extends StatefulWidget {
   const SearchDoctorPage({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../model/data_model.dart';
 import '../service/home_service.dart';
-import '/doctors/search_doctor_page.dart';
+import '../../doctors/pages/search_doctor_page.dart';
 import '/profile/page/patient_profile_page.dart';
 
 class HomeController extends ChangeNotifier {

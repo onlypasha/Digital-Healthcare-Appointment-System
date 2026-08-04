@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../controller/profile_controller.dart';
 import '../model/patient_profile_model.dart';
 import '/home/page/healthcare_home_page.dart';
-import '/doctors/search_doctor_page.dart';
+import '../../doctors/pages/search_doctor_page.dart';
 
 class PatientProfilePage extends StatelessWidget {
   const PatientProfilePage({super.key});

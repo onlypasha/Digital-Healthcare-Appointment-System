@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../model/data_model.dart';
 import '../controller/home_controller.dart';
-import '/doctors/search_doctor_page.dart';
+import '../../doctors/pages/search_doctor_page.dart';
 import '/login/controllers/auth_controller.dart';
 
 class HealthcareHomePage extends StatelessWidget {
