@@ -23,7 +23,7 @@ function redirectForRole(session: Session, request: NextRequest) {
   return NextResponse.redirect(new URL(getRedirectForRole(session.role), request.url));
 }
 
-export function proxy(request: NextRequest) {
+export default function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (
@@ -75,8 +75,6 @@ export function proxy(request: NextRequest) {
 
   return NextResponse.next();
 }
-
-export default proxy;
 
 export const config = {
   matcher: ['/((?!_next/static|_next/image).*)'],
