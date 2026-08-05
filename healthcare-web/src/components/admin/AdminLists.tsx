@@ -145,7 +145,12 @@ export function AdminDoctorsList() {
   const [message, setMessage] = useState('');
 
   const loadDoctors = useCallback(() => {
-    fetch('/api/doctors').then((r) => r.json()).then(setDoctors);
+    fetch('/api/doctors')
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data) => {
+        if (Array.isArray(data)) setDoctors(data);
+      })
+      .catch((err) => console.error('Error loading doctors:', err));
   }, []);
 
   useEffect(() => {

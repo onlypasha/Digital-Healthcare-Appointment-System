@@ -113,13 +113,10 @@ export async function POST(request: Request) {
       const backendResponse = await backendFetch('/api/MedicalRecord', {
         method: 'POST',
         body: JSON.stringify({
-          appointmentId: Number(appointmentId) || appointmentId,
-          patientId: Number(patientId) || patientId,
-          doctorId: Number(doctorId) || doctorId,
-          vitals,
-          diagnosis: diagnosis ?? '',
-          notes: notes ?? '',
-          recommendations: recommendations ?? '',
+          appointmentsId: Number(appointmentId || body.appointmentsId) || 0,
+          diagnosis: diagnosis ?? body.diagnosis ?? '',
+          prescription: body.prescription ?? recommendations ?? null,
+          notes: notes ?? body.notes ?? null,
         }),
       });
 

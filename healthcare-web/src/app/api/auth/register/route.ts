@@ -1,7 +1,19 @@
 import { NextResponse } from 'next/server';
 import { SESSION_COOKIE, getRedirectForRole } from '@/lib/auth';
 import { backendFetch, parseBackendResponse } from '@/lib/backend';
-import { registerUser } from '@/lib/store';
+
+// Mapping nama spesialisasi dari UI ke ID angka untuk .NET
+const SPECIALIZATION_MAP: Record<string, number> = {
+  'Dokter Umum': 1,
+  'Spesialis Anak': 2,
+  'Spesialis Penyakit Dalam': 3,
+  'Spesialis Jantung': 4,
+  'Spesialis Kulit & Kelamin': 5,
+  'Spesialis Saraf (Neurology)': 6,
+  'Spesialis Saraf': 6,
+  'Spesialis Mata': 7,
+  'Spesialis Gigi': 8,
+};
 
 export async function POST(request: Request) {
   try {
@@ -14,12 +26,7 @@ export async function POST(request: Request) {
       phone,
       gender,
       specialty,
-      hospital,
-      experience,
       fee,
-      location,
-      bio,
-      expertise,
     } = body as {
       name?: string;
       email?: string;
@@ -28,17 +35,19 @@ export async function POST(request: Request) {
       phone?: string;
       gender?: string;
       specialty?: string;
-      hospital?: string;
-      experience?: string;
-      fee?: number;
-      location?: string;
-      bio?: string;
-      expertise?: string[];
+      fee?: number | string;
     };
 
     if (!name || !email || !password) {
       return NextResponse.json(
         { error: 'Nama, email, dan password wajib diisi' },
+        { status: 400 }
+      );
+    }
+
+    if (role === 'admin' || (role !== 'patient' && role !== 'doctor')) {
+      return NextResponse.json(
+        { error: 'Pendaftaran hanya diizinkan untuk Pasien dan Dokter Medis.' },
         { status: 400 }
       );
     }
@@ -50,99 +59,95 @@ export async function POST(request: Request) {
       );
     }
 
-    let sessionData: any = null;
+    // 1. Register User ke backend .NET
+    // Kirim role dalam format string biasa dan PascalCase jika perlu
+    const formattedRole = role === 'doctor' ? 'Doctor' : 'Patient';
 
-    // 1. Try backend registration
+    let backendResponse;
     try {
-      const backendResponse = await backendFetch('/api/auth/register', {
+      backendResponse = await backendFetch('/api/auth/register/doctor', {
         method: 'POST',
         body: JSON.stringify({
           name,
           email,
           password,
-          role,
+          role: formattedRole,
           phone,
           gender,
-          specialty,
-          hospital,
-          experience,
-          fee,
-          location,
-          bio,
-          expertise,
         }),
       });
-
-      if (backendResponse.ok) {
-        const backendData = await parseBackendResponse(backendResponse);
-        const userData = backendData.data || backendData.user || backendData;
-        const user = userData.user || userData;
-        const token = userData.token || backendData.token || '';
-
-        if (user?.email) {
-          sessionData = {
-            userId: String(user.id || user.userId || ''),
-            role: String(user.role || role).toLowerCase(),
-            name: String(user.name || name),
-            email: String(user.email || email),
-            token: String(token || ''),
-            patientId: user.patientId,
-            doctorId: user.doctorId,
-            status: user.status,
-          };
-        }
-      }
-    } catch (e) {
-      console.warn('Backend registration failed, using local registration fallback:', e);
+    } catch (netErr) {
+      console.error('Koneksi ke backend .NET gagal:', netErr);
+      return NextResponse.json(
+        { error: 'Tidak dapat terhubung ke server backend .NET (Port 5000/5001).' },
+        { status: 502 }
+      );
     }
 
-    // 2. Fallback to local store registration
-    if (!sessionData) {
+    const backendData = await parseBackendResponse(backendResponse);
+
+    if (!backendResponse.ok) {
+      const errMsg =
+        typeof backendData === 'string'
+          ? backendData
+          : backendData?.message || backendData?.error || backendData?.title || 'Gagal mendaftar ke server backend .NET';
+      return NextResponse.json({ error: errMsg }, { status: backendResponse.status });
+    }
+
+    const userData = backendData.data || backendData.user || backendData;
+    const user = userData.user || userData;
+    const token = userData.token || backendData.token || '';
+    const userId = Number(user?.id || user?.userId || userData?.id || 0);
+
+    // 2. Jika Role = Doctor, daftarkan detail dokter
+    if (role === 'doctor') {
+      const specId =
+        typeof specialty === 'number'
+          ? specialty
+          : SPECIALIZATION_MAP[specialty || ''] || Number(specialty) || 1;
+
+      // Safe call ke /api/Doctor agar tidak bikin "Unknown error" kalau endpoint butuh Auth khusus
       try {
-        const localUser = registerUser({
-          name,
-          email,
-          password,
-          role,
-          phone,
-          gender,
-          specialty,
-          hospital,
-          experience,
-          fee,
-          location,
-          bio,
-          expertise,
+        const docRes = await backendFetch('/api/Doctor', {
+          method: 'POST',
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+          body: JSON.stringify({
+            userId: userId,
+            consultationFee: Number(fee) || 150000,
+            specializationId: specId,
+            phone: phone || null,
+          }),
         });
 
-        sessionData = {
-          userId: localUser.id,
-          role: localUser.role,
-          name: localUser.name,
-          email: localUser.email,
-          token: `mock-token-${Date.now()}`,
-          patientId: localUser.patientId,
-          doctorId: localUser.doctorId,
-          status: localUser.status,
-        };
-      } catch (err: any) {
-        return NextResponse.json(
-          { error: err.message || 'Gagal mendaftarkan akun' },
-          { status: 400 }
-        );
+        if (!docRes.ok) {
+          const docErrData = await parseBackendResponse(docRes);
+          console.warn('Backend /api/Doctor mengembalikan status non-OK:', docRes.status, docErrData);
+        }
+      } catch (docErr) {
+        console.error('Gagal memanggil POST /api/Doctor:', docErr);
       }
-    }
 
-    // Doctor registration requires Super Admin approval
-    if (role === 'doctor') {
-      return NextResponse.json({
+      const response = NextResponse.json({
         success: true,
         pendingApproval: true,
-        message: 'Pendaftaran dokter berhasil! Akun Anda sedang menunggu persetujuan dari Super Admin sebelum dapat digunakan untuk masuk ke portal.',
+        message:
+          'Pendaftaran Dokter berhasil dikirim! Akun Dokter Anda saat ini memerlukan persetujuan & verifikasi dari Super Admin (SA) sebelum Anda dapat masuk ke portal.',
       });
+      response.cookies.delete(SESSION_COOKIE);
+      return response;
     }
 
-    const redirect = getRedirectForRole(sessionData.role);
+    // 3. Jika Pasien
+    const sessionData = {
+      userId: String(userId),
+      role: 'patient',
+      name: String(user.name || name),
+      email: String(user.email || email),
+      token: String(token || ''),
+      status: 'active',
+    };
+
+    const redirect = getRedirectForRole('patient');
     const response = NextResponse.json({
       success: true,
       redirect,
@@ -157,10 +162,10 @@ export async function POST(request: Request) {
     });
 
     return response;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Registration API error:', error);
     return NextResponse.json(
-      { error: 'Terjadi kesalahan saat pendaftaran. Silakan coba lagi.' },
+      { error: error?.message || 'Terjadi kesalahan internal saat pendaftaran.' },
       { status: 500 }
     );
   }

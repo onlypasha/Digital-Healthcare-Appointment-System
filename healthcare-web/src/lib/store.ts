@@ -9,9 +9,46 @@ import type {
   VitalSigns,
 } from './types';
 
-const users: User[] = [];
+const globalForStore = globalThis as unknown as {
+  users: User[];
+  doctors: Doctor[];
+  patients: Patient[];
+  appointments: Appointment[];
+  healthRecords: HealthRecord[];
+  userSettings: UserSettings;
+  adminSettings: AdminSettings;
+};
 
-let doctors: Doctor[] = [
+const users: User[] = globalForStore.users || [
+  {
+    id: 'u-admin',
+    email: 'admin@careconnect.com',
+    password: 'password123',
+    role: 'admin',
+    name: 'Super Admin',
+    status: 'active',
+  },
+  {
+    id: 'u-patient',
+    email: 'patient@careconnect.com',
+    password: 'password123',
+    role: 'patient',
+    name: 'Budi Santoso',
+    patientId: 'p1',
+    status: 'active',
+  },
+  {
+    id: 'u-doctor',
+    email: 'doctor@careconnect.com',
+    password: 'password123',
+    role: 'doctor',
+    name: 'Dr. Sarah Jenkins, Sp.JP',
+    doctorId: 'd1',
+    status: 'active',
+  },
+];
+
+let doctors: Doctor[] = globalForStore.doctors || [
   {
     id: 'd1',
     name: 'Dr. Sarah Jenkins, Sp.JP',
@@ -48,11 +85,25 @@ let doctors: Doctor[] = [
   },
 ];
 
-let patients: Patient[] = [];
+let patients: Patient[] = globalForStore.patients || [
+  {
+    id: 'p1',
+    name: 'Budi Santoso',
+    email: 'patient@careconnect.com',
+    phone: '081234567890',
+    mrn: 'MRN-1001',
+    bloodType: 'O+',
+    age: 28,
+    gender: 'Laki-laki',
+    address: 'Jakarta',
+    emergencyContact: '081987654321',
+    status: 'Active',
+  },
+];
 
-let appointments: Appointment[] = [];
+let appointments: Appointment[] = globalForStore.appointments || [];
 
-let userSettings: UserSettings = {
+let userSettings: UserSettings = globalForStore.userSettings || {
   notifications: true,
   emailAlerts: true,
   smsAlerts: false,
@@ -60,7 +111,7 @@ let userSettings: UserSettings = {
   language: 'id',
 };
 
-let adminSettings: AdminSettings = {
+let adminSettings: AdminSettings = globalForStore.adminSettings || {
   clinicName: 'HealthAdmin Medical Center',
   timezone: 'Asia/Jakarta',
   appointmentDuration: 45,
@@ -68,7 +119,17 @@ let adminSettings: AdminSettings = {
   emailNotifications: true,
 };
 
-let healthRecords: HealthRecord[] = [];
+let healthRecords: HealthRecord[] = globalForStore.healthRecords || [];
+
+if (process.env.NODE_ENV !== 'production') {
+  globalForStore.users = users;
+  globalForStore.doctors = doctors;
+  globalForStore.patients = patients;
+  globalForStore.appointments = appointments;
+  globalForStore.healthRecords = healthRecords;
+  globalForStore.userSettings = userSettings;
+  globalForStore.adminSettings = adminSettings;
+}
 
 function deriveHeartRateStatus(bpm: number): string {
   if (bpm < 60) return 'Rendah';
@@ -156,8 +217,8 @@ export function registerUser(data: {
       education: [{ title: 'Fakultas Kedokteran', detail: 'Dokter Spesialis' }],
       location: data.location || 'Jakarta',
       fee: Number(data.fee) || 150000,
-      status: isDoctorPending ? 'Pending' : 'Active',
-    });
+      status: 'Pending',
+    }, true); // skipUserCreation=true so registerUser creates the single user account
     doctorId = createdDoctor.id;
   }
 
@@ -188,50 +249,76 @@ export function getDoctorById(id: string): Doctor | undefined {
   return doctors.find((d) => d.id === id);
 }
 
-export function addDoctor(doctor: Omit<Doctor, 'id' | 'availableSlots'> & { availableSlots?: string[]; status?: 'Active' | 'Pending' | 'Rejected' }): Doctor {
+export function addDoctor(
+  doctor: Omit<Doctor, 'id' | 'availableSlots'> & {
+    availableSlots?: string[];
+    status?: 'Active' | 'Pending' | 'Rejected';
+    password?: string;
+  },
+  skipUserCreation = false
+): Doctor {
   const newDoctor: Doctor = {
     ...doctor,
     id: String(Date.now()),
     availableSlots: doctor.availableSlots ?? ['09:00 AM', '10:00 AM', '02:00 PM'],
     status: doctor.status ?? 'Active',
   };
-  doctors = [...doctors, newDoctor];
+  doctors.push(newDoctor);
 
-  // Also create a linked user account for admin-created doctors if not existing
-  const existingUser = users.find((u) => u.doctorId === newDoctor.id);
-  if (!existingUser) {
-    const doctorEmail = `${newDoctor.name.toLowerCase().replace(/[^a-z0-9]/g, '')}@careconnect.com`;
-    users.push({
-      id: `u-${newDoctor.id}`,
-      email: doctorEmail,
-      password: 'password123',
-      role: 'doctor',
-      name: newDoctor.name,
-      doctorId: newDoctor.id,
-      status: newDoctor.status === 'Active' ? 'active' : 'pending_approval',
-    });
+  // Also create a linked user account for admin-created or registered doctors if not existing
+  if (!skipUserCreation) {
+    const existingUser = users.find(
+      (u) => u.doctorId === newDoctor.id || (doctor.email && u.email.toLowerCase() === doctor.email.toLowerCase())
+    );
+    if (!existingUser) {
+      const doctorEmail = doctor.email || `${newDoctor.name.toLowerCase().replace(/[^a-z0-9]/g, '')}@careconnect.com`;
+      const doctorPassword = doctor.password || 'password123';
+      users.push({
+        id: `u-${newDoctor.id}`,
+        email: doctorEmail,
+        password: doctorPassword,
+        role: 'doctor',
+        name: newDoctor.name,
+        doctorId: newDoctor.id,
+        status: newDoctor.status === 'Active' ? 'active' : 'pending_approval',
+      });
+    } else {
+      existingUser.doctorId = newDoctor.id;
+      if (doctor.password) existingUser.password = doctor.password;
+      if (newDoctor.status === 'Active') existingUser.status = 'active';
+    }
   }
 
   return newDoctor;
+}
+
+export function updateDoctor(id: string, partial: Partial<Doctor>): Doctor | null {
+  const index = doctors.findIndex((d) => d.id === id);
+  if (index === -1) return null;
+  doctors[index] = { ...doctors[index], ...partial };
+  return doctors[index];
 }
 
 export function updateDoctorStatus(doctorId: string, status: 'Active' | 'Pending' | 'Rejected'): Doctor | null {
   const docIndex = doctors.findIndex((d) => d.id === doctorId);
   if (docIndex === -1) return null;
 
+  const targetDoctor = doctors[docIndex];
   doctors[docIndex] = {
-    ...doctors[docIndex],
+    ...targetDoctor,
     status,
   };
 
-  // Update associated user account status
-  const userIndex = users.findIndex((u) => u.doctorId === doctorId);
-  if (userIndex !== -1) {
-    users[userIndex] = {
-      ...users[userIndex],
-      status: status === 'Active' ? 'active' : status === 'Pending' ? 'pending_approval' : 'rejected',
-    };
-  }
+  // Update ALL associated user accounts for this doctor
+  const newStatus = status === 'Active' ? 'active' : status === 'Pending' ? 'pending_approval' : 'rejected';
+  users.forEach((u, index) => {
+    if (
+      u.doctorId === doctorId ||
+      (u.role === 'doctor' && u.name.toLowerCase() === targetDoctor.name.toLowerCase())
+    ) {
+      users[index].status = newStatus;
+    }
+  });
 
   return doctors[docIndex];
 }
