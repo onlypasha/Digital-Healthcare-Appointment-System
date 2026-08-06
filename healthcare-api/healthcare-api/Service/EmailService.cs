@@ -28,13 +28,18 @@ namespace healthcare_api.Service
                 return;
             }
 
+            if (string.IsNullOrWhiteSpace(_smtpSettings.SenderEmail) || string.IsNullOrWhiteSpace(_smtpSettings.Password))
+            {
+                _logger.LogError("SMTP settings (SenderEmail or Password) are missing or empty. Cannot send email.");
+                return;
+            }
+
             try
             {
-                using var client = new SmtpClient(_smtpSettings.Host, _smtpSettings.Port)
-                {
-                    Credentials = new NetworkCredential(_smtpSettings.SenderEmail, _smtpSettings.Password),
-                    EnableSsl = _smtpSettings.EnableSsl
-                };
+                using var client = new SmtpClient(_smtpSettings.Host, _smtpSettings.Port);
+                client.UseDefaultCredentials = false; // Harus di-set sebelum Credentials
+                client.Credentials = new NetworkCredential(_smtpSettings.SenderEmail, _smtpSettings.Password);
+                client.EnableSsl = _smtpSettings.EnableSsl;
 
                 using var mailMessage = new MailMessage
                 {
