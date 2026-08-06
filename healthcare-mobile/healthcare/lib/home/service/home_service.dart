@@ -11,7 +11,7 @@ class HomeService {
     try {
       if (token != null && token.isNotEmpty) {
         final response = await http.get(
-          Uri.parse('$baseUrl/appointments/upcoming'),
+          Uri.parse('$baseUrl/Appointment'),
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',

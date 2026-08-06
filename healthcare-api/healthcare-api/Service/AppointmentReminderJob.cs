@@ -23,8 +23,9 @@ namespace healthcare_api.Service
 
         public async Task SendTomorrowAppointmentRemindersAsync()
         {
-            var tomorrowStart = DateTime.UtcNow.Date.AddDays(1);
-            var tomorrowEnd = tomorrowStart.AddDays(1);
+            var today = DateTime.SpecifyKind(DateTime.UtcNow.Date, DateTimeKind.Unspecified);
+            var tomorrowStart = today.AddDays(1);
+            var tomorrowEnd = today.AddDays(2);
 
             _logger.LogInformation("Running H-1 Appointment Reminder job for date range: {Start} to {End}", tomorrowStart, tomorrowEnd);
 
