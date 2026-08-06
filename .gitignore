@@ -1,53 +1,7 @@
-<<<<<<< HEAD
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# env files (can opt-in for committing if needed)
-.env*
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-=======
 # ==========================================
 # .GITIGNORE UNTUK NEXT.JS & C# WEB API
 # ==========================================
 
-# ------------------------------------------
-# 1. NEXT.JS / NODE.JS (FRONTEND)
-# ------------------------------------------
 # Dependencies
 node_modules/
 .pnp/
@@ -64,12 +18,13 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Environment variables (JANGAN PERNAH PUSH FILE .ENV)
+# Environment variables
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+.env*
 
 # Testing & Coverage
 coverage/
@@ -77,10 +32,7 @@ coverage/
 # Vercel / Deployment
 .vercel/
 
-# ------------------------------------------
-# 2. C# / .NET WEB API (BACKEND)
-# ------------------------------------------
-# Build and Release Folders
+# C# / .NET WEB API
 [Bb]in/
 [Oo]bj/
 [Dd]ebug/
@@ -97,38 +49,19 @@ coverage/
 *.sln.docstates
 *.rsuser
 
-# AppSettings untuk Development/Lokal (Mencegah bocornya koneksi database/API key)
-appsettings.Development.json
-appsettings.Local.json
-appsettings.json
-
-# NuGet Packages
-*.nupkg
-.nuget/
-
-# ------------------------------------------
-# 3. OS & EDITOR FILES (UMUM)
-# ------------------------------------------
-# Windows
+# OS & Editor
 Thumbs.db
 ehthumbs.db
 Desktop.ini
-
-# Mac OS
 .DS_Store
 .AppleDouble
 .LSOverride
 
-# VS Code (Mengabaikan cache, tapi tetap menyimpan konfigurasi jika ada)
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
 
-# Markdown Project Files
-md-files/
-.agents/skills/dotnet-best-practices
-CLAUDE.md
-skills-lock.json
->>>>>>>
+*.tsbuildinfo
+next-env.d.ts

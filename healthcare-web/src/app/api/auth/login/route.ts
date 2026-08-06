@@ -12,9 +12,10 @@ export async function POST(request: Request) {
   }
 
   let session: any = null;
+  let backendConnectError = false;
 
   try {
-    // Call backend API for authentication
+    // Panggil backend API untuk otentikasi
     const backendResponse = await backendFetch('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
@@ -36,62 +37,71 @@ export async function POST(request: Request) {
           token: String(token || ''),
           patientId: user.patientId,
           doctorId: user.doctorId,
-          status: user.status,
+          status: user.status || 'active',
         };
       }
     }
   } catch (error) {
-    console.warn('Backend login failed, using local auth fallback:', error);
+    console.warn('Backend login connection error:', error);
+    backendConnectError = true;
   }
 
-  
+  // Fallback otentikasi ke store lokal jika backend tidak menemukan user atau offline
   if (!session) {
     const localUser = authenticate(email, password);
-    if (!localUser) {
+    if (localUser) {
+      session = {
+        userId: localUser.id,
+        role: localUser.role,
+        name: localUser.name,
+        email: localUser.email,
+        token: `mock-token-${Date.now()}`,
+        patientId: localUser.patientId,
+        doctorId: localUser.doctorId,
+        status: localUser.status,
+      };
+    } else if (backendConnectError) {
+      // Hanya kembalikan 503 jika jaringan backend sama sekali tidak dapat dijangkau
+      return NextResponse.json(
+        { error: 'Server backend tidak dapat dijangkau. Silakan coba beberapa saat lagi.' },
+        { status: 503 }
+      );
+    } else {
+      // Jika kredensial salah
       return NextResponse.json(
         { error: 'Email atau password salah' },
         { status: 401 }
       );
     }
-
-    session = {
-      userId: localUser.id,
-      role: localUser.role,
-      name: localUser.name,
-      email: localUser.email,
-      token: `mock-token-${Date.now()}`,
-      patientId: localUser.patientId,
-      doctorId: localUser.doctorId,
-      status: localUser.status,
-    };
   }
 
-  // Check Approval Status for Doctors
+  // Periksa Status Persetujuan (Approval) untuk Dokter
   if (session.role === 'doctor') {
-    // Prefer authoritative status from backend (session.status) when available.
-    // Only fall back to local store checks if session.status is missing.
     const localUser = getUserByEmail(session.email);
-    const doctorObj = session.doctorId ? getDoctorById(session.doctorId) : undefined;
+    const doctorObj = session.doctorId
+      ? getDoctorById(session.doctorId)
+      : undefined;
 
-    const backendPending = session.status === 'pending_approval';
-    const backendRejected = session.status === 'rejected';
+    const isApproved =
+      session.status === 'active' ||
+      localUser?.status === 'active' ||
+      doctorObj?.status === 'Active';
 
-    const localPending = localUser?.status === 'pending_approval' || doctorObj?.status === 'Pending';
-    const localRejected = localUser?.status === 'rejected' || doctorObj?.status === 'Rejected';
+    if (!isApproved) {
+      const isRejected =
+        session.status === 'rejected' ||
+        localUser?.status === 'rejected' ||
+        doctorObj?.status === 'Rejected';
 
-    const isPending = backendPending || (!session.status && localPending);
-    const isRejected = backendRejected || (!session.status && localRejected);
+      if (isRejected) {
+        return NextResponse.json(
+          { error: 'Pendaftaran akun Dokter Anda tidak disetujui oleh Super Admin.' },
+          { status: 403 }
+        );
+      }
 
-    if (isPending) {
       return NextResponse.json(
         { error: 'Akun Dokter Anda sedang dalam proses persetujuan oleh Super Admin. Silakan tunggu verifikasi sebelum dapat masuk ke portal.' },
-        { status: 403 }
-      );
-    }
-
-    if (isRejected) {
-      return NextResponse.json(
-        { error: 'Pendaftaran akun Dokter Anda tidak disetujui oleh Super Admin.' },
         { status: 403 }
       );
     }

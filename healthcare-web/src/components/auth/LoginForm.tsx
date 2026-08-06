@@ -26,7 +26,11 @@ export function LoginForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error ?? 'Login gagal');
+        if (res.status >= 500) {
+          setError('Server sedang sibuk');
+        } else {
+          setError(data.error ?? 'Login gagal');
+        }
         return;
       }
 
@@ -34,7 +38,7 @@ export function LoginForm() {
       router.push(redirect);
       router.refresh();
     } catch {
-      setError('Terjadi kesalahan. Coba lagi.');
+      setError('Server sedang sibuk');
     } finally {
       setLoading(false);
     }
@@ -95,11 +99,21 @@ export function LoginForm() {
           {loading ? 'Memproses...' : 'Masuk'}
         </button>
 
+        <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs text-slate-600 space-y-1">
+          <div className="font-bold text-slate-700 flex items-center gap-1.5 mb-1">
+            <span className="material-symbols-outlined text-blue-600 text-sm">vpn_key</span>
+            <span>Akun Default Sistem:</span>
+          </div>
+          <p><strong>Admin:</strong> admin@careconnect.com (pass: password123)</p>
+          <p><strong>Pasien:</strong> patient@careconnect.com (pass: password123)</p>
+          <p><strong>Dokter:</strong> doctor@careconnect.com (pass: password123)</p>
+        </div>
+
         <div className="text-center pt-2">
           <p className="text-sm text-[var(--color-outline)]">
             Belum punya akun?{' '}
             <Link href="/register" className="text-[var(--color-primary)] font-bold hover:underline">
-              Daftar Akun Baru
+              Daftar Akun Baru (Pasien / Dokter)
             </Link>
           </p>
         </div>

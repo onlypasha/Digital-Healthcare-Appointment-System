@@ -37,7 +37,7 @@ export async function backendFetch(path: string, options?: RequestInit) {
   headers.set('ngrok-skip-browser-warning', 'true');
 
   const isLoginPath = String(path).toLowerCase().includes('/auth/login');
-  if (token && !isLoginPath) {
+  if (token && !isLoginPath && !token.startsWith('mock-token-')) {
     headers.set('Authorization', 'Bearer ' + token);
   }
 
@@ -59,11 +59,11 @@ export async function backendFetch(path: string, options?: RequestInit) {
  */
 export async function parseBackendResponse(response: Response) {
   const contentType = response.headers.get('content-type');
-  
+
   if (contentType?.includes('application/json')) {
     return await response.json();
   }
-  
+
   // Plain text response
   const text = await response.text();
   if (!response.ok) {
@@ -73,7 +73,7 @@ export async function parseBackendResponse(response: Response) {
     }
     return { error: text || 'Unknown error', status: response.status };
   }
-  
+
   // Try to parse as JSON anyway
   try {
     return JSON.parse(text);
@@ -83,24 +83,50 @@ export async function parseBackendResponse(response: Response) {
 }
 
 export function mapBackendDoctor(dto: any): Doctor {
+  // Mengambil nama dari dto.user atau dto.name
+  const doctorName =
+    dto.user?.name ??
+    dto.user?.fullName ??
+    dto.name ??
+    dto.Name ??
+    (dto.specialty || dto.specialization?.name ? `Dr. ${dto.specialty || dto.specialization?.name}` : 'Dokter Medis');
+
+  // Mengambil spesialisasi dari nested specialization object atau string
+  const doctorSpecialty =
+    dto.specialization?.name ??
+    dto.specialty ??
+    dto.Specialty ??
+    dto.specialisation ??
+    'Dokter Umum';
+
+  // Mengambil status verifikasi admin (Pending / Active / Rejected)
+  const doctorStatus =
+    dto.status ??
+    dto.Status ??
+    (dto.isApproved === true ? 'Active' : dto.isApproved === false ? 'Rejected' : 'Pending');
+
   return {
-    id: String(dto.id ?? dto.Id ?? dto.doctorId ?? ''),
-    name: dto.name ?? dto.Name ?? 'Dr. ' + (dto.specialty ?? 'Umum'),
-    specialty: dto.specialty ?? dto.Specialty ?? dto.specialisation ?? 'Dokter Umum',
-    hospital: dto.hospital ?? dto.Hospital ?? 'Rumah Sakit Umum',
+    id: String(dto.id ?? dto.Id ?? dto.doctorId ?? dto.userId ?? ''),
+    userId: String(dto.userId ?? dto.UserId ?? dto.user?.id ?? ''),
+    name: doctorName,
+    email: dto.user?.email ?? dto.email ?? dto.Email ?? '',
+    phone: dto.phone ?? dto.Phone ?? dto.user?.phone ?? '-',
+    specialty: doctorSpecialty,
+    hospital: dto.hospital ?? dto.Hospital ?? dto.clinicName ?? 'CareConnect Clinic',
     rating: Number(dto.rating ?? dto.Rating ?? 4.8),
     reviews: Number(dto.reviews ?? dto.Reviews ?? 12),
-    gender: (dto.gender ?? dto.Gender ?? 'male').toString().toLowerCase() === 'female' ? 'female' : 'male',
-    experience: dto.experience ?? dto.Experience ?? '5+ Tahun Pengalaman',
+    gender: String(dto.gender ?? dto.Gender ?? dto.user?.gender ?? 'male').toLowerCase() === 'female' ? 'female' : 'male',
+    experience: dto.experience ?? dto.Experience ?? '3+ Tahun Pengalaman',
     bio: dto.bio ?? dto.Bio ?? 'Spesialis medis berdedikasi.',
+    status: doctorStatus,
     expertise: Array.isArray(dto.expertise ?? dto.Expertise)
       ? dto.expertise ?? dto.Expertise
-      : [dto.specialty ?? dto.Specialty ?? 'Konsultasi Medis'],
+      : [doctorSpecialty],
     education: Array.isArray(dto.education ?? dto.Education)
       ? dto.education ?? dto.Education
       : [{ title: 'Fakultas Kedokteran', detail: 'Spesialis' }],
     location: dto.location ?? dto.Location ?? 'Jakarta',
-    fee: Number(dto.fee ?? dto.Fee ?? 150000),
+    fee: Number(dto.consultationFee ?? dto.fee ?? dto.Fee ?? 150000),
     availableSlots: Array.isArray(dto.availableSlots ?? dto.AvailableSlots)
       ? dto.availableSlots ?? dto.AvailableSlots
       : ['09:00 AM', '10:00 AM', '02:00 PM', '04:00 PM'],
@@ -110,13 +136,13 @@ export function mapBackendDoctor(dto: any): Doctor {
 export function mapBackendPatient(dto: any): Patient {
   return {
     id: String(dto.id ?? dto.Id ?? dto.patientId ?? ''),
-    name: dto.name ?? dto.Name ?? dto.fullName ?? 'Pasien',
-    email: dto.email ?? dto.Email ?? '',
-    phone: dto.phone ?? dto.Phone ?? dto.phoneNumber ?? '-',
+    name: dto.name ?? dto.Name ?? dto.fullName ?? dto.user?.name ?? 'Pasien',
+    email: dto.email ?? dto.Email ?? dto.user?.email ?? '',
+    phone: dto.phone ?? dto.Phone ?? dto.phoneNumber ?? dto.user?.phone ?? '-',
     mrn: dto.mrn ?? dto.Mrn ?? `MRN-${dto.id ?? '001'}`,
     bloodType: dto.bloodType ?? dto.BloodType ?? 'O+',
     age: Number(dto.age ?? dto.Age ?? 30),
-    gender: dto.gender ?? dto.Gender ?? 'Laki-laki',
+    gender: dto.gender ?? dto.Gender ?? dto.user?.gender ?? 'Laki-laki',
     address: dto.address ?? dto.Address ?? '-',
     emergencyContact: dto.emergencyContact ?? dto.EmergencyContact ?? '-',
     status: dto.status ?? dto.Status ?? 'Active',
@@ -140,9 +166,9 @@ export function mapBackendAppointment(dto: any): Appointment {
   return {
     id: String(dto.id ?? dto.Id ?? ''),
     patientId: String(dto.patientsId ?? dto.patientId ?? dto.PatientId ?? ''),
-    patientName: dto.patientName ?? dto.PatientName ?? dto.patient?.name ?? 'Pasien',
+    patientName: dto.patientName ?? dto.PatientName ?? dto.patient?.name ?? dto.patient?.user?.name ?? 'Pasien',
     doctorId: String(dto.doctorsId ?? dto.doctorId ?? dto.DoctorId ?? ''),
-    doctorName: dto.doctorName ?? dto.DoctorName ?? dto.doctor?.name ?? 'Dokter',
+    doctorName: dto.doctorName ?? dto.DoctorName ?? dto.doctor?.name ?? dto.doctor?.user?.name ?? 'Dokter',
     date: date || new Date().toISOString().split('T')[0],
     time: time || '09:00',
     serviceType: dto.complaint ?? dto.Complaint ?? dto.serviceType ?? 'Konsultasi',
@@ -194,4 +220,3 @@ export function buildAppointmentPayload(body: any) {
     complaint: body.notes || body.serviceType || 'Janji Temu Pasien',
   };
 }
-

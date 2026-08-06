@@ -10,6 +10,11 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "CareConnect & HealthAdmin",
   description: "Healthcare UI Design System",
+  icons: {
+    icon: "/vercel.svg?v=1",
+    shortcut: "/vercel.svg?v=1",
+    apple: "/vercel.svg?v=1",
+  },
 };
 
 export default function RootLayout({

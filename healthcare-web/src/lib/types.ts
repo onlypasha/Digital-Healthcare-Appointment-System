@@ -13,7 +13,10 @@ export interface User {
 
 export interface Doctor {
   id: string;
+  userId?: string;
   name: string;
+  email?:string;
+  phone?:string;
   specialty: string;
   hospital: string;
   rating: number;
@@ -100,4 +103,31 @@ export interface HealthRecord {
   diagnosis: string;
   notes: string;
   recommendations: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  chatId: string;
+  senderId: string;
+  senderName: string;
+  senderRole: 'patient' | 'doctor';
+  text: string;
+  timestamp: string;
+  attachments?: string[];
+  isRead?: boolean;
+}
+
+export interface ChatSession {
+  id: string;
+  appointmentId?: string;
+  patientId: string;
+  patientName: string;
+  doctorId: string;
+  doctorName: string;
+  doctorSpecialty?: string;
+  lastMessage?: string;
+  lastMessageTime?: string;
+  status: 'active' | 'closed';
+  unreadCountPatient?: number;
+  unreadCountDoctor?: number;
 }

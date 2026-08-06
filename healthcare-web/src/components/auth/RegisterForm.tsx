@@ -77,7 +77,7 @@ export function RegisterForm() {
         payload.expertise = expertise ? expertise.split(',').map((s) => s.trim()) : ['Konsultasi Medis'];
       }
 
-      const res = await fetch('/api/auth/register', {
+      const res = await fetch('/api/auth/register/doctor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -123,7 +123,7 @@ export function RegisterForm() {
           </p>
           <div className="pt-2">
             <Link
-              href="/login"
+              href="/logout"
               className="w-full inline-block bg-[var(--color-primary)] text-white py-3.5 px-6 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-md shadow-[var(--color-primary)]/20 text-sm"
             >
               Kembali ke Halaman Login
@@ -152,6 +152,13 @@ export function RegisterForm() {
         onSubmit={handleSubmit}
         className="bg-white rounded-2xl border border-[var(--color-outline-variant)] p-8 shadow-sm space-y-5"
       >
+        <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs text-slate-600 flex items-center gap-2.5">
+          <span className="material-symbols-outlined text-blue-600 text-base flex-shrink-0">info</span>
+          <span>
+            Pendaftaran khusus untuk <strong>Pasien</strong> & <strong>Dokter</strong>. Akun <strong>Admin</strong> sudah tersedia bawaan di sistem.
+          </span>
+        </div>
+
         {error && (
           <div className="bg-red-50 text-[var(--color-error)] text-sm px-4 py-3 rounded-lg border border-red-200 text-center font-medium">
             {error}

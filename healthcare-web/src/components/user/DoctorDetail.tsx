@@ -18,7 +18,12 @@ export function DoctorDetail({ doctorId }: Props) {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    fetch(`/api/doctors?id=${doctorId}`).then((r) => r.json()).then(setDoctor);
+    fetch(`/api/doctors?id=${doctorId}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data) setDoctor(data);
+      })
+      .catch((err) => console.error('Error fetching doctor detail:', err));
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     setSelectedDate(tomorrow.toISOString().split('T')[0]);
