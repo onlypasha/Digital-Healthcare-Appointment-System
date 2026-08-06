@@ -48,7 +48,7 @@ class VitalSign {
 // Data Dummy
 final UserModel currentUser = UserModel(
   name: "Alex Johnson",
-  greeting: "Good morning,",
+  greeting: "Selamat datang,",
 );
 
 final Appointment mockUpcomingAppointment = Appointment(

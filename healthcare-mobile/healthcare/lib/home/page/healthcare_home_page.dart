@@ -272,7 +272,12 @@ class HealthcareHomePage extends StatelessWidget {
                       color: secondaryBg,
                       shape: BoxShape.circle,
                     ),
-                    child: Image.asset('assets/images/${spec['icon']!}', width: 20, height: 20, color: primaryColor),
+                    // [FIXED]: Warna color dihapus agar gambar asli muncul tanpa tertimpa warna biru
+                    child: Image.asset(
+                      'assets/images/${spec['icon']!}', 
+                      width: 20, 
+                      height: 20,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(spec['name']!, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: textColorMain)),
@@ -329,7 +334,11 @@ class HealthcareHomePage extends StatelessWidget {
               color: Color(0xFFFEEEEE),
               shape: BoxShape.circle,
             ),
-            child: Image.asset('assets/images/${vital.iconAssetName}', width: 20, height: 20, color: const Color(0xFFE53935)),
+            child: Image.asset(
+              'assets/images/${vital.iconAssetName}', 
+              width: 20, 
+              height: 20,
+            ),
           ),
           const SizedBox(width: 12),
           Column(
