@@ -51,7 +51,7 @@ namespace healthcare_api.Service
 
                 if (!string.IsNullOrWhiteSpace(patientEmail))
                 {
-                    var subject = "Reminder Appintment - Care Connect";
+                    var subject = "Reminder Appointment - Care Connect";
                     var body = $@"
                         <h3>Yth, {patientName}</h3>
                         <p>Ini adalah pengingat bahwa Anda memiliki jadwal konsultasi besok:</p>
