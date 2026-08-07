@@ -18,6 +18,15 @@ namespace healthcare_api.Service
             var user = await context.Users.FindAsync(userId);
             if (user == null || user.Role != "Doctor")
             {
+                var doctorFallback = await context.Doctors.FindAsync(userId);
+                if (doctorFallback != null)
+                {
+                    user = await context.Users.FindAsync(doctorFallback.UserId);
+                }
+            }
+
+            if (user == null || user.Role != "Doctor")
+            {
                 return false;
             }
 
@@ -46,6 +55,15 @@ namespace healthcare_api.Service
             var user = await context.Users.FindAsync(userId);
             if (user == null || user.Role != "Doctor")
             {
+                var doctorFallback = await context.Doctors.FindAsync(userId);
+                if (doctorFallback != null)
+                {
+                    user = await context.Users.FindAsync(doctorFallback.UserId);
+                }
+            }
+
+            if (user == null || user.Role != "Doctor")
+            {
                 return false;
             }
             user.Status = "InActive";
@@ -64,6 +82,20 @@ namespace healthcare_api.Service
         public async Task<Doctor?> UpdateDoctorAsync(long id, UpdateDoctorDto request)
         {
             var user = await context.Users.FindAsync(id);
+            if (user == null || user.Role != "Doctor")
+            {
+                var doctorFallback = await context.Doctors.FindAsync(id);
+                if (doctorFallback != null)
+                {
+                    user = await context.Users.FindAsync(doctorFallback.UserId);
+                    if (user != null && user.Role == "Doctor")
+                    {
+                        // Because id was actually Doctor.Id, we should set id to UserId so the next query works
+                        id = user.Id;
+                    }
+                }
+            }
+
             if (user == null || user.Role != "Doctor")
             {
                 return null;
