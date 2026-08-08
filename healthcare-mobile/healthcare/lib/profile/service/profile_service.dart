@@ -6,23 +6,31 @@ class ProfileService {
   final String baseUrl = 'https://perky-drastic-gleeful.ngrok-free.dev/api';
 
   // Fetch Patient Profile
-  Future<PatientProfileModel> getProfile() async {
+  Future<PatientProfileModel> getProfile(String? token) async {
+    if (token == null || token.isEmpty) {
+      return mockPatientProfile;
+    }
+
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/Auth/profile'),
+        Uri.parse('$baseUrl/patients/profile'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
         },
       );
 
       if (response.statusCode == 200 && response.body.isNotEmpty) {
         final dynamic data = jsonDecode(response.body);
         if (data is Map<String, dynamic>) {
-          return PatientProfileModel.fromJson(data);
+          final profileJson = data.containsKey('data') && data['data'] is Map<String, dynamic>
+              ? data['data']
+              : data;
+          return PatientProfileModel.fromJson(profileJson);
         }
       }
-      // Return mock data fallback if offline or mock endpoint
+      // Return mock data fallback if status code is not 200
       return mockPatientProfile;
     } catch (_) {
       // Fallback mock data when API connection is offline
@@ -31,13 +39,15 @@ class ProfileService {
   }
 
   // Update Profile
-  Future<bool> updateProfile(PatientProfileModel updatedProfile) async {
+  Future<bool> updateProfile(PatientProfileModel updatedProfile, {String? token}) async {
     try {
       final response = await http.put(
-        Uri.parse('$baseUrl/Auth/profile'),
+        Uri.parse('$baseUrl/patients/profile'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+          if (token != null && token.isNotEmpty)
+            'Authorization': 'Bearer $token',
         },
         body: jsonEncode(updatedProfile.toJson()),
       );
@@ -47,3 +57,4 @@ class ProfileService {
     }
   }
 }
+

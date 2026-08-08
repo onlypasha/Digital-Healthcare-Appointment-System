@@ -383,7 +383,7 @@ class SignUpPage extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         DropdownButtonFormField<String>(
-          value: controller.selectedBloodType,
+          initialValue: controller.selectedBloodType,
           items: ['A', 'B', 'AB', 'O'].map((type) {
             return DropdownMenuItem(value: type, child: Text(type));
           }).toList(),
@@ -407,7 +407,7 @@ class SignUpPage extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         DropdownButtonFormField<String>(
-          value: controller.selectedGender,
+          initialValue: controller.selectedGender,
           items: ['Laki-laki', 'Perempuan'].map((gender) {
             return DropdownMenuItem(value: gender, child: Text(gender));
           }).toList(),

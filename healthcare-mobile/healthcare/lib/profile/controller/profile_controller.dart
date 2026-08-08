@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:healthcare/login/controllers/auth_controller.dart';
+import 'package:provider/provider.dart';
 import '../model/patient_profile_model.dart';
 import '../service/profile_service.dart';
 import '/login/pages/sign_in_page.dart';
@@ -12,16 +14,18 @@ class ProfileController extends ChangeNotifier {
   PatientProfileModel? get profile => _profile;
   bool get isLoading => _isLoading;
 
-  ProfileController() {
-    fetchProfile();
-  }
+  ProfileController();
 
-  Future<void> fetchProfile() async {
+  Future<void> fetchProfile([String? token]) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      _profile = await _profileService.getProfile();
+      if (token != null && token.isNotEmpty) {
+        _profile = await _profileService.getProfile(token);
+      } else {
+        _profile = mockPatientProfile;
+      }
     } catch (_) {
       _profile = mockPatientProfile;
     } finally {
@@ -45,7 +49,9 @@ class ProfileController extends ChangeNotifier {
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFD92D20),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
             onPressed: () => Navigator.pop(context, true),
             child: const Text('Keluar', style: TextStyle(color: Colors.white)),
@@ -55,6 +61,7 @@ class ProfileController extends ChangeNotifier {
     );
 
     if (confirm == true && context.mounted) {
+      Provider.of<AuthController>(context, listen: false).clearToken();
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const SignInPage()),
@@ -63,3 +70,4 @@ class ProfileController extends ChangeNotifier {
     }
   }
 }
+

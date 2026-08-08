@@ -31,7 +31,10 @@ class PatientProfileModel {
       address: json['address'] ?? '',
       bloodType: json['bloodType'] ?? json['blood_type'] ?? '-',
       gender: json['gender'] ?? '-',
-      avatarUrl: json['avatarUrl'] ?? json['avatar_url'] ?? 'https://i.pravatar.cc/150?u=patient',
+      avatarUrl:
+          json['avatarUrl'] ??
+          json['avatar_url'] ??
+          'https://i.pravatar.cc/150?u=patient',
     );
   }
 
@@ -53,7 +56,7 @@ class PatientProfileModel {
 // Mock Patient Profile Data
 final PatientProfileModel mockPatientProfile = PatientProfileModel(
   id: "P-1002",
-  name: "Alex Johnson",
+  name: "Alex Test",
   email: "alex.johnson@example.com",
   phone: "+62 812-3456-7890",
   birthDate: "15/08/1995",

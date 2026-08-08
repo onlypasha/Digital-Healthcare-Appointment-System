@@ -78,7 +78,7 @@ class _SearchDoctorPageState extends State<SearchDoctorPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.black.withOpacity(0.1)),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.1)),
       ),
       child: TextField(
         controller: _searchController,
@@ -126,7 +126,7 @@ class _SearchDoctorPageState extends State<SearchDoctorPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.black.withOpacity(0.15)),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.15)),
       ),
       child: Row(
         children: [
@@ -171,10 +171,10 @@ class _SearchDoctorPageState extends State<SearchDoctorPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.black.withOpacity(0.08)),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.08)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -226,7 +226,7 @@ class _SearchDoctorPageState extends State<SearchDoctorPage> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: primaryColor.withOpacity(0.08),
+                  color: primaryColor.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -252,7 +252,7 @@ class _SearchDoctorPageState extends State<SearchDoctorPage> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: slotBgColor.withOpacity(0.5),
+              color: slotBgColor.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -275,10 +275,10 @@ class _SearchDoctorPageState extends State<SearchDoctorPage> {
                         margin: const EdgeInsets.only(right: 8),
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         decoration: BoxDecoration(
-                          color: isHighlighted ? primaryColor.withOpacity(0.12) : Colors.white,
+                          color: isHighlighted ? primaryColor.withValues(alpha: 0.12) : Colors.white,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: isHighlighted ? primaryColor : Colors.grey.withOpacity(0.2),
+                            color: isHighlighted ? primaryColor : Colors.grey.withValues(alpha: 0.2),
                           ),
                         ),
                         child: Center(

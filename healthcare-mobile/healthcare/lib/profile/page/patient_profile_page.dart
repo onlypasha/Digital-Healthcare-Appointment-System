@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:healthcare/login/controllers/auth_controller.dart';
 import 'package:provider/provider.dart';
 import '../controller/profile_controller.dart';
 import '../model/patient_profile_model.dart';
 import '/home/page/healthcare_home_page.dart';
 import '../../doctors/pages/search_doctor_page.dart';
 
-class PatientProfilePage extends StatelessWidget {
+class PatientProfilePage extends StatefulWidget {
   const PatientProfilePage({super.key});
 
+  @override
+  State<PatientProfilePage> createState() => _PatientProfilePageState();
+}
+
+class _PatientProfilePageState extends State<PatientProfilePage> {
   static const Color primaryColor = Color(0xFF2A5EE5);
   static const Color backgroundColor = Color(0xFFF8FAFC);
   static const Color textColorMain = Color(0xFF1D2939);
@@ -16,8 +22,18 @@ class PatientProfilePage extends StatelessWidget {
   static const Color cardFillColor = Colors.white;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final token = Provider.of<AuthController>(context, listen: false).token;
+      Provider.of<ProfileController>(context, listen: false).fetchProfile(token);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final profileController = Provider.of<ProfileController>(context);
+    final authController = Provider.of<AuthController>(context, listen: false);
     final patient = profileController.profile;
 
     return Scaffold(
@@ -27,14 +43,20 @@ class PatientProfilePage extends StatelessWidget {
         elevation: 0,
         title: const Text(
           'Profil Saya',
-          style: TextStyle(color: textColorMain, fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: textColorMain,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit_outlined, color: primaryColor),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Fitur Edit Profil akan segera hadir!')),
+                const SnackBar(
+                  content: Text('Fitur Edit Profil akan segera hadir!'),
+                ),
               );
             },
           ),
@@ -42,67 +64,108 @@ class PatientProfilePage extends StatelessWidget {
       ),
       body: profileController.isLoading
           ? const Center(child: CircularProgressIndicator(color: primaryColor))
-          : SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
-              child: Column(
-                children: [
-                  // --- HEADER PROFIL & AVATAR ---
-                  _buildProfileHeader(patient),
-                  const SizedBox(height: 20),
+          : RefreshIndicator(
+              onRefresh: () => profileController.fetchProfile(authController.token),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20.0,
+                  vertical: 12.0,
+                ),
+                child: Column(
+                  children: [
+                    // --- HEADER PROFIL & AVATAR ---
+                    _buildProfileHeader(patient),
+                    const SizedBox(height: 20),
 
-                  // --- STATISTIK SINGKAT MEDIS ---
-                  _buildQuickStatsCard(patient),
-                  const SizedBox(height: 20),
+                    // --- STATISTIK SINGKAT MEDIS ---
+                    _buildQuickStatsCard(patient),
+                    const SizedBox(height: 20),
 
-                  // --- INFORMASI PRIBADI ---
-                  _buildSectionTitle('Informasi Pribadi & Kontak'),
-                  const SizedBox(height: 10),
-                  _buildInfoCard([
-                    _buildInfoTile(Icons.calendar_today_outlined, 'Tanggal Lahir', patient?.birthDate ?? '-'),
-                    const Divider(height: 1),
-                    _buildInfoTile(Icons.phone_outlined, 'Nomor HP', patient?.phone ?? '-'),
-                    const Divider(height: 1),
-                    _buildInfoTile(Icons.location_on_outlined, 'Alamat', patient?.address ?? '-'),
-                  ]),
-                  const SizedBox(height: 20),
-
-                  // --- PENGATURAN & AKSI ---
-                  _buildSectionTitle('Pengaturan & Akses'),
-                  const SizedBox(height: 10),
-                  _buildInfoCard([
-                    _buildActionTile(Icons.lock_outline, 'Ubah Kata Sandi', () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Fitur Ubah Kata Sandi akan segera hadir!')),
-                      );
-                    }),
-                    const Divider(height: 1),
-                    _buildActionTile(Icons.history_outlined, 'Riwayat Medis & Janji Temu', () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Fitur Riwayat Medis akan segera hadir!')),
-                      );
-                    }),
-                  ]),
-                  const SizedBox(height: 28),
-
-                  // --- TOMBOL LOGOUT ---
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton.icon(
-                      onPressed: () => profileController.logout(context),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        side: const BorderSide(color: accentRed),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    // --- INFORMASI PRIBADI ---
+                    _buildSectionTitle('Informasi Pribadi & Kontak'),
+                    const SizedBox(height: 10),
+                    _buildInfoCard([
+                      _buildInfoTile(
+                        Icons.calendar_today_outlined,
+                        'Tanggal Lahir',
+                        patient?.birthDate ?? '-',
                       ),
-                      icon: const Icon(Icons.logout_rounded, color: accentRed, size: 20),
-                      label: const Text(
-                        'Keluar Akun',
-                        style: TextStyle(color: accentRed, fontSize: 15, fontWeight: FontWeight.bold),
+                      const Divider(height: 1),
+                      _buildInfoTile(
+                        Icons.phone_outlined,
+                        'Nomor HP',
+                        patient?.phone ?? '-',
+                      ),
+                      const Divider(height: 1),
+                      _buildInfoTile(
+                        Icons.location_on_outlined,
+                        'Alamat',
+                        patient?.address ?? '-',
+                      ),
+                    ]),
+                    const SizedBox(height: 20),
+
+                    // --- PENGATURAN & AKSI ---
+                    _buildSectionTitle('Pengaturan & Akses'),
+                    const SizedBox(height: 10),
+                    _buildInfoCard([
+                      _buildActionTile(Icons.lock_outline, 'Ubah Kata Sandi', () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              'Fitur Ubah Kata Sandi akan segera hadir!',
+                            ),
+                          ),
+                        );
+                      }),
+                      const Divider(height: 1),
+                      _buildActionTile(
+                        Icons.history_outlined,
+                        'Riwayat Medis & Janji Temu',
+                        () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Fitur Riwayat Medis akan segera hadir!',
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ]),
+                    const SizedBox(height: 28),
+
+                    // --- TOMBOL LOGOUT ---
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: () => profileController.logout(context),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          side: const BorderSide(color: accentRed),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        icon: const Icon(
+                          Icons.logout_rounded,
+                          color: accentRed,
+                          size: 20,
+                        ),
+                        label: const Text(
+                          'Keluar Akun',
+                          style: TextStyle(
+                            color: accentRed,
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                ],
+                    const SizedBox(height: 20),
+                  ],
+                ),
               ),
             ),
       bottomNavigationBar: _buildBottomNavigationBar(context),
@@ -133,7 +196,11 @@ class PatientProfilePage extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             patient?.name ?? 'Nama Pasien',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: textColorMain),
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: textColorMain,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
@@ -154,7 +221,11 @@ class PatientProfilePage extends StatelessWidget {
                 SizedBox(width: 4),
                 Text(
                   'Pasien Terverifikasi',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: primaryColor),
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: primaryColor,
+                  ),
                 ),
               ],
             ),
@@ -168,15 +239,27 @@ class PatientProfilePage extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: _buildStatItem('ID Pasien', patient?.id ?? '-', Icons.badge_outlined),
+          child: _buildStatItem(
+            'ID Pasien',
+            patient?.id ?? '-',
+            Icons.badge_outlined,
+          ),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: _buildStatItem('Gol. Darah', patient?.bloodType ?? '-', Icons.bloodtype_outlined),
+          child: _buildStatItem(
+            'Gol. Darah',
+            patient?.bloodType ?? '-',
+            Icons.bloodtype_outlined,
+          ),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: _buildStatItem('Gender', patient?.gender ?? '-', Icons.person_outline),
+          child: _buildStatItem(
+            'Gender',
+            patient?.gender ?? '-',
+            Icons.person_outline,
+          ),
         ),
       ],
     );
@@ -194,9 +277,19 @@ class PatientProfilePage extends StatelessWidget {
         children: [
           Icon(icon, size: 22, color: primaryColor),
           const SizedBox(height: 6),
-          Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: textColorMain)),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: textColorMain,
+            ),
+          ),
           const SizedBox(height: 2),
-          Text(label, style: const TextStyle(fontSize: 11, color: textColorSecondary)),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 11, color: textColorSecondary),
+          ),
         ],
       ),
     );
@@ -207,7 +300,11 @@ class PatientProfilePage extends StatelessWidget {
       alignment: Alignment.centerLeft,
       child: Text(
         title,
-        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: textColorMain),
+        style: const TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.bold,
+          color: textColorMain,
+        ),
       ),
     );
   }
@@ -237,8 +334,18 @@ class PatientProfilePage extends StatelessWidget {
         ),
         child: Icon(icon, size: 20, color: primaryColor),
       ),
-      title: Text(title, style: const TextStyle(fontSize: 12, color: textColorSecondary)),
-      subtitle: Text(subtitle, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: textColorMain)),
+      title: Text(
+        title,
+        style: const TextStyle(fontSize: 12, color: textColorSecondary),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: textColorMain,
+        ),
+      ),
     );
   }
 
@@ -253,7 +360,14 @@ class PatientProfilePage extends StatelessWidget {
         ),
         child: Icon(icon, size: 20, color: primaryColor),
       ),
-      title: Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: textColorMain)),
+      title: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: textColorMain,
+        ),
+      ),
       trailing: const Icon(Icons.chevron_right, color: textColorSecondary),
     );
   }
@@ -283,8 +397,14 @@ class PatientProfilePage extends StatelessWidget {
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
         BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
-        BottomNavigationBarItem(icon: Icon(Icons.calendar_today_outlined), label: "Appointments"),
-        BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: "Profile"),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.calendar_today_outlined),
+          label: "Appointments",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person_outline),
+          label: "Profile",
+        ),
       ],
     );
   }
