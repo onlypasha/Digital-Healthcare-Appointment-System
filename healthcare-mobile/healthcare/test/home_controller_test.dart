@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:healthcare/home/controller/home_controller.dart';
+import 'package:healthcare/features/home/presentation/controllers/home_controller.dart';
 
 void main() {
   group('HomeController Unit Tests', () {

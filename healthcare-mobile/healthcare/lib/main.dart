@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'login/controllers/auth_controller.dart';
-import 'login/pages/sign_in_page.dart';
-
-import 'profile/controller/profile_controller.dart';
-import 'home/controller/home_controller.dart';
+import 'features/auth/presentation/controllers/auth_controller.dart';
+import 'features/auth/presentation/pages/sign_in_page.dart';
+import 'features/profile/presentation/controllers/profile_controller.dart';
+import 'features/home/presentation/controllers/home_controller.dart';
 
 void main() {
   runApp(const MyApp());

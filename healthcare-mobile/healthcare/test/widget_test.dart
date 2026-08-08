@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:healthcare/main.dart';
-import 'package:healthcare/login/controllers/auth_controller.dart';
+import 'package:healthcare/features/auth/presentation/controllers/auth_controller.dart';
 
 void main() {
   testWidgets('SignInPage renders initial UI', (WidgetTester tester) async {

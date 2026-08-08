@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:healthcare/profile/model/patient_profile_model.dart';
-import 'package:healthcare/profile/controller/profile_controller.dart';
-import 'package:healthcare/profile/page/patient_profile_page.dart';
+import 'package:healthcare/features/profile/domain/patient_profile_model.dart';
+import 'package:healthcare/features/profile/presentation/controllers/profile_controller.dart';
+import 'package:healthcare/features/profile/presentation/pages/patient_profile_page.dart';
 
 void main() {
   group('Patient Profile Tests', () {

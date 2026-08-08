@@ -14,34 +14,50 @@
 - **Run App**: `flutter run`
 - **Check Outdated Dependencies**: `flutter pub outdated`
 
-## Project Structure & Modules
+## Project Structure & Modules (Clean Architecture)
 ```
 lib/
-├── main.dart                      # App entry point & MultiProvider setup
-├── login/
-│   ├── controllers/
-│   │   └── auth_controller.dart   # Auth state & Form Controllers (ChangeNotifier)
-│   ├── services/
-│   │   └── auth_service.dart      # HTTP Service for login/register API calls
-│   ├── pages/
-│   │   ├── sign_in_page.dart      # Sign In UI screen
-│   │   ├── sign_up_page.dart      # Sign Up UI screen
-│   │   └── pages.dart             # Barrel export
-│   └── shared/
-│       ├── theme_shared.dart      # Common styles, colors & typography
-│       └── shared.dart            # Shared utilities export
-├── home/
-│   ├── data_model.dart            # Models for User, Doctor, Appointment, VitalSign & mock data
-│   └── healthcare_home_page.dart  # Home Dashboard UI
-└── doctors/
-    ├── doctor_model.dart          # Doctor model & mockDoctorList
-    └── search_doctor_page.dart    # Search & Doctor listing UI
+├── main.dart                          # App entry point & MultiProvider setup
+└── features/
+    ├── auth/                          # Authentication Feature
+    │   ├── data/
+    │   │   └── auth_service.dart      # HTTP API calls for login/register
+    │   ├── presentation/
+    │   │   ├── controllers/
+    │   │   │   └── auth_controller.dart # Auth state & form logic (ChangeNotifier)
+    │   │   └── pages/                 # Sign In, Sign Up, Forgot Password screens
+    │   └── shared/
+    │       └── theme_shared.dart      # Common styles & color tokens
+    ├── doctors/                       # Doctors & Appointment Feature
+    │   ├── domain/
+    │   │   └── doctor_model.dart      # Doctor model & mock data
+    │   └── presentation/
+    │       ├── controllers/           # AppointmentController
+    │       ├── pages/                 # SearchDoctorPage, AppointmentsPage, DoctorSchedulePage
+    │       └── widgets/               # Detail & Filter bottom sheets
+    ├── home/                          # Home Dashboard Feature
+    │   ├── data/
+    │   │   └── home_service.dart      # Dashboard API & mock data fetcher
+    │   ├── domain/
+    │   │   └── data_model.dart        # User, Doctor, Appointment, VitalSign entities
+    │   └── presentation/
+    │       ├── controllers/           # HomeController
+    │       └── pages/                 # HealthcareHomePage UI
+    └── profile/                       # Patient Profile Feature
+        ├── data/
+        │   └── profile_service.dart   # Profile API service
+        ├── domain/
+        │   └── patient_profile_model.dart # PatientProfileModel & mock data
+        └── presentation/
+            ├── controllers/           # ProfileController
+            └── pages/                 # PatientProfilePage UI
 ```
 
 ## Code Conventions & Guidelines
-- **State Management**: Use `Provider` with `ChangeNotifier` (e.g. `AuthController`).
+- **State Management**: Use `Provider` with `ChangeNotifier` (e.g. `AuthController`, `ProfileController`, `HomeController`).
+- **Clean Architecture Layers**: Keep data logic in `data/`, domain models in `domain/`, and UI/State in `presentation/`.
 - **Form Handling**: Text field controllers should be managed in the controller and disposed in `dispose()`.
-- **API Calls**: Keep HTTP requests inside dedicated service classes in `lib/*/services/` and catch errors gracefully using `try/catch`.
+- **API Calls**: Keep HTTP requests inside dedicated service classes in `lib/features/*/data/` and catch errors gracefully using `try/catch`.
 - **Color Opacity**: Prefer `Color.withValues(alpha: ...)` instead of deprecated `Color.withOpacity(...)`.
 - **Context Checks**: Use `if (context.mounted)` before using `BuildContext` across async gaps.
 
