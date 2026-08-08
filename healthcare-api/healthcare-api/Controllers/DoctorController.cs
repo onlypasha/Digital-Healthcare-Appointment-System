@@ -17,6 +17,7 @@ namespace healthcare_api.Controllers
             var response = doctors.Select(d => new DoctorResponseDto
             {
                 Id = d.Id,
+                UserId = d.UserId ?? 0,
                 Name = d.User?.Name ?? string.Empty,
                 Email = d.User?.Email ?? string.Empty,
                 Role = d.User?.Role ?? string.Empty,
